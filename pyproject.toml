@@ -1,13 +1,13 @@
 [project]
-name = "examplepyapp"
-description = "Example Python repo for neutrons"
+name = "hyspecplanningtools"
+description = "Polarization tool for neutrons"
 dynamic = ["version"]
 requires-python = ">=3.10"
 dependencies = [
   # list all runtime dependencies here
 ]
 license = { text = "MIT" }
-keywords = ["neutrons", "example", "python"]
+keywords = ["neutrons", "polarization", "single crystal", "powder"]
 readme = "README.md"
 
 [project.urls]
@@ -42,7 +42,7 @@ file = "src/hyspecplanningtools/_version.py"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-exclude = ["tests*", "scripts*", "docs*", "notebooks*"]
+exclude = ["tests*", "scripts*", "docs*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.yml","*.yaml","*.ini"]
