@@ -8,7 +8,7 @@ on:
     tags: ['v*']
 
 jobs:
-  linux:
+  pytest_conda_tests:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -35,6 +35,11 @@ jobs:
           github.actor != 'dependabot[bot]'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+      - name: build python wheel - pypi
+        run: |
+          # test that the python wheel builds
+          VERSION=$(versioningit .) python -m build --wheel --no-isolation
+          check-wheel-contents dist/hyspecplanningtools-*.whl
       - name: build conda package
         run: |
           # test that the conda package builds
@@ -42,6 +47,6 @@ jobs:
           echo "versioningit $(versioningit ../)"
           # conda channels could have been defined in the conda-incubator, but you can copy/paste the lines
           # below to build the conda package in your local machine
-          CHANNELS="--channel mantid/label/main --channel conda-forge"
+          CHANNELS="--channel --channel conda-forge"
           VERSION=$(versioningit ../) conda mambabuild $CHANNELS --output-folder . .
           conda verify noarch/hyspecplanningtools*.tar.bz2
