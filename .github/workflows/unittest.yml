@@ -8,7 +8,7 @@ on:
     tags: ['v*']
 
 jobs:
-  pytest_conda_tests:
+  pytest_package_tests:
     runs-on: ubuntu-latest
     defaults:
       run:
