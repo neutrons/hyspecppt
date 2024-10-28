@@ -2,7 +2,7 @@
 
 import webbrowser
 
-from packagenamepy.configuration import get_data
+from hyspecplanningtools.configuration import get_data
 
 
 def help_function(context):

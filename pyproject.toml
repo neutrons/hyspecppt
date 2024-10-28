@@ -11,10 +11,10 @@ keywords = ["neutrons", "example", "python"]
 readme = "README.md"
 
 [project.urls]
-homepage = "https://github.com/neutrons/python_project_template/"  # if no homepage, use repo url
-repository = "https://github.com/neutrons/python_project_template/"
+homepage = "https://github.com/neutrons/HyspecPlanningTools"  # if no homepage, use repo url
+repository = "https://github.com/neutrons/HyspecPlanningTools"
 # documentation = add_url_to_readthedoc_here
-issues = "https://github.com/neutrons/python_project_template/issues"
+issues = "https://github.com/neutrons/HyspecPlanningTools/issues"
 
 [build-system]
 requires = [
@@ -38,7 +38,7 @@ dirty = "{version}+d{build_date:%Y%m%d}"
 distance-dirty = "{next_version}.dev{distance}+d{build_date:%Y%m%d%H%M}"
 
 [tool.versioningit.write]
-file = "src/packagenamepy/_version.py"
+file = "src/hyspecplanningtools/_version.py"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -48,10 +48,10 @@ exclude = ["tests*", "scripts*", "docs*", "notebooks*"]
 "*" = ["*.yml","*.yaml","*.ini"]
 
 [project.scripts]
-packagename-cli = "packagenamepy.packagename:main"
+hyspecplanningtools-cli = "hyspecplanningtools.hyspecplanningtools:main"
 
 [project.gui-scripts]
-packagenamepy = "packagenamepy.packagename:gui"
+hyspecplanningtools = "hyspecplanningtools.hyspecplanningtools:gui"
 
 [tool.pytest.ini_options]
 pythonpath = [

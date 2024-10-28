@@ -2,8 +2,9 @@ name: hyspecplanningtools_dev
 channels:
   - conda-forge
 dependencies:
-  - python>=3.8 
+  - python>=3.10 
   - pyqt == 5.*
+  - qtpy
   - numpy
   - scipy
   - matplotlib
