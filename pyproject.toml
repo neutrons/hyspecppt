@@ -47,9 +47,6 @@ exclude = ["tests*", "scripts*", "docs*"]
 [tool.setuptools.package-data]
 "*" = ["*.yml","*.yaml","*.ini"]
 
-[project.scripts]
-hyspecplanningtools-cli = "hyspecplanningtools.hyspecplanningtools:main"
-
 [project.gui-scripts]
 hyspecplanningtools = "hyspecplanningtools.hyspecplanningtools:gui"
 
