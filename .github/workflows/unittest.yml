@@ -39,7 +39,7 @@ jobs:
         run: |
           # test that the python wheel builds
           VERSION=$(versioningit .) python -m build --wheel --no-isolation
-          check-wheel-contents dist/hyspecplanningtools-*.whl
+          twine check dist/hyspecplanningtools-*.whl
       - name: build conda package
         run: |
           # test that the conda package builds
