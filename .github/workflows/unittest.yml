@@ -21,10 +21,11 @@ jobs:
           channels: conda-forge,defaults
           use-mamba: true
           environment-file: environment.yml
-          activate-environment: test
-      - name: install additional dependencies
+          activate-environment: hyspecplanningtools_dev
+      - name: install in editable mode
         run: |
-          echo "installing additional dependencies if cannot be installed from conda"
+          echo "installing in editable mode"
+          pythom -m pip install -e .
       - name: run unit tests
         run: |
           echo "running unit tests"
