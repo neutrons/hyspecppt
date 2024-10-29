@@ -2,6 +2,10 @@
 HyspecPlanningTools
 =====================
 
+Polarization tool for Single Crystal and Powder
+
+## Installation Process
+
 Create the development conda environment
 
 `conda env create`
