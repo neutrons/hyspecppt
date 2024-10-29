@@ -3,12 +3,11 @@
 Will fall back to a default
 """
 
+import logging
 import os
 import shutil
 from configparser import ConfigParser
 from pathlib import Path
-
-import logging
 
 logger = logging.getLogger("hyspecplanningtools")
 

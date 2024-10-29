@@ -1,14 +1,13 @@
 """Main Qt application"""
 
-import sys
 import logging
+import sys
 
 from qtpy.QtWidgets import QApplication, QMainWindow
 
-from hyspecplanningtools import __version__ 
+from hyspecplanningtools import __version__
 from hyspecplanningtools.configuration import Configuration
 from hyspecplanningtools.mainwindow import MainWindow
-
 
 logger = logging.getLogger("hyspecplanningtools")
 
