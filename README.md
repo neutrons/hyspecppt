@@ -2,11 +2,19 @@
 HyspecPlanningTools
 =====================
 
-To install the application in editable mode
+Create the development conda environment
+
+`conda env create`
+
+Activate the environment
+
+`conda activate hyspecplanningtools_dev`
+
+Install the application in editable mode
 
 `pip install -e .`
 
-To start the tool
+Start the tool
 
 `hyspecplanningtools`
 
