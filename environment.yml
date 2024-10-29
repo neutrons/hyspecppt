@@ -1,23 +1,16 @@
-name: mypythonapp
+name: hyspecplanningtools_dev
 channels:
   - conda-forge
 dependencies:
-  # -- Runtime dependencies
-  # base: list all base dependencies here
-  - python>=3.8  # please specify the minimum version of python here
-  - versioningit
-  # compute: list all compute dependencies here
+  - python>=3.10
+  - pyqt == 5.*
+  - qtpy
   - numpy
-  - pandas
-  # plot: list all plot dependencies here, if applicable
+  - scipy
   - matplotlib
-  # jupyter: list all jupyter dependencies here, if applicable
-  - jupyterlab
-  - ipympl
-  # -- Development dependencies
-  # utils:
   - pre-commit
   # package building:
+  - versioningit
   - libmamba
   - libarchive
   - anaconda-client
@@ -29,16 +22,9 @@ dependencies:
   # docs
   - sphinx
   - sphinx_rtd_theme
+  - sphinxcontrib-mermaid
   - myst-parser  # required for parsing markdown files
   # test: list all test dependencies here
   - pytest
   - pytest-cov
   - pytest-xdist
-  # --------------------------------------------------
-  # add additional sections such as Qt, etc. if needed
-  # --------------------------------------------------
-  # if packages are not available on conda, list them here
-  - pip
-  - pip:
-    - bm3d-streak-removal # example
-    - pytest-playwright

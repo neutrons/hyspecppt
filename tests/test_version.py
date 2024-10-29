@@ -1,5 +1,5 @@
-from packagenamepy import __version__
+from hyspecplanningtools import __version__
 
 
 def test_version():
-    assert __version__ == "unknown"
+    assert __version__ != "unknown"

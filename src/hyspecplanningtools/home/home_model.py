@@ -1,8 +1,8 @@
 """Model for the Main tab"""
 
-from mantid.kernel import Logger
+import logging
 
-logger = Logger("PACKAGENAME")
+logger = logging.getLogger("hyspecplanningtools")
 
 
 class HomeModel:  # pylint: disable=too-many-public-methods
