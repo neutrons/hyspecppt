@@ -25,7 +25,7 @@ jobs:
       - name: install in editable mode
         run: |
           echo "installing in editable mode"
-          pythom -m pip install -e .
+          python -m pip install -e .
       - name: run unit tests
         run: |
           echo "running unit tests"
