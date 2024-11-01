@@ -5,9 +5,9 @@ dependencies:
   - python>=3.10
   - pyqt == 5.*
   - qtpy
-  #- numpy
-  #- scipy
-  #- matplotlib
+  - numpy
+  - scipy
+  - matplotlib
   - pre-commit
   # package building:
   - versioningit
