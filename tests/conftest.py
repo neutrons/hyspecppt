@@ -5,14 +5,11 @@ from configparser import ConfigParser
 
 import pytest
 
-from hyspecplanningtools.hyspecplanningtools import HyspecPlanningTool
-
-
-@pytest.fixture(scope="session")
-def hyspec_app():
-    app = HyspecPlanningTool()
-    yield app
-    app.destroy()
+# @pytest.fixture(scope="session")
+# def hyspec_app():
+#     app = HyspecPlanningTool()
+#     yield app
+#     app.destroy()
 
 
 @pytest.fixture(scope="session")

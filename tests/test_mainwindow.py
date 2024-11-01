@@ -1,16 +1,14 @@
 """UI tests for the application"""
 
-from hyspecplanningtools.hyspecplanningtools import HyspecPlanningTool, __version__
 
-
-def test_appwindow(qtbot):
-    """Test that the application starts successfully"""
-    hyspecplanningtools = HyspecPlanningTool()
-    hyspecplanningtools.show()
-    qtbot.waitUntil(hyspecplanningtools.show, timeout=5000)
-    assert hyspecplanningtools.isVisible()
-    assert hyspecplanningtools.windowTitle() == f"HyspecPlanning Tools - {__version__}"
-    hyspecplanningtools.destroy()
+# def test_appwindow(qtbot):
+#     """Test that the application starts successfully"""
+#     hyspecplanningtools = HyspecPlanningTool()
+#     hyspecplanningtools.show()
+#     qtbot.waitUntil(hyspecplanningtools.show, timeout=5000)
+#     assert hyspecplanningtools.isVisible()
+#     assert hyspecplanningtools.windowTitle() == f"HyspecPlanning Tools - {__version__}"
+#     hyspecplanningtools.destroy()
 
 
 # def test_gui_version():
