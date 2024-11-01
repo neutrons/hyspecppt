@@ -5,17 +5,18 @@ from unittest.mock import Mock
 
 import pytest
 
-from hyspecplanningtools.hyspecplanningtools import __version__
+from hyspecplanningtools.hyspecplanningtools import HyspecPlanningTool, __version__
 from hyspecplanningtools.mainwindow import MainWindow
 
-# def test_appwindow(qtbot):
-#     """Test that the application starts successfully"""
-#     hyspecplanningtools = HyspecPlanningTool()
-#     hyspecplanningtools.show()
-#     qtbot.waitUntil(hyspecplanningtools.show, timeout=5000)
-#     assert hyspecplanningtools.isVisible()
-#     assert hyspecplanningtools.windowTitle() == f"HyspecPlanning Tools - {__version__}"
-#     hyspecplanningtools.destroy()
+
+def test_appwindow(qtbot):
+    """Test that the application starts successfully"""
+    hyspecplanningtools = HyspecPlanningTool()
+    hyspecplanningtools.show()
+    qtbot.waitUntil(hyspecplanningtools.show, timeout=5000)
+    assert hyspecplanningtools.isVisible()
+    assert hyspecplanningtools.windowTitle() == f"HyspecPlanning Tools - {__version__}"
+    hyspecplanningtools.destroy()
 
 
 def test_gui_version():
