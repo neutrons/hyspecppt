@@ -1,5 +1,6 @@
 """Main Qt application"""
 
+import argparse
 import logging
 import sys
 
@@ -44,8 +45,10 @@ class HyspecPlanningTool(QMainWindow):
 
 def gui():
     """Main entry point for Qt application"""
-    input_flags = sys.argv[1::]
-    if "--v" in input_flags or "--version" in input_flags:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-v", "--version", help="print the version", action="store_true")
+    args = parser.parse_args()
+    if args.version:
         print(__version__)
         sys.exit()
     else:
