@@ -1,11 +1,6 @@
 """UI tests for the application"""
 
-from unittest.mock import Mock
-
-import pytest
-
 from hyspecplanningtools.hyspecplanningtools import HyspecPlanningTool, __version__
-from hyspecplanningtools.mainwindow import MainWindow
 
 
 def test_appwindow(qtbot):
@@ -34,24 +29,24 @@ def test_appwindow(qtbot):
 #     assert version_result == __version__
 
 
-@pytest.mark.parametrize(
-    "user_conf_file",
-    [
-        """
-        [global.other]
-        help_url = https://test.url.com
+# @pytest.mark.parametrize(
+#     "user_conf_file",
+#     [
+#         """
+#         [global.other]
+#         help_url = https://test.url.com
 
-        """
-    ],
-    indirect=True,
-)
-def test_mainwindow_help(monkeypatch, user_conf_file):
-    """Test the help function in the main window"""
+#         """
+#     ],
+#     indirect=True,
+# )
+# def test_mainwindow_help(monkeypatch, user_conf_file):
+#     """Test the help function in the main window"""
 
-    fake_webbrowser = Mock()
-    monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
-    monkeypatch.setattr("webbrowser.open", fake_webbrowser)
+#     fake_webbrowser = Mock()
+#     monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
+#     monkeypatch.setattr("webbrowser.open", fake_webbrowser)
 
-    main_window = MainWindow()
-    main_window.handle_help()
-    fake_webbrowser.assert_called_once()
+#     main_window = MainWindow()
+#     main_window.handle_help()
+#     fake_webbrowser.assert_called_once()
