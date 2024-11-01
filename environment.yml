@@ -1,6 +1,7 @@
 name: hyspecplanningtools_dev
 channels:
   - conda-forge
+  - anaconda
 dependencies:
   - pyqt == 5.*
   - qtpy

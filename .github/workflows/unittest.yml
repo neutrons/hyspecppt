@@ -23,6 +23,7 @@ jobs:
           condarc: |
             channels:
               - conda-forge
+              - anaconda
       - name: install in editable mode
         run: |
           echo "installing in editable mode"
