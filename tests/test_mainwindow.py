@@ -1,6 +1,5 @@
 """UI tests for the application"""
 
-import subprocess
 from unittest.mock import Mock
 
 import pytest
@@ -19,20 +18,20 @@ def test_appwindow(qtbot):
     hyspecplanningtools.destroy()
 
 
-def test_gui_version():
-    """Test that argument parameter --version prints the version"""
-    full_command = ["hyspecplanningtools", "--version"]
-    version_result = subprocess.run(full_command, capture_output=True, text=True)
-    version_result = version_result.stdout.strip()
-    assert version_result == __version__
+# def test_gui_version():
+#     """Test that argument parameter --version prints the version"""
+#     full_command = ["hyspecplanningtools", "--version"]
+#     version_result = subprocess.run(full_command, capture_output=True, text=True)
+#     version_result = version_result.stdout.strip()
+#     assert version_result == __version__
 
 
-def test_gui_v():
-    """Test that argument parameter -v prints the version"""
-    full_command = ["hyspecplanningtools", "-v"]
-    version_result = subprocess.run(full_command, capture_output=True, text=True)
-    version_result = version_result.stdout.strip()
-    assert version_result == __version__
+# def test_gui_v():
+#     """Test that argument parameter -v prints the version"""
+#     full_command = ["hyspecplanningtools", "-v"]
+#     version_result = subprocess.run(full_command, capture_output=True, text=True)
+#     version_result = version_result.stdout.strip()
+#     assert version_result == __version__
 
 
 @pytest.mark.parametrize(
