@@ -1,22 +1,21 @@
 """UI tests for the application"""
 
 import subprocess
-from unittest.mock import Mock
 
 import pytest
 
 from hyspecplanningtools.hyspecplanningtools import HyspecPlanningTool, __version__
-from hyspecplanningtools.mainwindow import MainWindow
 
 
 def test_appwindow(qtbot):
     """Test that the application starts successfully"""
-    hyspecplanningtools = HyspecPlanningTool()
-    hyspecplanningtools.show()
-    qtbot.waitUntil(hyspecplanningtools.show, timeout=5000)
-    assert hyspecplanningtools.isVisible()
-    assert hyspecplanningtools.windowTitle() == f"HyspecPlanning Tools - {__version__}"
-    hyspecplanningtools.destroy()
+    hyspec_app = HyspecPlanningTool()
+    hyspec = hyspec_app
+    hyspec.show()
+    qtbot.waitUntil(hyspec.show, timeout=5000)
+    assert hyspec.isVisible()
+    assert hyspec.windowTitle() == f"HyspecPlanning Tools - {__version__}"
+    hyspec_app = hyspec = None
 
 
 def test_gui_version():
@@ -48,11 +47,16 @@ def test_gui_v():
 )
 def test_mainwindow_help(monkeypatch, user_conf_file):
     """Test the help function in the main window"""
+    hyspec_app = HyspecPlanningTool()
 
-    fake_webbrowser = Mock()
+    help_url = ""
+
+    def fake_webbrowser(url):
+        nonlocal help_url
+        help_url = url
+
     monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
     monkeypatch.setattr("webbrowser.open", fake_webbrowser)
 
-    main_window = MainWindow()
-    main_window.handle_help()
-    fake_webbrowser.assert_called_once()
+    hyspec_app.main_window.handle_help()
+    assert help_url == "https://test.url.com"

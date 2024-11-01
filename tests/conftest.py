@@ -5,14 +5,19 @@ from configparser import ConfigParser
 
 import pytest
 
-from hyspecplanningtools.hyspecplanningtools import HyspecPlanningTool
+# from hyspecplanningtools.hyspecplanningtools import HyspecPlanningTool
 
 
-@pytest.fixture(scope="session")
-def hyspec_app():
-    app = HyspecPlanningTool()
-    yield app
-    app.destroy()
+# @pytest.fixture(scope="session")
+# def hyspec_app():
+#     if HyspecPlanningTool.get_instance() is None:
+#         app = HyspecPlanningTool()
+#         print("fsfsdf")
+#     else:
+#         app = HyspecPlanningTool.get_instance()
+#         print("fsfsdf")
+
+#     return app
 
 
 @pytest.fixture(scope="session")

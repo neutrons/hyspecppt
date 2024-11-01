@@ -18,6 +18,9 @@ class HyspecPlanningTool(QMainWindow):
 
     __instance = None
 
+    def get_instance():
+        return HyspecPlanningTool.__instance
+
     def __new__(cls):
         if HyspecPlanningTool.__instance is None:
             HyspecPlanningTool.__instance = QMainWindow.__new__(cls)  # pylint: disable=no-value-for-parameter

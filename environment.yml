@@ -7,7 +7,7 @@ dependencies:
   - qtpy
   - numpy
   - scipy
-  - matplotlib
+  - matplotlib <3.9 #resolves pyside 6 error
   - pre-commit
   # package building:
   - versioningit
