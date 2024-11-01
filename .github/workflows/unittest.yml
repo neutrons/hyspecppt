@@ -30,8 +30,8 @@ jobs:
           python -m pip install -e .
       - name: run unit tests
         run: |
-          echo "running unit tests"
-          python -m pytest --cov=src --cov-report=xml --cov-report=term-missing tests/
+          echo "running unit tests with coverage"
+          xvfb-run --server-args="-screen 0 1920x1080x24" -a python -m pytest --cov=src --cov-report=xml --cov-report=term
       - name: upload coverage to codecov
         uses: codecov/codecov-action@v4
         if:
