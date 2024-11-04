@@ -3,7 +3,7 @@
 from qtpy.QtWidgets import QHBoxLayout, QWidget
 
 
-class Home(QWidget):  # pylint: disable=too-many-public-methods
+class Home(QWidget):
     """Main widget"""
 
     def __init__(self, parent=None):

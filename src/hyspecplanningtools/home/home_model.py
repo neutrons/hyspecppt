@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger("hyspecplanningtools")
 
 
-class HomeModel:  # pylint: disable=too-many-public-methods
+class HomeModel:
     """Main model"""
 
     def __init__(self):

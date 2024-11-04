@@ -5,7 +5,9 @@ from configparser import ConfigParser
 from pathlib import Path
 
 import pytest
+from qtpy.QtWidgets import QApplication
 
+from hyspecplanningtools import HyspecPlanningTool
 from hyspecplanningtools.configuration import Configuration, get_data
 
 
@@ -172,3 +174,32 @@ def test_get_data_invalid(monkeypatch, user_conf_file):
     assert len(get_data("generate_tab.oncat", "")) == 3
     # field
     assert get_data("generate_tab.oncat", "field_not_here") is None
+
+
+@pytest.mark.parametrize(
+    "user_conf_file",
+    [
+        """
+        [global.other]
+        #url to documentation
+        help_url = https://github.com/neutrons/HyspecPlanningTools/blob/next/README.md
+        """
+    ],
+    indirect=True,
+)
+def test_conf_init_invalid(capsys, user_conf_file, monkeypatch):
+    # mock conf info
+    monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
+
+    def mock_is_valid(self):  # noqa: ARG001
+        return False
+
+    monkeypatch.setattr("hyspecplanningtools.configuration.Configuration.is_valid", mock_is_valid)
+    with pytest.raises(SystemExit):
+        # initialization
+        _ = QApplication([])
+        hyspec = HyspecPlanningTool()
+        hyspec.show()
+
+    captured = capsys.readouterr()
+    assert captured[0].startswith("Error with configuration settings!")

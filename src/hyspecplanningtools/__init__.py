@@ -5,9 +5,13 @@ try:
 except ImportError:
     __version__ = "unknown"
 
-# def HyspecPlanningTool():  # pylint: disable=invalid-name
-#     """This is needed for backward compatibility because mantid workbench does "from shiver import Shiver" """
-#     from .hyspecplanningtools import HyspecPlanningTool as hyspecplanningtools
-# # pylint: disable=import-outside-toplevel
 
-#     return hyspecplanningtools()
+def HyspecPlanningTool():  # noqa: N802
+    """
+    This is needed for backward compatibility because mantid workbench does
+    "from hyspecplanningtools import HyspecPlanningTool"
+    """
+
+    from .hyspecplanningtools import HyspecPlanningTool as hyspecplanningtools  # noqa: E501, N813
+
+    return hyspecplanningtools()
