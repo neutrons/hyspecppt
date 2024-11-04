@@ -12,6 +12,7 @@ class MainWindow(QWidget):
     """Main widget"""
 
     def __init__(self, parent=None):
+        """Constructor"""
         super().__init__(parent)
 
         ### Create tabs here ###

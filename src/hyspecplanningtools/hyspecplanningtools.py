@@ -1,5 +1,6 @@
 """Main Qt application"""
 
+import argparse
 import logging
 import sys
 
@@ -18,11 +19,13 @@ class HyspecPlanningTool(QMainWindow):
     __instance = None
 
     def __new__(cls):
-        if HyspecPlanningTool.__instance is None:
-            HyspecPlanningTool.__instance = QMainWindow.__new__(cls)  # pylint: disable=no-value-for-parameter
-        return HyspecPlanningTool.__instance
+        """Create new instance of the HyspecPlanningTool"""
+        if not cls.__instance:
+            cls.__instance = super(HyspecPlanningTool, cls).__new__(cls)
+        return cls.__instance
 
     def __init__(self, parent=None):
+        """Constructor"""
         super().__init__(parent)
         logger.info(f"HyspecPlanningTool version: {__version__}")
         config = Configuration()
@@ -44,8 +47,10 @@ class HyspecPlanningTool(QMainWindow):
 
 def gui():
     """Main entry point for Qt application"""
-    input_flags = sys.argv[1::]
-    if "--v" in input_flags or "--version" in input_flags:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-v", "--version", help="print the version", action="store_true")
+    args = parser.parse_args()
+    if args.version:
         print(__version__)
         sys.exit()
     else:

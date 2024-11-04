@@ -7,7 +7,7 @@ dependencies:
   - qtpy
   - numpy
   - scipy
-  - matplotlib
+  - matplotlib <3.9 #resolves pyside 6 error
   - pre-commit
   # package building:
   - versioningit
@@ -26,5 +26,7 @@ dependencies:
   - myst-parser  # required for parsing markdown files
   # test: list all test dependencies here
   - pytest
+  - pytest-qt
   - pytest-cov
   - pytest-xdist
+  - pytest-xvfb

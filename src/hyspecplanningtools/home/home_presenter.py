@@ -1,10 +1,11 @@
 """Presenter for the Main tab"""
 
 
-class HomePresenter:  # pylint: disable=too-many-public-methods
+class HomePresenter:
     """Main presenter"""
 
     def __init__(self, view, model):
+        """Constructor"""
         self._view = view
         self._model = model
 
