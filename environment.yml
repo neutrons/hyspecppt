@@ -29,3 +29,4 @@ dependencies:
   - pytest-qt
   - pytest-cov
   - pytest-xdist
+  - pytest-xvfb
