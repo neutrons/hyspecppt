@@ -22,7 +22,6 @@ def test_config_path_default():
 
 def test_config_path_in_folder(monkeypatch, tmp_path):
     """Test configuration configuration user-defined file path that does not exist in a new directory"""
-
     user_path = os.path.join(tmp_path, "temp2", "test_config.ini")
     assert not os.path.exists(user_path)
 
@@ -60,7 +59,8 @@ def test_config_path_does_not_exist(monkeypatch, tmp_path):
 )
 def test_field_validate_fields_exist(monkeypatch, user_conf_file):
     """Test configuration validate all fields exist with the same values as templates
-    Note: update the parameters if the fields increase"""
+    Note: update the parameters if the fields increase
+    """
     # read the custom configuration file
     monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
     user_config = Configuration()
@@ -94,7 +94,6 @@ def test_field_validate_fields_exist(monkeypatch, user_conf_file):
 )
 def test_field_validate_fields_same(monkeypatch, user_conf_file):
     """Test configuration validate all fields exist with their values; different from the template"""
-
     # read the custom configuration file
     monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
     user_config = Configuration()
@@ -120,7 +119,6 @@ def test_field_validate_fields_same(monkeypatch, user_conf_file):
 )
 def test_field_validate_fields_missing(monkeypatch, user_conf_file):
     """Test configuration validate missing fields added from the template"""
-
     # read the custom configuration file
     monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
     user_config = Configuration()
@@ -136,7 +134,6 @@ def test_field_validate_fields_missing(monkeypatch, user_conf_file):
 @pytest.mark.parametrize("user_conf_file", ["""[global.other]"""], indirect=True)
 def test_get_data_valid(monkeypatch, user_conf_file):
     """Test configuration get_data - valid"""
-
     monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
     config = Configuration()
     assert config.config_file_path.endswith(user_conf_file) is True
@@ -188,6 +185,7 @@ def test_get_data_invalid(monkeypatch, user_conf_file):
     indirect=True,
 )
 def test_conf_init_invalid(capsys, user_conf_file, monkeypatch):
+    """Test invalid configuration settings"""
     # mock conf info
     monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
 

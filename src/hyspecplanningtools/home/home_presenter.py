@@ -5,6 +5,7 @@ class HomePresenter:
     """Main presenter"""
 
     def __init__(self, view, model):
+        """Constructor"""
         self._view = view
         self._model = model
 

@@ -7,11 +7,9 @@ except ImportError:
 
 
 def HyspecPlanningTool():  # noqa: N802
-    """
-    This is needed for backward compatibility because mantid workbench does
+    """This is needed for backward compatibility because mantid workbench does
     "from hyspecplanningtools import HyspecPlanningTool"
     """
-
     from .hyspecplanningtools import HyspecPlanningTool as hyspecplanningtools  # noqa: E501, N813
 
     return hyspecplanningtools()

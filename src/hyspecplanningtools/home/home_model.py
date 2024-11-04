@@ -9,4 +9,5 @@ class HomeModel:
     """Main model"""
 
     def __init__(self):
+        """Constructor"""
         return

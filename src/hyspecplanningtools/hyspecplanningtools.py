@@ -18,15 +18,14 @@ class HyspecPlanningTool(QMainWindow):
 
     __instance = None
 
-    def get_instance():
-        return HyspecPlanningTool.__instance
-
     def __new__(cls):
+        """Create new instance of the HyspecPlanningTool"""
         if not cls.__instance:
             cls.__instance = super(HyspecPlanningTool, cls).__new__(cls)
         return cls.__instance
 
     def __init__(self, parent=None):
+        """Constructor"""
         super().__init__(parent)
         logger.info(f"HyspecPlanningTool version: {__version__}")
         config = Configuration()
