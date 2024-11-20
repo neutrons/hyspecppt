@@ -1,7 +1,7 @@
 .. _design__guidelines:
 
 =============================
-Polarization Tool Design
+Hyspecplanningtools Design
 =============================
 
 Information, diagrams and flowcharts are included about the various components of the polarization tool.

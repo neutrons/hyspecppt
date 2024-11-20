@@ -5,17 +5,17 @@ Design
 
 
 
-Polarization Model
+PPT Model
 -------------------
 
 .. mermaid::
 
  classDiagram
-    PolarizationModel <|-- SingleCrystalModel
-    PolarizationModel <|-- PowderModel
+    PPTModel <|-- SingleCrystalModel
+    PPTModel <|-- PowderModel
 
 
-    class PolarizationModel{
+    class PPTModel{
         <<Abstract>>
         +Double incident_energy_e
         +Double detector_tank_angle_s
@@ -46,15 +46,15 @@ Polarization Model
 
 
 
-Polarization View
+PPT View
 -------------------
 
 .. mermaid::
 
  classDiagram
-    PolarizationWindow "1" -->"1" SingleCrystalParameters
+    PPTWindow "1" -->"1" SingleCrystalParameters
 
-    class PolarizationWindow{
+    class PPTWindow{
         -Signal~str~:error_message_signal
         -Signal~str~:update
 
@@ -109,26 +109,26 @@ Polarization View
     }
 
 
-Polarization Presenter
+PPT Presenter
 -----------------------
 
 .. mermaid::
 
  classDiagram
-    PolarizationPresenter "1" -->"1" PolarizationModel
-    PolarizationPresenter "1" -->"1" PolarizationWindow
+    PPTPresenter "1" -->"1" PPTModel
+    PPTPresenter "1" -->"1" PPTWindow
 
-    class PolarizationPresenter{
-        -PolarizationModel:model
-        -PolarizationWindow:view
+    class PPTPresenter{
+        -PPTModel:model
+        -PPTWindow:view
         +update_plot()
         +update_qmod()
     }
 
-    class PolarizationModel{
+    class PPTModel{
         <from above>
     }
 
-    class PolarizationWindow{
+    class PPTWindow{
         <from above>
     }
