@@ -9,12 +9,12 @@ import sys
 
 # import versioningit
 
-sys.path.insert(0, os.path.abspath("../src"))
+sys.path.insert(0, os.path.abspath("../../src"))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "hyspecplanningtools"
+project = "Hyspecplanningtools"
 copyright = "2024, ORNL"  # noqa A001
 author = "ORNL"
 # version = versioningit.get_version("../../")
