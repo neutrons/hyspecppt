@@ -2,10 +2,10 @@
 
 from qtpy.QtWidgets import QHBoxLayout, QPushButton, QTabWidget, QVBoxLayout, QWidget
 
-from hyspecplanningtools.help.help_model import help_function
-from hyspecplanningtools.home.home_model import HomeModel
-from hyspecplanningtools.home.home_presenter import HomePresenter
-from hyspecplanningtools.home.home_view import Home
+from hyspecppt.help.help_model import help_function
+from hyspecppt.home.home_model import HomeModel
+from hyspecppt.home.home_presenter import HomePresenter
+from hyspecppt.home.home_view import Home
 
 
 class MainWindow(QWidget):

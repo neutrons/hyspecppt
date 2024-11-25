@@ -2,7 +2,7 @@
 
 import logging
 
-logger = logging.getLogger("hyspecplanningtools")
+logger = logging.getLogger("hyspecppt")
 
 
 class HomeModel:

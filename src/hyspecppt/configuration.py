@@ -9,10 +9,10 @@ import shutil
 from configparser import ConfigParser
 from pathlib import Path
 
-logger = logging.getLogger("hyspecplanningtools")
+logger = logging.getLogger("hyspecppt")
 
 # configuration settings file path
-CONFIG_PATH_FILE = os.path.join(Path.home(), ".hyspecplanningtools", "configuration.ini")
+CONFIG_PATH_FILE = os.path.join(Path.home(), ".hyspecppt", "configuration.ini")
 
 
 class Configuration:

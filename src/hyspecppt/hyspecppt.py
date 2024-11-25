@@ -6,28 +6,28 @@ import sys
 
 from qtpy.QtWidgets import QApplication, QMainWindow
 
-from hyspecplanningtools import __version__
-from hyspecplanningtools.configuration import Configuration
-from hyspecplanningtools.mainwindow import MainWindow
+from hyspecppt import __version__
+from hyspecppt.configuration import Configuration
+from hyspecppt.mainwindow import MainWindow
 
-logger = logging.getLogger("hyspecplanningtools")
+logger = logging.getLogger("hyspecppt")
 
 
-class HyspecPlanningTool(QMainWindow):
+class HyspecPPT(QMainWindow):
     """Main Package window"""
 
     __instance = None
 
     def __new__(cls):
-        """Create new instance of the HyspecPlanningTool"""
+        """Create new instance of the HyspecPPT"""
         if not cls.__instance:
-            cls.__instance = super(HyspecPlanningTool, cls).__new__(cls)
+            cls.__instance = super(HyspecPPT, cls).__new__(cls)
         return cls.__instance
 
     def __init__(self, parent=None):
         """Constructor"""
         super().__init__(parent)
-        logger.info(f"HyspecPlanningTool version: {__version__}")
+        logger.info(f"Hyspecppt version: {__version__}")
         config = Configuration()
 
         if not config.is_valid():
@@ -40,7 +40,7 @@ class HyspecPlanningTool(QMainWindow):
 
             print(" ".join(msg))
             sys.exit(-1)
-        self.setWindowTitle(f"HyspecPlanning Tools - {__version__}")
+        self.setWindowTitle(f"Hyspecppt - {__version__}")
         self.main_window = MainWindow(self)
         self.setCentralWidget(self.main_window)
 
@@ -55,6 +55,6 @@ def gui():
         sys.exit()
     else:
         app = QApplication(sys.argv)
-        window = HyspecPlanningTool()
+        window = HyspecPPT()
         window.show()
         sys.exit(app.exec_())

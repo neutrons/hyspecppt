@@ -4,7 +4,7 @@ import subprocess
 
 import pytest
 
-from hyspecplanningtools.hyspecplanningtools import __version__
+from hyspecppt.hyspecppt import __version__
 
 
 def test_appwindow(hyspec_app, qtbot):
@@ -12,12 +12,12 @@ def test_appwindow(hyspec_app, qtbot):
     hyspec_app.show()
     qtbot.waitUntil(hyspec_app.show, timeout=5000)
     assert hyspec_app.isVisible()
-    assert hyspec_app.windowTitle() == f"HyspecPlanning Tools - {__version__}"
+    assert hyspec_app.windowTitle() == f"Hyspecppt - {__version__}"
 
 
 def test_gui_version():
     """Test that argument parameter --version prints the version"""
-    full_command = ["hyspecplanningtools", "--version"]
+    full_command = ["hyspecppt", "--version"]
     version_result = subprocess.run(full_command, capture_output=True, text=True)
     version_result = version_result.stdout.strip()
     assert version_result == __version__
@@ -25,7 +25,7 @@ def test_gui_version():
 
 def test_gui_v():
     """Test that argument parameter -v prints the version"""
-    full_command = ["hyspecplanningtools", "-v"]
+    full_command = ["hyspecppt", "-v"]
     version_result = subprocess.run(full_command, capture_output=True, text=True)
     version_result = version_result.stdout.strip()
     assert version_result == __version__
@@ -52,7 +52,7 @@ def test_mainwindow_help(monkeypatch, user_conf_file, hyspec_app):
         nonlocal help_url
         help_url = url
 
-    monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
+    monkeypatch.setattr("hyspecppt.configuration.CONFIG_PATH_FILE", user_conf_file)
     monkeypatch.setattr("webbrowser.open", fake_webbrowser)
 
     hyspec_app.main_window.handle_help()

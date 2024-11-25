@@ -1,5 +1,5 @@
 [project]
-name = "hyspecplanningtools"
+name = "hyspecppt"
 description = "Polarization tool for neutrons"
 dynamic = ["version"]
 requires-python = ">=3.10"
@@ -11,10 +11,10 @@ keywords = ["neutrons", "polarization", "single crystal", "powder"]
 readme = "README.md"
 
 [project.urls]
-homepage = "https://github.com/neutrons/HyspecPlanningTools"  # if no homepage, use repo url
-repository = "https://github.com/neutrons/HyspecPlanningTools"
+homepage = "https://github.com/neutrons/hyspecppt"  # if no homepage, use repo url
+repository = "https://github.com/neutrons/hyspecppt"
 # documentation = add_url_to_readthedoc_here
-issues = "https://github.com/neutrons/HyspecPlanningTools/issues"
+issues = "https://github.com/neutrons/hyspecppt/issues"
 
 [build-system]
 requires = [
@@ -38,7 +38,7 @@ dirty = "{version}+d{build_date:%Y%m%d}"
 distance-dirty = "{next_version}.dev{distance}+d{build_date:%Y%m%d%H%M}"
 
 [tool.versioningit.write]
-file = "src/hyspecplanningtools/_version.py"
+file = "src/hyspecppt/_version.py"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -48,7 +48,7 @@ exclude = ["tests*", "scripts*", "docs*"]
 "*" = ["*.yml","*.yaml","*.ini"]
 
 [project.gui-scripts]
-hyspecplanningtools = "hyspecplanningtools.hyspecplanningtools:gui"
+hyspecppt = "hyspecppt.hyspecppt:gui"
 
 [tool.pytest.ini_options]
 pythonpath = [
