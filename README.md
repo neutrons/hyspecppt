@@ -1,8 +1,8 @@
 
-HyspecPlanningTools
-=====================
+Hyspecppt
+==========
 
-Polarization tool for Single Crystal and Powder
+Hyspec Polarization tool for Single Crystal and Powder
 
 ## Installation Process
 
@@ -12,7 +12,7 @@ Create the development conda environment
 
 Activate the environment
 
-`conda activate hyspecplanningtools_dev`
+`conda activate hyspecppt_dev`
 
 Install the application in editable mode
 
@@ -20,7 +20,7 @@ Install the application in editable mode
 
 Start the tool
 
-`hyspecplanningtools`
+`hyspecppt`
 
 
 [![CI](https://github.com/neutrons/HyspecPlanningTools/actions/workflows/unittest.yml/badge.svg?branch=next)](https://github.com/neutrons/HyspecPlanningTools/actions/workflows/unittest.yml)

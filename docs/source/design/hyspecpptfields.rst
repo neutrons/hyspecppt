@@ -1,4 +1,4 @@
-.. _polarizationflow:
+.. _hyspecpptfields:
 
 ===============================
 Fields and Validation for Plot
@@ -47,7 +47,7 @@ Below are the fields of SingleCrystal and Powder Models
   * - Delta E
     - Double
     -
-    - Delta E<=Ei
+    - Ei - DeltaE ≥ -Ei
     - no
   * - mod Q (\|Q\|)
     - Double
@@ -69,7 +69,7 @@ Below are the additional fields of SingleCrystal Model
 
   * - Field
     - Type
-    - Value Origin
+    - Default
     - Additional validation
     - Mandatory
   * - a
@@ -124,15 +124,15 @@ Inter-Field Validations
 ------------------------
 
 Polarization Type:
-  * If Polarization Type set to "Single Crystal", all parameters of Single Crystal block are required.
-  * If Polarization Type set to "Powder", all parameters of Single Crystal block are hidden and not required.
+  * If Polarization Type set to "Single Crystal", all parameters of Single Crystal block are required. The valid default/model-stored values are set at the appropriate fields.
+  * If Polarization Type set to "Powder", all parameters of Single Crystal block are hidden and not required. The valid default/model-stored values are set at the appropriate fields.
 
 modQ (\|Q\|):
   * If Polarization Type set to "Single Crystal", it is a read-only field. The value is returned from the backend after all Single crystal parameters are filled in.
   * If Polarization Type set to "Powder", user can fill the value in.
 
 Delta E - Ei:
-  * If and only if Delta E<=Ei, the Delta E value is valid
+  * If and only if  Ei - DeltaE ≥ -Ei, the Delta E value is valid. Else the DeltaE is set to -Ei and the related parameters are recalculated, too
 
 
 Validation
@@ -150,3 +150,4 @@ Front end side validation can include:
 Backend side validation can include:
   * qmod calculation
   * graph data calculations
+  * update DeltaE and related parameters

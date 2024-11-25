@@ -44,8 +44,6 @@ def test_gui_v():
 )
 def test_mainwindow_help(monkeypatch, user_conf_file, hyspec_app):
     """Test the help function in the main window"""
-    # hyspec_app = HyspecPlanningTool()
-
     help_url = ""
 
     def fake_webbrowser(url):
