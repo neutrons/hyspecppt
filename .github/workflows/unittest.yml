@@ -42,7 +42,7 @@ jobs:
         run: |
           # test that the python wheel builds
           VERSION=$(versioningit .) python -m build --wheel --no-isolation
-          twine check dist/hyspecplanningtools-*.whl
+          twine check dist/hyspecppt-*.whl
       - name: build conda package
         run: |
           # test that the conda package builds
@@ -52,4 +52,4 @@ jobs:
           # below to build the conda package in your local machine
           CHANNELS="--channel conda-forge"
           VERSION=$(versioningit ../) conda mambabuild $CHANNELS --output-folder . .
-          conda verify noarch/hyspecplanningtools*.tar.bz2
+          conda verify noarch/hyspecppt*.tar.bz2
