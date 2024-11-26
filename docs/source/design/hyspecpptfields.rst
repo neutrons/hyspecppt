@@ -40,7 +40,7 @@ Below are the fields of SingleCrystal and Powder sample Models
     - yes
   * - S2 (HYSPEC Detector Tank Angle)
     - Double
-    - 
+    -
     - 30
     - -100 < S2< 100 && (S2 > 30 || S2 < -30)
     - yes
