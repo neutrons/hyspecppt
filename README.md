@@ -2,7 +2,7 @@
 Hyspecppt
 ==========
 
-Hyspec Polarization tool for Single Crystal and Powder
+Tool that enables users to analyze polarized neutron experiments on powder and single crystal samples using the HYSPEC instrument.
 
 ## Installation Process
 
