@@ -31,6 +31,14 @@ def test_gui_v():
     assert version_result == __version__
 
 
+def test_gui_invalid_parameter():
+    """Test that invalid parameter prints usage"""
+    full_command = ["hyspecppt", "-invalid"]
+    invalid_result = subprocess.run(full_command, capture_output=True, text=True)
+    invalid_result = invalid_result.stderr.strip()
+    assert invalid_result.startswith("usage: hyspecppt [-h] [-v]") is True
+
+
 @pytest.mark.parametrize(
     "user_conf_file",
     [
