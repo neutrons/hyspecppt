@@ -54,7 +54,7 @@ Below are the fields of SingleCrystal and Powder sample Models
     - Double
     -
     - 0 (for Power mode)
-    - 
+    -
     - no
   * - mod Q (\|Q\|)
     - Double
