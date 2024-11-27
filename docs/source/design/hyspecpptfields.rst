@@ -54,7 +54,7 @@ Below are the fields of SingleCrystal and Powder sample Models
     - Double
     -
     - 0 (for Power mode)
-    - Ei - DeltaE ≥ -Ei
+    - 
     - no
   * - mod Q (\|Q\|)
     - Double
@@ -140,9 +140,6 @@ modQ (\|Q\|):
   * If Polarization Type set to "Single Crystal", it is a read-only field. The value is returned from the backend after all Single crystal parameters are filled in.
   * If Polarization Type set to "Powder", user can fill the value in.
 
-Delta E - Ei:
-  * If and only if  Ei - DeltaE ≥ -Ei, the Delta E value is valid. Else the DeltaE is set to -Ei and the related parameters are recalculated, too
-
 
 Validation
 ----------
@@ -153,10 +150,9 @@ Regarding validation, if all fields are valid, then the front end triggers the b
 Front end side validation can include:
    * required fields
    * field types
-   * threshold limits: Ei, P, deltaE and crystal parameters; qt validators can be used
+   * threshold limits: Ei, S2, Ap,modQ, and crystal parameters; qt validators can be used
 
 
 Backend side validation can include:
   * qmod calculation
   * graph data calculations
-  * update DeltaE and related parameters
