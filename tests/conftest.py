@@ -3,8 +3,8 @@
 import os
 from configparser import ConfigParser
 
-import pyqt  # noqa: F401
 import pytest
+import qtpy  # noqa: F401
 
 from hyspecppt import Hyspecppt
 
