@@ -6,10 +6,10 @@ except ImportError:
     __version__ = "unknown"
 
 
-def HyspecPlanningTool():  # noqa: N802
+def Hyspecppt():  # noqa: N802
     """This is needed for backward compatibility because mantid workbench does
-    "from hyspecplanningtools import HyspecPlanningTool"
+    "from hyspecppt import Hyspecppt"
     """
-    from .hyspecplanningtools import HyspecPlanningTool as hyspecplanningtools  # noqa: E501, N813
+    from .hyspecppt import HyspecPPT as hyspecppt  # noqa: E501, N813
 
-    return hyspecplanningtools()
+    return hyspecppt()

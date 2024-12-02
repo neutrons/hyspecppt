@@ -7,14 +7,14 @@ from pathlib import Path
 import pytest
 from qtpy.QtWidgets import QApplication
 
-from hyspecplanningtools import HyspecPlanningTool
-from hyspecplanningtools.configuration import Configuration, get_data
+from hyspecppt import Hyspecppt
+from hyspecppt.configuration import Configuration, get_data
 
 
 def test_config_path_default():
     """Test configuration default file path"""
     config = Configuration()
-    assert config.config_file_path.endswith(".hyspecplanningtools/configuration.ini") is True
+    assert config.config_file_path.endswith(".hyspecppt/configuration.ini") is True
     # check the valid state
     assert config.is_valid()
     assert config.valid == config.is_valid()
@@ -25,7 +25,7 @@ def test_config_path_in_folder(monkeypatch, tmp_path):
     user_path = os.path.join(tmp_path, "temp2", "test_config.ini")
     assert not os.path.exists(user_path)
 
-    monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_path)
+    monkeypatch.setattr("hyspecppt.configuration.CONFIG_PATH_FILE", user_path)
 
     config = Configuration()
     # check if the file exists now
@@ -38,7 +38,7 @@ def test_config_path_does_not_exist(monkeypatch, tmp_path):
     user_path = os.path.join(tmp_path, "test_config.ini")
     assert not os.path.exists(user_path)
 
-    monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_path)
+    monkeypatch.setattr("hyspecppt.configuration.CONFIG_PATH_FILE", user_path)
 
     config = Configuration()
     # check if the file is exists now
@@ -52,7 +52,7 @@ def test_config_path_does_not_exist(monkeypatch, tmp_path):
         """
         [global.other]
         #url to documentation
-        help_url = https://github.com/neutrons/HyspecPlanningTools/blob/next/README.md
+        help_url = https://github.com/neutrons/hyspecppt/blob/next/README.md
         """
     ],
     indirect=True,
@@ -62,7 +62,7 @@ def test_field_validate_fields_exist(monkeypatch, user_conf_file):
     Note: update the parameters if the fields increase
     """
     # read the custom configuration file
-    monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
+    monkeypatch.setattr("hyspecppt.configuration.CONFIG_PATH_FILE", user_conf_file)
     user_config = Configuration()
 
     assert user_config.config_file_path.endswith(user_conf_file) is True
@@ -71,7 +71,7 @@ def test_field_validate_fields_exist(monkeypatch, user_conf_file):
 
     # check all fields are the same as the configuration template file
     project_directory = Path(__file__).resolve().parent.parent
-    template_file_path = os.path.join(project_directory, "src", "hyspecplanningtools", "configuration_template.ini")
+    template_file_path = os.path.join(project_directory, "src", "hyspecppt", "configuration_template.ini")
     template_config = ConfigParser(allow_no_value=True, comment_prefixes="/")
     template_config.read(template_file_path)
     # comments should be copied too
@@ -95,7 +95,7 @@ def test_field_validate_fields_exist(monkeypatch, user_conf_file):
 def test_field_validate_fields_same(monkeypatch, user_conf_file):
     """Test configuration validate all fields exist with their values; different from the template"""
     # read the custom configuration file
-    monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
+    monkeypatch.setattr("hyspecppt.configuration.CONFIG_PATH_FILE", user_conf_file)
     user_config = Configuration()
 
     # check if the file exists
@@ -120,7 +120,7 @@ def test_field_validate_fields_same(monkeypatch, user_conf_file):
 def test_field_validate_fields_missing(monkeypatch, user_conf_file):
     """Test configuration validate missing fields added from the template"""
     # read the custom configuration file
-    monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
+    monkeypatch.setattr("hyspecppt.configuration.CONFIG_PATH_FILE", user_conf_file)
     user_config = Configuration()
 
     # check if the file exists
@@ -128,20 +128,20 @@ def test_field_validate_fields_missing(monkeypatch, user_conf_file):
     assert user_config.config_file_path == user_conf_file
 
     # check all field values have the same values as the user configuration file
-    assert get_data("global.other", "help_url") == "https://github.com/neutrons/HyspecPlanningTools/blob/next/README.md"
+    assert get_data("global.other", "help_url") == "https://github.com/neutrons/hyspecppt/blob/next/README.md"
 
 
 @pytest.mark.parametrize("user_conf_file", ["""[global.other]"""], indirect=True)
 def test_get_data_valid(monkeypatch, user_conf_file):
     """Test configuration get_data - valid"""
-    monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
+    monkeypatch.setattr("hyspecppt.configuration.CONFIG_PATH_FILE", user_conf_file)
     config = Configuration()
     assert config.config_file_path.endswith(user_conf_file) is True
     # get the data
     # section
     assert len(get_data("global.other", "")) == 1
     # fields
-    assert get_data("global.other", "help_url") == "https://github.com/neutrons/HyspecPlanningTools/blob/next/README.md"
+    assert get_data("global.other", "help_url") == "https://github.com/neutrons/hyspecppt/blob/next/README.md"
 
     assert config.is_valid()
 
@@ -161,7 +161,7 @@ def test_get_data_valid(monkeypatch, user_conf_file):
 def test_get_data_invalid(monkeypatch, user_conf_file):
     """Test configuration get_data - invalid"""
     # read the custom configuration file
-    monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
+    monkeypatch.setattr("hyspecppt.configuration.CONFIG_PATH_FILE", user_conf_file)
     config = Configuration()
     assert config.config_file_path.endswith(user_conf_file) is True
 
@@ -179,7 +179,7 @@ def test_get_data_invalid(monkeypatch, user_conf_file):
         """
         [global.other]
         #url to documentation
-        help_url = https://github.com/neutrons/HyspecPlanningTools/blob/next/README.md
+        help_url = https://github.com/neutrons/hyspecppt/blob/next/README.md
         """
     ],
     indirect=True,
@@ -187,16 +187,16 @@ def test_get_data_invalid(monkeypatch, user_conf_file):
 def test_conf_init_invalid(capsys, user_conf_file, monkeypatch):
     """Test invalid configuration settings"""
     # mock conf info
-    monkeypatch.setattr("hyspecplanningtools.configuration.CONFIG_PATH_FILE", user_conf_file)
+    monkeypatch.setattr("hyspecppt.configuration.CONFIG_PATH_FILE", user_conf_file)
 
     def mock_is_valid(self):  # noqa: ARG001
         return False
 
-    monkeypatch.setattr("hyspecplanningtools.configuration.Configuration.is_valid", mock_is_valid)
+    monkeypatch.setattr("hyspecppt.configuration.Configuration.is_valid", mock_is_valid)
     with pytest.raises(SystemExit):
         # initialization
         _ = QApplication([])
-        hyspec = HyspecPlanningTool()
+        hyspec = Hyspecppt()
         hyspec.show()
 
     captured = capsys.readouterr()

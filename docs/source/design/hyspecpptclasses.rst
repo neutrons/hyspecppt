@@ -1,21 +1,21 @@
-.. _polmodel:
+.. _hyspecpptclasses:
 
-Design
-=======
+Model-View-Presenter
+=====================
 
 
 
-PPT Model
--------------------
+HyspecPPT Model
+----------------
 
 .. mermaid::
 
  classDiagram
-    PPTModel <|-- SingleCrystalModel
-    PPTModel <|-- PowderModel
+    HyspecPPTModel <|-- SingleCrystalModel
+    HyspecPPTModel <|-- PowderModel
 
 
-    class PPTModel{
+    class HyspecPPTModel{
         <<Abstract>>
         +Double incident_energy_e
         +Double detector_tank_angle_s
@@ -24,6 +24,8 @@ PPT Model
         +Double mod_q
         +Option graph_type
         +calculate_graph_data()
+        +get_model_data()
+        +store_data()
 
     }
 
@@ -38,6 +40,7 @@ PPT Model
         +String single_crystal_k
         +String single_crystal_l
         +calculate_qmod()
+        +get_single_crystal_data()
     }
 
     class PowderModel{
@@ -46,15 +49,15 @@ PPT Model
 
 
 
-PPT View
--------------------
+HyspecPPT View
+---------------
 
 .. mermaid::
 
  classDiagram
-    PPTWindow "1" -->"1" SingleCrystalParameters
+    HyspecPPTView "1" -->"1" SingleCrystalParameters
 
-    class PPTWindow{
+    class HyspecPPTView{
         -Signal~str~:error_message_signal
         -Signal~str~:update
 
@@ -78,7 +81,8 @@ PPT View
         +send_error_message()
         -show_error_message()
         //+QStatusBar:status_bar
-        +update_plot()
+        +get_stored_data()
+        +store_data_and_update_plot()
         +show_hide_cystal_parameters()
         +validate_delta_ei()
     }
@@ -109,26 +113,26 @@ PPT View
     }
 
 
-PPT Presenter
------------------------
+HyspecPPT Presenter
+--------------------
 
 .. mermaid::
 
  classDiagram
-    PPTPresenter "1" -->"1" PPTModel
-    PPTPresenter "1" -->"1" PPTWindow
+    HyspecPPTPresenter "1" -->"1" HyspecPPTModel
+    HyspecPPTPresenter "1" -->"1" HyspecPPTView
 
-    class PPTPresenter{
-        -PPTModel:model
-        -PPTWindow:view
+    class HyspecPPTPresenter{
+        -HyspecPPTModel:model
+        -HyspecPPTView:view
         +update_plot()
         +update_qmod()
     }
 
-    class PPTModel{
-        <from above>
+    class HyspecPPTModel{
+        #from above
     }
 
-    class PPTWindow{
-        <from above>
+    class HyspecPPTView{
+        #from above
     }

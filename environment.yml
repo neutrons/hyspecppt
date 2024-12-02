@@ -1,4 +1,4 @@
-name: hyspecplanningtools_dev
+name: hyspecppt_dev
 channels:
   - conda-forge
 dependencies:

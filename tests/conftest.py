@@ -5,13 +5,13 @@ from configparser import ConfigParser
 
 import pytest
 
-from hyspecplanningtools import HyspecPlanningTool
+from hyspecppt import Hyspecppt
 
 
 @pytest.fixture
 def hyspec_app(qapp):  # noqa: ARG001
-    """Create a HyspecPlanningTool app"""
-    app = HyspecPlanningTool()
+    """Create a Hyspecppt app"""
+    app = Hyspecppt()
     app.show()
     return app
 
