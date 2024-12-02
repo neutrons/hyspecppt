@@ -3,9 +3,9 @@
 from qtpy.QtWidgets import QHBoxLayout, QPushButton, QTabWidget, QVBoxLayout, QWidget
 
 from hyspecppt.help.help_model import help_function
-from hyspecppt.home.home_model import HomeModel
-from hyspecppt.home.home_presenter import HomePresenter
-from hyspecppt.home.home_view import Home
+from hyspecppt.hppt.hppt_model import HyspecPPTModel
+from hyspecppt.hppt.hppt_presenter import HyspecPPTPresenter
+from hyspecppt.hppt.hppt_view import HyspecPPTView
 
 
 class MainWindow(QWidget):
@@ -19,9 +19,9 @@ class MainWindow(QWidget):
 
         ### Main tab
         self.tabs = QTabWidget()
-        home = Home(self)
-        home_model = HomeModel()
-        self.home_presenter = HomePresenter(home, home_model)
+        home = HyspecPPTView(self)
+        home_model = HyspecPPTModel()
+        self.home_presenter = HyspecPPTPresenter(home, home_model)
         self.tabs.addTab(home, "Home")
 
         ### Set tab layout
@@ -48,7 +48,7 @@ class MainWindow(QWidget):
     def handle_help(self):
         """Get current tab type and open the corresponding help page"""
         open_tab = self.tabs.currentWidget()
-        if isinstance(open_tab, Home):
+        if isinstance(open_tab, HyspecPPTView):
             context = "home"
         else:
             context = ""

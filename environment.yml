@@ -6,8 +6,7 @@ dependencies:
   - pyqt == 5.*
   - qtpy
   - numpy
-  - scipy
-  - matplotlib <3.9 #resolves pyside 6 error
+  - matplotlib #resolves pyside 6 error * !! 0we want the latest version
   - pre-commit
   # package building:
   - versioningit

@@ -53,13 +53,13 @@ Below are the fields of SingleCrystal and Powder sample Models
   * - Delta E
     - Double
     -
-    - 0 (for Power mode)
+    - 0
     -
     - no
   * - mod Q (\|Q\|)
     - Double
     -
-    - 0 (for Power mode)
+    - 0
     - 0 <= \|Q\| <=10
     - no
   * - Plot Type
@@ -154,5 +154,4 @@ Front end side validation can include:
 
 
 Backend side validation can include:
-  * qmod calculation
-  * graph data calculations
+  * matplotlib save figure?
