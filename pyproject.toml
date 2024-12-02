@@ -71,4 +71,5 @@ ignore = ["D203", # conflict with D211
           "D205", # conflicts
           "D400", "D401","D404", "D415" # Unnecessary
           ]
+unfixable = ["F401"]
 # Add additional 3rd party tool configuration here as needed
