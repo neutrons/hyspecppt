@@ -282,20 +282,26 @@ HyspecPPT View
 .. mermaid::
 
  classDiagram
-    HyspecPPTView "1" -->"1" SingleCrystalParameters
+    HyspecPPTView "1" -->"1" SampleWidget
+    SampleWidget "1" -->"1" SingleCrystalParameters
 
     class HyspecPPTView{
-        -Signal~str~:error_message_signal
-        -Signal~str~:update
+        +SampleWidget:sample
+        +PlotFigure:plot
+        +QButton:help_btn
+        +update_plot()
+    }
 
+    class SampleWidget{
+        +Signal'dict' changed
         +QLabel:ei_display
         +QLineEdit:ei_value
         +QLabel:s2_display
         +QLineEdit:s2_value
         +QLabel:p_display
         +QLineEdit:p_value
-        +QLabel:pol_type_display
-        +QRadioButton:pol_type_value
+        +QLabel:sample_type_display
+        +QRadioButton:sample_type_value
         +QLabel:delta_e_display
         +QLineEdit:delta_e_value
         +QLabel:qmod_display
@@ -303,22 +309,14 @@ HyspecPPT View
         +QLabel:plot_type_display
         +QComboBox:plot_type_value
         +SingleCrystalParameters:single_crystal_parameters
-        +PlotFigure:plot
-        +QButton:help_btn
-        +send_error_message()
-        -show_error_message()
-        //+QStatusBar:status_bar
-        +get_plot_options() //from the file
-        +get_sample_type_options() //from the file
-        +get_stored_data()
-        +store_data_and_update_plot()
-        +show_hide_cystal_parameters()
-        +validate_delta_ei()
+        +get_plot_options() //from the file - init
+        +get_sample_type_options() //from the file - init
+        +check_parameters_and_send_data() // on every text editingFinished, combobox currentIndexChanged and radio toggled
+        +toggle_crystal_parameters()
+        +validation_status()
     }
 
-
     class SingleCrystalParameters{
-        -Signal~str~:update
         +QLabel:a_display
         +QLineEdit:a_value
         +QLabel:b_display
@@ -337,8 +335,10 @@ HyspecPPT View
         +QLineEdit:k_value
         +QLabel:l_display
         +QLineEdit:l_value
-        +update_qmod()
-        +send_parameters()
+        +get_parameters()
+        +set_parameters(dict parameters)
+        +check_parameters_and_sample() // triggered by every sc parameter text textEdited event
+        +validation_status()
     }
 
 
