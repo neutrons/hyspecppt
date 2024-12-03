@@ -99,7 +99,7 @@ The function signatures and description are included below.
 
 -- Sample
 
-* def calculate_graph_data(Dict data) --> Dict : The function receives data parameters, updates the sample object's field values and calculates and returns the plot data. The incoming data have the following format: e.g.
+* def calculate_graph_data(data: dict) --> dict : The function receives data parameters, updates the sample object's field values and calculates and returns the plot data. The incoming data have the following format: e.g.
      .. code-block:: bash
 
         {
@@ -154,7 +154,7 @@ The function signatures and description are included below.
             "crosshair": { "x": <>, "y":<>}
         }
 
-* def get_data() --> Dict : The function returns all the sample's parameters in a dictionary format regardless the of the sample type e.g:
+* def get_data() --> dict : The function returns all the sample's parameters in a dictionary format regardless the of the sample type e.g:
 
     .. code-block:: bash
 
@@ -182,7 +182,7 @@ The function signatures and description are included below.
 
     The function can be called by the Presenter, in order to update the View with the memory-stored values.
 
-* def store_data(Dict data) --> None : The function receives data parameters and updates the sample object's field values. The dictionary format is similar to get_data return value e.g.:
+* def store_data(data: dict) --> None : The function receives data parameters and updates the sample object's field values. The dictionary format is similar to get_data return value e.g.:
 
     .. code-block:: bash
 
@@ -241,7 +241,7 @@ The get_emin and get_qmod functions are only used internally in the Sample Model
 
 -- SingleCrystalParameters
 
-* def get_parameters(dict sc_data) --> None : The function updates the SingleCrystalParameters with the sc_data, provided in the following format e.g:
+* def set_parameters(sc_data: dict) --> None : The function updates the SingleCrystalParameters with the sc_data, provided in the following format e.g:
 
      .. code-block:: bash
 
@@ -257,7 +257,7 @@ The get_emin and get_qmod functions are only used internally in the Sample Model
             "lattice_unit_l":<l>
         }
 
-* def set_parameters() --> Dict : The function returns a dictionary with the SingleCrystalParameters field values.
+* def get_parameters() --> dict : The function returns a dictionary with the SingleCrystalParameters field values.
 
      .. code-block:: bash
 
@@ -283,13 +283,13 @@ HyspecPPT View
 
  classDiagram
     HyspecPPTView "1" -->"1" SampleWidget
-    SampleWidget "1" -->"1" SingleCrystalParameters
+    SampleWidget "1" -->"1" SingleCrystalParametersWidget
 
     class HyspecPPTView{
         +SampleWidget:sample
         +PlotFigure:plot
         +QButton:help_btn
-        +update_plot()
+        +update_plot(q_min: list[float],q_max: list[float],energy_transfer: list[float], q2d: list[list[float]],e2d: list[list[float]], scharpf_angle: list[list[float]], crosshair: dict)
     }
 
     class SampleWidget{
@@ -308,15 +308,16 @@ HyspecPPT View
         +QLineEdit:qmod_value
         +QLabel:plot_type_display
         +QComboBox:plot_type_value
-        +SingleCrystalParameters:single_crystal_parameters
-        +get_plot_options() //from the file - init
-        +get_sample_type_options() //from the file - init
-        +check_parameters_and_send_data() // on every text editingFinished, combobox currentIndexChanged and radio toggled
+        +SingleCrystalParametersWidget:single_crystal_parameters
+        +get_sample_type_options()
+        +get_plot_options()
+        +sample_type_parameters_update()
+        +check_parameters_and_send_data()
         +toggle_crystal_parameters()
         +validation_status()
     }
 
-    class SingleCrystalParameters{
+    class SingleCrystalParametersWidget{
         +QLabel:a_display
         +QLineEdit:a_value
         +QLabel:b_display
@@ -336,11 +337,112 @@ HyspecPPT View
         +QLabel:l_display
         +QLineEdit:l_value
         +get_parameters()
-        +set_parameters(dict parameters)
-        +check_parameters_and_sample() // triggered by every sc parameter text textEdited event
+        +set_parameters(parameters:dict)
+        +check_parameters_and_sample()
         +validation_status()
     }
 
+
+Functions
+-------------
+
+The function signatures and description are included below.
+
+-- HyspecPPTView
+
+* def update_plot(q_min: list[float],q_max: list[float],energy_transfer: list[float], q2d: list[list[float]],e2d: list[list[float]], scharpf_angle: list[list[float]], crosshair: dict) --> None : The function updates the plot with the given parameters. The crosshair dictionary has the following structure:
+
+     .. code-block:: bash
+
+        {
+            "crosshair": { "x": <>, "y":<>}
+        }
+
+-- SampleWidget
+
+* def get_sample_type_options() --> None : The function returns the Sample options (Single Crystal and Powder) to be used as radio button options during the widget's initialization.
+* def get_plot_options() --> None : The function returns the plot type options, e.g. alpha_s, to be used as combobox options during the widget's initialization.
+* def check_parameters_and_send_data() --> dict : The function checks the status of all parameters, including Single Crystal parameters for the Single Crystal mode, (validation_status) and if every parameter is valid it packs/returns the parameters in a dictionary. Example usage: on every text editingFinished, and combobox currentIndexChanged
+    .. code-block:: bash
+
+        {
+            "current_sample_type": "SingleCrystal",
+            "incident_energy_e": <e>,
+            "detector_tank_angle_s" : <s2>,
+            "polarization_direction_angle_p" :<ao>,
+            "delta_e": <d_e>,
+            "mod_q" : <m_q>,  //can be ignored
+            "plot_type" : <g_a>,
+            "sc_parameters" :
+            {
+                "lattice_a":<a>,
+                "lattice_b":<b>,
+                "lattice_c":<c>,
+                "lattice_alpha":<alpha>,
+                "lattice_beta":<beta>,
+                "lattice_gamma":<gamma>,
+                "lattice_unit_h":<h>,
+                "lattice_unit_k":<k>,
+                "lattice_unit_l":<l>
+            }
+        }
+
+    In case of Powder the dictionary format will look as the following:
+
+    .. code-block:: bash
+
+        {
+            "current_sample_type": "SingleCrystal",
+            "incident_energy_e": <e>,
+            "detector_tank_angle_s" : <s2>,
+            "polarization_direction_angle_p" :<ao>,
+            "delta_e": <d_e>,
+            "mod_q" : <m_q>,
+            "plot_type" : <g_a>,
+            "sc_parameters" :
+            {
+            }
+        }
+
+* def sample_type_parameters_update() --> None : // on sample type radio toggled
+* def toggle_crystal_parameters() --> None : The function hides/shows the SingleCrystalParametersWidget based on the selected Sample type (sample_type_value).
+* def validation_status() --> Bool : The function checks all the SampleWidget's and SingleCrystalParametersWidget's parameters' (if necessary, it calls SingleCrystalParametersWidget.validation_status()) validation status. It returns True, if and only if all parameters are valid, else False.
+
+-- SingleCrystalParametersWidget
+
+* def get_parameters() --> dict : The function packs/returns all parameters in a dictionary format as follows:
+    .. code-block:: bash
+
+        {
+            "lattice_a":<a>,
+            "lattice_b":<b>,
+            "lattice_c":<c>,
+            "lattice_alpha":<alpha>,
+            "lattice_beta":<beta>,
+            "lattice_gamma":<gamma>,
+            "lattice_unit_h":<h>,
+            "lattice_unit_k":<k>,
+            "lattice_unit_l":<l>
+        }
+
+* def set_parameters(parameters: dict) --> None : The functions sets all SingleCrystalParametersWidget's parameters from the dictionary with the following format:
+    .. code-block:: bash
+
+        {
+            "lattice_a":<a>,
+            "lattice_b":<b>,
+            "lattice_c":<c>,
+            "lattice_alpha":<alpha>,
+            "lattice_beta":<beta>,
+            "lattice_gamma":<gamma>,
+            "lattice_unit_h":<h>,
+            "lattice_unit_k":<k>,
+            "lattice_unit_l":<l>
+        }
+
+    The functions get_parameters() and set_parameters() have the same dictionary format.
+* def check_parameters_and_sample() // triggered by every sc parameter text textEdited event
+* def validation_status() --> Bool : The function checks all the parameters' validation status. It returns True, if and only if all parameters are valid, else False.
 
 HyspecPPT Presenter
 ++++++++++++++++++++++
@@ -356,6 +458,8 @@ HyspecPPT Presenter
         -HyspecPPTView:view
         +update_plot()
         +update_qmod()
+        +get_plot_options()
+        +get_sample_type_options()
     }
 
     class HyspecPPTModel{
