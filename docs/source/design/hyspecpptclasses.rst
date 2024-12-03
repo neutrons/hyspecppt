@@ -9,7 +9,7 @@ Model-View-Presenter
 HyspecPPT Model
 +++++++++++++++
 
-The HyspecPPTModel encapsulates the backend functionality. It maintains one object: sample (Sample) that has all the valid-calculated values. The object fields are updated
+The HyspecPPTModel encapsulates the backend functionality. It maintains one object: sample (Sample) that has all the valid values. The object fields are updated
 every time there are new valid values received from the user (front end).
 
 .. mermaid::
@@ -24,20 +24,20 @@ every time there are new valid values received from the user (front end).
     }
 
     class Sample{
-        +str current_sample_type
+        +enum 'SampleType' current_sample_type
         +float incident_energy_e
         +float detector_tank_angle_s
         +float polarization_direction_angle_p
         +float delta_e
         +float mod_q
-        +str graph_type
+        +enum 'PlotType' plot_type
         +SingleCrystalParameters sc_parameters
         +calculate_graph_data()
         +get_data()
         +store_data()
         -get_emin(delta_e, incident_energy_e)
-        -calculate_qmod()
-        -calculate_crosshair()
+        -get_qmod()
+        -get_crosshair()
     }
 
     class SingleCrystalParameters{
@@ -58,10 +58,24 @@ Default Values
 ----------------
 
 The parameters' default values for each Sample object are stored in a file, e.g sample_default.py, next to the model file. They are imported
-in the HyspecPPT Model file and used during the Sample objects' initialization and data calculations.
+in the HyspecPPT Model file and used during the Sample objects' initialization and data calculations. The options for sample and plot types are used in HyspecPPT Model and View files.
 More specifically the parameters with their values are:
 
-    * sample_type = "Powder"
+    * sample type options
+        .. code-block:: bash
+
+            class SampleType(Enum):
+                POWDER = "Powder"
+                SINGLECRYSTAL = "Single Crystal"
+    * plot type options
+        .. code-block:: bash
+
+            class PlotType(Enum):
+                ALPHA = "alpha_s"
+                COSALPHA = "cos^2(alpha_s)"
+                COSALPHAPLUS1 = "1+cos^2(alpha_s))/2"
+    * default_sample_type = SampleType.POWDER
+    * default_plot_type = PlotType.COS_2_ALPHA_S
     * incident_energy_e = 20
     * detector_tank_angle_s = 30
     * polarization_direction_angle_p = 0
@@ -95,7 +109,7 @@ The function signatures and description are included below.
             "polarization_direction_angle_p" :<ao>,
             "delta_e": <d_e>,
             "mod_q" : <m_q>,
-            "graph_type" : <g_a>,
+            "plot_type" : <g_a>,
             "sc_parameters" :
             {
                 "lattice_a":<a>,
@@ -120,12 +134,12 @@ The function signatures and description are included below.
             "polarization_direction_angle_p" :<ao>,
             "delta_e": <d_e>,
             "mod_q" : <m_q>,
-            "graph_type" : <g_a>,
+            "plot_type" : <g_a>,
             "sc_parameters" : {}
         }
 
     The data structure is similar to the ones used in get_data() and set_data() for consistency.
-    Internally store_data() is called to store the parameters, and for the Single Crystal case calculate_qmod() and calculate_crosshair are called to find qmod and crosshair values respectively.
+    Internally store_data() is called to store the parameters, and get_qmod() and get_crosshair are called to find qmod and crosshair values respectively.
     The data dictionary created for the plot have the  following format:
 
      .. code-block:: bash
@@ -136,7 +150,7 @@ The function signatures and description are included below.
             "energy_transfer" : [], //1-d array
             "q2d" :[[],], //2-d array
             "e2d" :[[],], //2-d array
-            "scharf_angle" :[[],], //2-d array
+            "scharpf_angle" :[[],], //2-d array
             "crosshair": { "x": <>, "y":<>}
         }
 
@@ -151,7 +165,7 @@ The function signatures and description are included below.
             "polarization_direction_angle_p" :<ao>,
             "delta_e": <d_e>,
             "mod_q" : <m_q>,
-            "graph_type" : <g_a>,
+            "plot_type" : <g_a>,
             "sc_parameters" :
             {
                 "lattice_a":<a>,
@@ -179,7 +193,7 @@ The function signatures and description are included below.
             "polarization_direction_angle_p" :<ao>,
             "delta_e": <d_e>,
             "mod_q" : <m_q>,
-            "graph_type" : <g_a>,
+            "plot_type" : <g_a>,
             "sc_parameters" :
             {
                 "lattice_a":<a>,
@@ -205,14 +219,15 @@ The function signatures and description are included below.
             "polarization_direction_angle_p" :<ao>,
             "delta_e": <d_e>,
             "mod_q" : <m_q>,
-            "graph_type" : <g_a>,
+            "plot_type" : <g_a>,
             "sc_parameters" : {}
         }
 
 
 * get_emin(delta_e, incident_energy_e) --> float : The function returns the e_min value, based on delta_e and incident_energy_e. If delta_e < -incident_energy_e, then e_min =1.2* delta_e, else e_min = delta_e.
-* calculate_qmod() --> float :  The function returns qmod. It calculates the value from the sc_parameters (SingleCrystal mode).
-* calculate_crosshair() --> dict : The function calculates the crosshair x and y float values from the sc_parameters (SingleCrystal mode). The following format is returned:
+* get_qmod() --> float :  The function returns qmod. It calculates the value from the sc_parameters (SingleCrystal mode). It returns the qmod field for Powder.
+* get_crosshair() --> dict : The function returns the crosshair x and y float values from the sc_parameters (SingleCrystal mode). It returns delta_e and qmod as x and y respectively for Powder.
+  The following format is returned:
 
      .. code-block:: bash
 
@@ -222,7 +237,7 @@ The function signatures and description are included below.
         }
 
 
-The get_emin and calculate_qmod functions are only used internally in the Sample Model.
+The get_emin and get_qmod functions are only used internally in the Sample Model.
 
 -- SingleCrystalParameters
 
@@ -285,14 +300,16 @@ HyspecPPT View
         +QLineEdit:delta_e_value
         +QLabel:qmod_display
         +QLineEdit:qmod_value
-        +QLabel:graph_type_display
-        +QComboBox:graph_type_value
+        +QLabel:plot_type_display
+        +QComboBox:plot_type_value
         +SingleCrystalParameters:single_crystal_parameters
         +PlotFigure:plot
         +QButton:help_btn
         +send_error_message()
         -show_error_message()
         //+QStatusBar:status_bar
+        +get_plot_options() //from the file
+        +get_sample_type_options() //from the file
         +get_stored_data()
         +store_data_and_update_plot()
         +show_hide_cystal_parameters()
