@@ -404,7 +404,7 @@ The function signatures and description are included below.
             }
         }
 
-* def sample_type_parameters_update() --> None : // on sample type radio toggled
+* def sample_type_parameters_update() --> None : The function checks the selected Sample type (Powder or Single Crystal). It toggles the SingleCrystalParametersWidget (toggle_crystal_parameters) and updates the Readonly text status of qmod. (If Single Crystal is selected, the Single Crystal Parameters are updated with the values stored in the backend model) and it calls check_parameters_and_send_data to send the data in the backend. Example usage: on sample type radio toggled
 * def toggle_crystal_parameters() --> None : The function hides/shows the SingleCrystalParametersWidget based on the selected Sample type (sample_type_value).
 * def validation_status() --> Bool : The function checks all the SampleWidget's and SingleCrystalParametersWidget's parameters' (if necessary, it calls SingleCrystalParametersWidget.validation_status()) validation status. It returns True, if and only if all parameters are valid, else False.
 
