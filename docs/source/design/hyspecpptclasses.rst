@@ -51,14 +51,14 @@ every time there are new valid values received from the user (front end).
         +float lattice_unit_k
         +float lattice_unit_l
         +get_parameters()
-        +set_paraeters()
+        +set_parameters()
     }
 
-Default Values
+Sample Settings
 ----------------
 
-The parameters' default values for each Sample object are stored in a file, e.g sample_default.py, next to the model file. They are imported
-in the HyspecPPT Model file and used during the Sample objects' initialization and data calculations. The options for sample and plot types are used in HyspecPPT Model and View files.
+The parameters' default values for the Sample object are stored in a file, e.g sample_settings.py, next to the model file. They are imported
+in the HyspecPPT Model file and used during the Sample object's initialization and data calculations. The options for sample and plot types are used in HyspecPPT Model and View files.
 More specifically the parameters with their values are:
 
     * sample type options
