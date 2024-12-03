@@ -47,9 +47,9 @@ every time there are new valid values received from the user (front end).
         +float lattice_alpha
         +float lattice_beta
         +float lattice_gamma
-        +str lattice unit_h
-        +str lattice unit_k
-        +str lattice unit_l
+        +float lattice_unit_h
+        +float lattice_unit_k
+        +float lattice_unit_l
         +get_parameters()
         +set_paraeters()
     }
@@ -73,9 +73,9 @@ More specifically the parameters with their values are:
     * lattice_alpha = 90
     * lattice_beta = 90
     * lattice_gamma = 90
-    * lattice unit_h = 0
-    * lattice unit_k = 0
-    * lattice unit_l = 0
+    * lattice_unit_h = 0
+    * lattice_unit_k = 0
+    * lattice_unit_l = 0
     * number_of_pixels = 200
 
 Functions
@@ -96,7 +96,7 @@ The function signatures and description are included below.
             "delta_e": <d_e>,
             "mod_q" : <m_q>,
             "graph_type" : <g_a>,
-            "sc_parametes" :
+            "sc_parameters" :
             {
                 "lattice_a":<a>,
                 "lattice_b":<b>,
@@ -104,13 +104,13 @@ The function signatures and description are included below.
                 "lattice_alpha":<alpha>,
                 "lattice_beta":<beta>,
                 "lattice_gamma":<gamma>,
-                "lattice unit_h":<h>,
-                "lattice unit_k":<k>,
-                "lattice unit_l":<l>
+                "lattice_unit_h":<h>,
+                "lattice_unit_k":<k>,
+                "lattice_unit_l":<l>
             }
         }
 
-    In case of Powder mode the sc_parameters are not populated/included in the data dictionary and the sc_parametes is ignored for model data update e.g.:
+    In case of Powder mode the sc_parameters are not populated/included in the data dictionary and the sc_parameters is ignored for model data update e.g.:
      .. code-block:: bash
 
         {
@@ -121,7 +121,7 @@ The function signatures and description are included below.
             "delta_e": <d_e>,
             "mod_q" : <m_q>,
             "graph_type" : <g_a>,
-            "sc_parametes" : {}
+            "sc_parameters" : {}
         }
 
     The data structure is similar to the ones used in get_data() and set_data() for consistency.
@@ -152,7 +152,7 @@ The function signatures and description are included below.
             "delta_e": <d_e>,
             "mod_q" : <m_q>,
             "graph_type" : <g_a>,
-            "sc_parametes" :
+            "sc_parameters" :
             {
                 "lattice_a":<a>,
                 "lattice_b":<b>,
@@ -160,9 +160,9 @@ The function signatures and description are included below.
                 "lattice_alpha":<alpha>,
                 "lattice_beta":<beta>,
                 "lattice_gamma":<gamma>,
-                "lattice unit_h":<h>,
-                "lattice unit_k":<k>,
-                "lattice unit_l":<l>
+                "lattice_unit_h":<h>,
+                "lattice_unit_k":<k>,
+                "lattice_unit_l":<l>
             }
         }
 
@@ -180,7 +180,7 @@ The function signatures and description are included below.
             "delta_e": <d_e>,
             "mod_q" : <m_q>,
             "graph_type" : <g_a>,
-            "sc_parametes" :
+            "sc_parameters" :
             {
                 "lattice_a":<a>,
                 "lattice_b":<b>,
@@ -188,13 +188,13 @@ The function signatures and description are included below.
                 "lattice_alpha":<alpha>,
                 "lattice_beta":<beta>,
                 "lattice_gamma":<gamma>,
-                "lattice unit_h":<h>,
-                "lattice unit_k":<k>,
-                "lattice unit_l":<l>
+                "lattice_unit_h":<h>,
+                "lattice_unit_k":<k>,
+                "lattice_unit_l":<l>
             }
         }
 
-    In case of Powder mode the sc_parameters are not populated/included in the data dictionary and the sc_parametes is ignored for model data update e.g.:
+    In case of Powder mode the sc_parameters are not populated/included in the data dictionary and the sc_parameters is ignored for model data update e.g.:
 
      .. code-block:: bash
 
@@ -206,13 +206,13 @@ The function signatures and description are included below.
             "delta_e": <d_e>,
             "mod_q" : <m_q>,
             "graph_type" : <g_a>,
-            "sc_parametes" : {}
+            "sc_parameters" : {}
         }
 
 
 * get_emin(delta_e, incident_energy_e) --> float : The function returns the e_min value, based on delta_e and incident_energy_e. If delta_e < -incident_energy_e, then e_min =1.2* delta_e, else e_min = delta_e.
-* calculate_qmod() --> float :  The function returns qmod. It calculates the value from the sc_parametes (SingleCrystal mode).
-* calculate_crosshair() --> dict : The function calculates the crosshair x and y float values from the sc_parametes (SingleCrystal mode). The following format is returned:
+* calculate_qmod() --> float :  The function returns qmod. It calculates the value from the sc_parameters (SingleCrystal mode).
+* calculate_crosshair() --> dict : The function calculates the crosshair x and y float values from the sc_parameters (SingleCrystal mode). The following format is returned:
 
      .. code-block:: bash
 
@@ -237,9 +237,9 @@ The get_emin and calculate_qmod functions are only used internally in the Sample
             "lattice_alpha":<alpha>,
             "lattice_beta":<beta>,
             "lattice_gamma":<gamma>,
-            "lattice unit_h":<h>,
-            "lattice unit_k":<k>,
-            "lattice unit_l":<l>
+            "lattice_unit_h":<h>,
+            "lattice_unit_k":<k>,
+            "lattice_unit_l":<l>
         }
 
 * def set_parameters() --> Dict : The function returns a dictionary with the SingleCrystalParameters field values.
@@ -253,9 +253,9 @@ The get_emin and calculate_qmod functions are only used internally in the Sample
             "lattice_alpha":<alpha>,
             "lattice_beta":<beta>,
             "lattice_gamma":<gamma>,
-            "lattice unit_h":<h>,
-            "lattice unit_k":<k>,
-            "lattice unit_l":<l>
+            "lattice_unit_h":<h>,
+            "lattice_unit_k":<k>,
+            "lattice_unit_l":<l>
         }
 
 The data structure is the same in set_parameters() and get_parameters() for consistency.
