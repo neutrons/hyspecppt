@@ -97,7 +97,7 @@ Functions
 
 The function signatures and description are included below.
 
--- Sample
+**-- Sample**
 
 * def calculate_graph_data(data: dict) --> dict : The function receives data parameters, updates the sample object's field values and calculates and returns the plot data. The incoming data have the following format: e.g.
      .. code-block:: bash
@@ -239,7 +239,7 @@ The function signatures and description are included below.
 
 The get_emin and get_qmod functions are only used internally in the Sample Model.
 
--- SingleCrystalParameters
+**-- SingleCrystalParameters**
 
 * def set_parameters(sc_data: dict) --> None : The function updates the SingleCrystalParameters with the sc_data, provided in the following format e.g:
 
@@ -348,7 +348,7 @@ Functions
 
 The function signatures and description are included below.
 
--- HyspecPPTView
+**-- HyspecPPTView**
 
 * def update_plot(q_min: list[float],q_max: list[float],energy_transfer: list[float], q2d: list[list[float]],e2d: list[list[float]], scharpf_angle: list[list[float]], crosshair: dict) --> None : The function updates the plot with the given parameters. The crosshair dictionary has the following structure:
 
@@ -358,7 +358,7 @@ The function signatures and description are included below.
             "crosshair": { "x": <>, "y":<>}
         }
 
--- SampleWidget
+**-- SampleWidget**
 
 * def get_sample_type_options() --> None : The function returns the Sample options (Single Crystal and Powder) to be used as radio button options during the widget's initialization.
 * def get_plot_options() --> None : The function returns the plot type options, e.g. alpha_s, to be used as combobox options during the widget's initialization.
@@ -408,7 +408,7 @@ The function signatures and description are included below.
 * def toggle_crystal_parameters() --> None : The function hides/shows the SingleCrystalParametersWidget based on the selected Sample type (sample_type_value).
 * def validation_status() --> Bool : The function checks all the SampleWidget's and SingleCrystalParametersWidget's parameters' (if necessary, it calls SingleCrystalParametersWidget.validation_status()) validation status. It returns True, if and only if all parameters are valid, else False.
 
--- SingleCrystalParametersWidget
+**-- SingleCrystalParametersWidget**
 
 * def get_parameters() --> dict : The function packs/returns all parameters in a dictionary format as follows:
     .. code-block:: bash
@@ -441,7 +441,7 @@ The function signatures and description are included below.
         }
 
     The functions get_parameters() and set_parameters() have the same dictionary format.
-* def check_parameters_and_sample() // triggered by every sc parameter text textEdited event
+* def check_parameters_and_sample() : The function check the status of all single crystal parameters (validation_status) and if they are valid, it emits an event (changed Signal) to the parent Sample Widget. The function is triggered by every sc parameter text textEdited event, in order to update the plot eventually.
 * def validation_status() --> Bool : The function checks all the parameters' validation status. It returns True, if and only if all parameters are valid, else False.
 
 HyspecPPT Presenter
@@ -456,8 +456,8 @@ HyspecPPT Presenter
     class HyspecPPTPresenter{
         -HyspecPPTModel:model
         -HyspecPPTView:view
-        +update_plot()
-        +update_qmod()
+        +get_parameters_and_update_plot()
+        +get_sample_type_and_update_parameters_and_plot() //qmod value field, and sc parameters values block
         +get_plot_options()
         +get_sample_type_options()
     }
@@ -469,3 +469,35 @@ HyspecPPT Presenter
     class HyspecPPTView{
         #from above
     }
+
+
+The Presenter describes the 2 main workflows that require communication and coordination between the Model and View through the Presenter. Additionally, it includes 2 functions that retrieves the options  from the settings files for the View.
+Any value processing to match the requirements of the View and Model side should happen on the Presenter.
+
+#. Get available plot types from the settings files: get_plot_options()
+
+    .. mermaid::
+
+        sequenceDiagram
+            participant View
+            participant Presenter
+
+            Note over View,Presenter: Application Start - HyspecPPTView Initialization
+            View->>Presenter: Get all available plot type options - SampleWidget::get_plot_options()
+            Note right of Presenter: get the PlotType Enum from sample_settings file
+            Presenter->>View: Return the list of plot types (str)
+            Note left of View: Display the plot types in the plot_type_value combo box
+
+#. Get available sample type options from the settings files: get_sample_type_options()
+
+    .. mermaid::
+
+        sequenceDiagram
+            participant View
+            participant Presenter
+
+            Note over View,Presenter: Application Start - HyspecPPTView Initialization
+            View->>Presenter: Get all available sample type options - SampleWidget::get_sample_type_options()
+            Note right of Presenter: get the SampleType Enum from sample_settings file
+            Presenter->>View: Return the list of sample types (str)
+            Note left of View: Display the sample types in the plot_type_value radio buttons
