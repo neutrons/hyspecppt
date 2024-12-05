@@ -32,12 +32,13 @@ every time there are new valid values received from the user (front end).
         +float mod_q
         +enum 'PlotType' plot_type
         +SingleCrystalParameters sc_parameters
-        +calculate_graph_data()
+        +calculate_graph_data(incident_energy_e:float, detector_tank_angle_s:float,polarization_direction_angle_p:float,plot_type:str)
+        +calculate_crosshair(current_sample_type:str, delta_e:float, mod_q:float, sc_parameters:dict)
         +get_data()
         +store_data()
         -get_emin(delta_e, incident_energy_e)
-        -get_qmod()
-        -get_crosshair()
+        +get_qmod() //when switching from Powder to Single Crystal ?
+        //+update_qmod()
     }
 
     class SingleCrystalParameters{
@@ -99,17 +100,26 @@ The function signatures and description are included below.
 
 **-- Sample**
 
-* def calculate_graph_data(data: dict) --> dict : The function receives data parameters, updates the sample object's field values and calculates and returns the plot data. The incoming data have the following format: e.g.
+* def calculate_graph_data(incident_energy_e:float, detector_tank_angle_s:float,polarization_direction_angle_p:float,plot_type:str) --> dict : The function receives data parameters, updates the sample object's field values and calculates and returns the plot data.
+
+    Internally store_data() is called to store the parameters. The returned data dictionary needed for the plot has the following format:
+
      .. code-block:: bash
 
         {
-            "current_sample_type": "SingleCrystal",
-            "incident_energy_e": <e>,
-            "detector_tank_angle_s" : <s2>,
-            "polarization_direction_angle_p" :<ao>,
-            "delta_e": <d_e>,
-            "mod_q" : <m_q>,
-            "plot_type" : <g_a>,
+            "q_min": [], //1-d array
+            "q_max": [], //1-d array
+            "energy_transfer" : [], //1-d array
+            "q2d" :[[],], //2-d array
+            "e2d" :[[],], //2-d array
+            "scharpf_angle" :[[],], //2-d array
+        }
+
+* def calculate_crosshair(current_sample_type:str, delta_e:float, mod_q:float, sc_parameters:dict) --> dict : The function returns the crosshair values. For the SingleCrystal mode it calculates the eline and qline from the sc_parameters. For Powder, it returns delta_e and qmod as eline and qline respectively. The single crystal parameters dictionary have the following format
+
+     .. code-block:: bash
+
+        {
             "sc_parameters" :
             {
                 "lattice_a":<a>,
@@ -124,35 +134,17 @@ The function signatures and description are included below.
             }
         }
 
-    In case of Powder mode the sc_parameters are not populated/included in the data dictionary and the sc_parameters is ignored for model data update e.g.:
-     .. code-block:: bash
-
-        {
-            "current_sample_type": "Powder",
-            "incident_energy_e": <e>,
-            "detector_tank_angle_s" : <s2>,
-            "polarization_direction_angle_p" :<ao>,
-            "delta_e": <d_e>,
-            "mod_q" : <m_q>,
-            "plot_type" : <g_a>,
-            "sc_parameters" : {}
-        }
-
-    The data structure is similar to the ones used in get_data() and set_data() for consistency.
-    Internally store_data() is called to store the parameters, and get_qmod() and get_crosshair are called to find qmod and crosshair values respectively.
-    The data dictionary created for the plot have the  following format:
+    Internally store_data() is called to store the parameters, and get_qmod() is called to find qmod values respectively.
+    The following format is returned:
 
      .. code-block:: bash
 
         {
-            "q_min": [], //1-d array
-            "q_max": [], //1-d array
-            "energy_transfer" : [], //1-d array
-            "q2d" :[[],], //2-d array
-            "e2d" :[[],], //2-d array
-            "scharpf_angle" :[[],], //2-d array
-            "crosshair": { "x": <>, "y":<>}
+            eline: list[float], // 2 values in the list
+            qline:list[float] // 2 values in the list
         }
+
+    Example usage: when switching from Powder to Single Crystal mode and backend all related parameters
 
 * def get_data() --> dict : The function returns all the sample's parameters in a dictionary format regardless the of the sample type e.g:
 
@@ -224,20 +216,11 @@ The function signatures and description are included below.
         }
 
 
-* get_emin(delta_e, incident_energy_e) --> float : The function returns the e_min value, based on delta_e and incident_energy_e. If delta_e < -incident_energy_e, then e_min =1.2* delta_e, else e_min = delta_e.
-* get_qmod() --> float :  The function returns qmod. It calculates the value from the sc_parameters (SingleCrystal mode). It returns the qmod field for Powder.
-* get_crosshair() --> dict : The function returns the crosshair x and y float values from the sc_parameters (SingleCrystal mode). It returns delta_e and qmod as x and y respectively for Powder.
-  The following format is returned:
-
-     .. code-block:: bash
-
-        {
-            "x": <x>,
-            "y": <y>
-        }
+* def get_emin(delta_e, incident_energy_e) --> float : The function returns the e_min value, based on delta_e and incident_energy_e. If delta_e < -incident_energy_e, then e_min =1.2* delta_e, else e_min = delta_e.
+* def get_qmod() --> float :  The function returns qmod. It calculates the value from the sc_parameters (SingleCrystal mode). It returns the qmod field for Powder.
 
 
-The get_emin and get_qmod functions are only used internally in the Sample Model.
+The get_emin is only used internally in the Sample Model.
 
 **-- SingleCrystalParameters**
 
@@ -283,23 +266,33 @@ HyspecPPT View
 
  classDiagram
     HyspecPPTView "1" -->"1" SampleWidget
-    SampleWidget "1" -->"1" SingleCrystalParametersWidget
+    SampleWidget "1" -->"1" CrosshairWidget
+    CrosshairWidget "1" -->"1" SingleCrystalParametersWidget
 
     class HyspecPPTView{
         +SampleWidget:sample
         +PlotFigure:plot
         +QButton:help_btn
-        +update_plot(q_min: list[float],q_max: list[float],energy_transfer: list[float], q2d: list[list[float]],e2d: list[list[float]], scharpf_angle: list[list[float]], crosshair: dict)
+        +update_plot(q_min: list[float],q_max: list[float],energy_transfer: list[float], q2d: list[list[float]],e2d: list[list[float]], scharpf_angle: list[list[float]])
+        +update_crosshair(eline: list[float], qline:list[float])
+
     }
 
     class SampleWidget{
-        +Signal'dict' changed
         +QLabel:ei_display
         +QLineEdit:ei_value
         +QLabel:s2_display
         +QLineEdit:s2_value
         +QLabel:p_display
         +QLineEdit:p_value
+        +CrosshairWidget:crosshair_parameters
+        +validation_status()
+        +parameters_update()
+        +get_parameters()
+
+    }
+
+    class CrosshairWidget{
         +QLabel:sample_type_display
         +QRadioButton:sample_type_value
         +QLabel:delta_e_display
@@ -309,12 +302,15 @@ HyspecPPT View
         +QLabel:plot_type_display
         +QComboBox:plot_type_value
         +SingleCrystalParametersWidget:single_crystal_parameters
-        +get_sample_type_options()
-        +get_plot_options()
-        +sample_type_parameters_update()
-        +check_parameters_and_send_data()
-        +toggle_crystal_parameters()
+        +set_sample_options(sample_types:[str])
+        +set_plot_options(plot_types:[str])
+        +set_qmod(qmod:float)
+        +toggle_crystal_parameters(show:bool)
         +validation_status()
+        +sample_type_update()
+        +parameters_update()
+        +get_parameters()
+
     }
 
     class SingleCrystalParametersWidget{
@@ -338,8 +334,9 @@ HyspecPPT View
         +QLineEdit:l_value
         +get_parameters()
         +set_parameters(parameters:dict)
-        +check_parameters_and_sample()
         +validation_status()
+        +parameters_update()
+
     }
 
 
@@ -350,63 +347,40 @@ The function signatures and description are included below.
 
 **-- HyspecPPTView**
 
-* def update_plot(q_min: list[float],q_max: list[float],energy_transfer: list[float], q2d: list[list[float]],e2d: list[list[float]], scharpf_angle: list[list[float]], crosshair: dict) --> None : The function updates the plot with the given parameters. The crosshair dictionary has the following structure:
+* def update_plot(q_min: list[float],q_max: list[float],energy_transfer: list[float], q2d: list[list[float]],e2d: list[list[float]], scharpf_angle: list[list[float]]) --> None : The function updates the plot with the given parameters.
+* def update_crosshair(eline: list[float], qline:list[float]) --> None : The function updates the crosshair lines at the plot with the given parameters.
 
+**-- CrosshairWidget**
+
+* def set_sample_options(sample_types:[str]) --> None : The function sets the Sample options (Single Crystal and Powder) to be used as radio button options during the widget's initialization.
+* def set_plot_options(plot_types:[str]) --> None : The function sets the plot type options, e.g. alpha_s, to be used as combobox options during the widget's initialization.
+* def set_qmod(qmod:float) --> None: The function sets the mod_q value from qmod parameter.
+* def sample_type_update() --> None :   The function wraps the Presenter call. Example usage: it is called on sample type radio toggled
+* def parameters_update() --> None : The function wraps the Presenter call. Example usage: it is called at every parameter update event.
+* def toggle_crystal_parameters(show:bool) --> None : The function hides/shows the SingleCrystalParametersWidget based on the show flag.
+* def validation_status() --> Bool : The function checks all the CrosshairWidget's parameters' validation status. It returns True, if and only if all parameters are valid, else False.
+* def get_parameters() --> dict : The function packs/returns all parameters in a dictionary format as follows:
      .. code-block:: bash
 
         {
-            "crosshair": { "x": <>, "y":<>}
+            "current_sample_type": "Powder",
+            "delta_e": <d_e>,
+            "mod_q" : <m_q>,
+            "plot_type" : <g_a>,
         }
 
 **-- SampleWidget**
 
-* def get_sample_type_options() --> None : The function returns the Sample options (Single Crystal and Powder) to be used as radio button options during the widget's initialization.
-* def get_plot_options() --> None : The function returns the plot type options, e.g. alpha_s, to be used as combobox options during the widget's initialization.
-* def check_parameters_and_send_data() --> dict : The function checks the status of all parameters, including Single Crystal parameters for the Single Crystal mode, (validation_status) and if every parameter is valid it packs/returns the parameters in a dictionary. Example usage: on every text editingFinished, and combobox currentIndexChanged
-    .. code-block:: bash
+* def parameters_update() --> None : The function wraps the Presenter call. Example usage: it is called at every parameter update event.
+* def validation_status() --> Bool : The function checks all the SampleWidget's parameters' validation status. It returns True, if and only if all parameters are valid, else False.
+* def get_parameters() --> dict : The function packs/returns all parameters in a dictionary format as follows:
+     .. code-block:: bash
 
         {
-            "current_sample_type": "SingleCrystal",
             "incident_energy_e": <e>,
             "detector_tank_angle_s" : <s2>,
             "polarization_direction_angle_p" :<ao>,
-            "delta_e": <d_e>,
-            "mod_q" : <m_q>,  //can be ignored
-            "plot_type" : <g_a>,
-            "sc_parameters" :
-            {
-                "lattice_a":<a>,
-                "lattice_b":<b>,
-                "lattice_c":<c>,
-                "lattice_alpha":<alpha>,
-                "lattice_beta":<beta>,
-                "lattice_gamma":<gamma>,
-                "lattice_unit_h":<h>,
-                "lattice_unit_k":<k>,
-                "lattice_unit_l":<l>
-            }
         }
-
-    In case of Powder the dictionary format will look as the following:
-
-    .. code-block:: bash
-
-        {
-            "current_sample_type": "SingleCrystal",
-            "incident_energy_e": <e>,
-            "detector_tank_angle_s" : <s2>,
-            "polarization_direction_angle_p" :<ao>,
-            "delta_e": <d_e>,
-            "mod_q" : <m_q>,
-            "plot_type" : <g_a>,
-            "sc_parameters" :
-            {
-            }
-        }
-
-* def sample_type_parameters_update() --> None : The function checks the selected Sample type (Powder or Single Crystal). It toggles the SingleCrystalParametersWidget (toggle_crystal_parameters) and updates the Readonly text status of qmod. (If Single Crystal is selected, the Single Crystal Parameters are updated with the values stored in the backend model) and it calls check_parameters_and_send_data to send the data in the backend. Example usage: on sample type radio toggled
-* def toggle_crystal_parameters() --> None : The function hides/shows the SingleCrystalParametersWidget based on the selected Sample type (sample_type_value).
-* def validation_status() --> Bool : The function checks all the SampleWidget's and SingleCrystalParametersWidget's parameters' (if necessary, it calls SingleCrystalParametersWidget.validation_status()) validation status. It returns True, if and only if all parameters are valid, else False.
 
 **-- SingleCrystalParametersWidget**
 
@@ -441,7 +415,7 @@ The function signatures and description are included below.
         }
 
     The functions get_parameters() and set_parameters() have the same dictionary format.
-* def check_parameters_and_sample() : The function check the status of all single crystal parameters (validation_status) and if they are valid, it emits an event (changed Signal) to the parent Sample Widget. The function is triggered by every sc parameter text textEdited event, in order to update the plot eventually.
+* def parameters_update() --> None : The function wraps the Presenter call. Example usage: it is called at every parameter update event.
 * def validation_status() --> Bool : The function checks all the parameters' validation status. It returns True, if and only if all parameters are valid, else False.
 
 HyspecPPT Presenter
@@ -456,8 +430,8 @@ HyspecPPT Presenter
     class HyspecPPTPresenter{
         -HyspecPPTModel:model
         -HyspecPPTView:view
-        +get_parameters_and_update_plot()
-        +get_sample_type_and_update_parameters_and_plot() //qmod value field, and sc parameters values block
+        +update_plot()
+        +update_crosshair()
         +get_plot_options()
         +get_sample_type_options()
     }
@@ -470,9 +444,45 @@ HyspecPPT Presenter
         #from above
     }
 
+* parameters_update
+* sample parameters_update
+* sample sample type update
+* sc parameters_update
+
+* def check_parameters_and_send_data() --> dict : The function checks the status of all parameters, (validation_status) and if every parameter is valid it packs/returns the parameters in a dictionary. Example usage: on every text editingFinished, and combobox currentIndexChanged
+
+    .. code-block:: bash
+
+        {
+            "current_sample_type": <sample_type>,
+            "delta_e": <d_e>,
+            "mod_q" : <m_q>,
+            "sc_parameters" :
+            {
+                "lattice_a":<a>,
+                "lattice_b":<b>,
+                "lattice_c":<c>,
+                "lattice_alpha":<alpha>,
+                "lattice_beta":<beta>,
+                "lattice_gamma":<gamma>,
+                "lattice_unit_h":<h>,
+                "lattice_unit_k":<k>,
+                "lattice_unit_l":<l>
+            }
+        }
+
+* def check_parameters_and_send_data() --> dict : The function checks the status of all parameters, (validation_status) and if every parameter is valid it packs/returns the parameters in a dictionary. Example usage: on every text editingFinished, and combobox currentIndexChanged
+    .. code-block:: bash
+
+        {
+            "incident_energy_e": <e>,
+            "detector_tank_angle_s" : <s2>,
+            "polarization_direction_angle_p" :<ao>,
+            "delta_e": <d_e>,
+        }
 
 The Presenter describes the 2 main workflows that require communication and coordination between the Model and View through the Presenter. Additionally, it includes 2 functions that retrieves the options  from the settings files for the View.
-Any value processing to match the requirements of the View and Model side should happen on the Presenter.
+Any value processing and/or filtering to match the requirements and logic of the View and Model side should happen on the Presenter.
 
 #. Get available plot types from the settings files: get_plot_options()
 
@@ -501,3 +511,63 @@ Any value processing to match the requirements of the View and Model side should
             Note right of Presenter: get the SampleType Enum from sample_settings file
             Presenter->>View: Return the list of sample types (str)
             Note left of View: Display the sample types in the plot_type_value radio buttons
+
+#. This describes the sequence of events happening among M-V-P when Sample parameters (except from sample type) are updated in order to see a new plot : update_plot()
+
+    .. mermaid::
+
+        sequenceDiagram
+            participant View
+            participant Presenter
+            participant Model
+
+            Note over View,Model: Plot Update due to any Sample parameter (except from sample type) update
+            View->>Presenter: User updates a parameter at SampleWidget (except from sample type)
+            Note right of Presenter: get the SampleType Enum from sample_settings file
+            Presenter->>View: Return the list of sample types (str)
+            Note left of View: Display the sample types in the plot_type_value radio buttons
+
+#. This describes the sequence of events happening among M-V-P when Single Crystal parameters are updated in order to see a new plot : update_plot()
+
+    .. mermaid::
+
+        sequenceDiagram
+            participant View
+            participant Presenter
+            participant Model
+
+            Note over View,Model: Plot Update due to any Single Crystal parameter
+            View->>Presenter: User updates a parameter at SingleCrystalWidget
+            Note right of Presenter: get the SampleType Enum from sample_settings file
+            Presenter->>View: Return the list of sample types (str)
+            Note left of View: Display the sample types in the plot_type_value radio buttons
+
+
+#. This describes the sequence of events happening among M-V-P when only the sample type is updated in order to see a new plot : update_crosshair()  //qmod value field, and sc parameters values block
+
+    .. mermaid::
+
+        sequenceDiagram
+            participant View
+            participant Presenter
+            participant Model
+
+            Note over View,Model: Plot update due to sample type change
+            View->>Presenter: User updates the sample_type_value at SampleWidget
+            Note right of Presenter: get the SampleType Enum from sample_settings file
+            Presenter->>View: Return the list of sample types (str)
+            Note left of View: Display the sample types in the plot_type_value radio buttons
+
+
+
+Powder: crosshair (x,y lines) are updated from deltaE and Qmod.
+If only Qmod is updated, then the crosshair can be updated in the front end. The only thing needed at this point is to store the new Qmod in the model.
+if only DeltaE is updated:
+* check if the plot data need to redrawned
+* redraw the crosshair
+in the model split crosshair and plot data calculations
+Single Crystal: parameters are responsible only for the mod Q
+
+update_crosshair
+update_plot
+when switching from Powder to Single Crystal and back, the only thing affected is the (modQ) crosshair. Only mod Q is kept and updated between sample switches
