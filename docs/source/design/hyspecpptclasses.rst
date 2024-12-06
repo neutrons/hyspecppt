@@ -287,6 +287,7 @@ HyspecPPT View
         +validation_status()
         +parameters_update()
         +get_parameters()
+        +set_parameters(incident_energy_e: float, detector_tank_angle_s:float, polarization_direction_angle_p:float, plot_type:str)
 
     }
 
@@ -307,7 +308,7 @@ HyspecPPT View
         +experiment_type_update()
         +parameters_update()
         +get_parameters()
-
+        +set_parameters(current_experiment_type: str, delta_e:float, delta_e:floatr
     }
 
     class SingleCrystalParametersWidget{
@@ -365,6 +366,7 @@ The function signatures and description are included below.
             "delta_e": <d_e>,
             "mod_q" : <m_q>
         }
+* def set_parameters(current_experiment_type: str, delta_e:float, delta_e:float) --> None : The function sets the Widget's values with the parameters.
 
 **-- ExperimentWidget**
 
@@ -379,6 +381,7 @@ The function signatures and description are included below.
             "polarization_direction_angle_p" :<ao>,
             "plot_type" : <g_a>
         }
+* def set_parameters(incident_energy_e: float, detector_tank_angle_s:float, polarization_direction_angle_p:float, plot_type:str) --> None : The function sets the Widget's values with the parameters.
 
 **-- SingleCrystalParametersWidget**
 
@@ -446,6 +449,30 @@ HyspecPPT Presenter
 
 The Presenter describes the main workflows that require communication and coordination between the Model and View through the Presenter. Additionally, it includes 2 functions that retrieves the options  from the settings files for the View.
 Any value processing and/or filtering to match the requirements and logic of the View and Model side should happen on the Presenter.
+
+
+#. Application Start - HyspecPPTView Initialization. All default values are retrieved from the settings file.
+
+    .. mermaid::
+
+        sequenceDiagram
+            participant View
+            participant Presenter
+
+            Note over View,Presenter:  - HyspecPPTView Initialization
+            Note right of Presenter: get Experiment parameters from experiment_settings file
+            Presenter->>View: Set Experiment parameters (ExperimentWidget.set_parameters)
+            Note left of View: Display Experiment parameters values
+            Note left of View: experiment_parameters_update is triggered
+            Note right of Presenter: get Crosshair parameters from experiment_settings file
+            Presenter->>View: Set Crosshair parameters (CrosshairWidget.set_parameters)
+            Note left of View: Display Crosshair parameters values
+            Note right of Presenter: get SingleCrystal parameters from experiment_settings file
+            Presenter->>View: Set SingleCrystal parameters (SingleCrystalWidget.set_parameters)
+            Note left of View: Display SingleCrystal parameters values
+            Note left of View: crosshair_parameters_update is triggered
+
+
 
 #. Display the available plot types from the settings files: set_plot_options() at the View
 
