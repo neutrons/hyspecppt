@@ -34,6 +34,7 @@ every time there are new valid values received from the user (front end).
         +SingleCrystalParameters sc_parameters
         +calculate_graph_data(incident_energy_e:float, detector_tank_angle_s:float,polarization_direction_angle_p:float,plot_type:str)
         +calculate_crosshair(current_sample_type:str, delta_e:float, mod_q:float, sc_parameters:dict)
+        +set_sample_type(sample_type:str)
         +get_data()
         +store_data()
         -get_emin(delta_e, incident_energy_e)
@@ -215,8 +216,9 @@ The function signatures and description are included below.
         }
 
 
-* def get_emin(delta_e, incident_energy_e) --> float : The function returns the e_min value, based on delta_e and incident_energy_e. If delta_e < -incident_energy_e, then e_min =1.2* delta_e, else e_min = delta_e.
+* def get_emin(delta_e:float, incident_energy_e:float) --> float : The function returns the e_min value, based on delta_e and incident_energy_e. If delta_e < -incident_energy_e, then e_min =1.2* delta_e, else e_min = delta_e.
 * def get_qmod() --> float :  The function returns qmod. It calculates the value from the sc_parameters (SingleCrystal mode). It returns the qmod field for Powder.
+* def set_sample_type(sample_type:str) --> None :  The function sets the Sample current_sample_type from the sample_type parameter
 
 
 The get_emin is only used internally in the Sample Model.
@@ -593,8 +595,8 @@ The presenter checks the value of sample_type_value and splits the workflow as f
                 Presenter->>View: Toggle the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and enables/disables the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
                 Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
                 Note right of Presenter: Valid Status except from qmod: Gather the CrosshairWidget parameters (CrosshairWidget.get_parameters)
-                Presenter->>Model: Send the parameters (Sample.set_data)
-                Note right of Model: Save the parameters (sample_type)
+                Presenter->>Model: Send the sample_type (Sample.set_sample_type)
+                Note right of Model: Save the sample_type
                 Presenter->>Model: Get the stored qmod (Sample.get_qmod)
                 Model->>Presenter: Return qmod
                 Presenter->>View: Return qmod (CrosshairWidget.set_qmod)
