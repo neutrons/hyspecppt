@@ -9,22 +9,22 @@ Model-View-Presenter
 HyspecPPT Model
 +++++++++++++++
 
-The HyspecPPTModel encapsulates the backend functionality. It maintains one object: sample (Sample) that has all the valid values. The object fields are updated
+The HyspecPPTModel encapsulates the backend functionality. It maintains one object: experiment (Experiment) that has all the valid values. The object fields are updated
 every time there are new valid values received from the user (front end).
 
 .. mermaid::
 
  classDiagram
-    HyspecPPTModel <|-- Sample
-    Sample "1" -->"1" CrosshairParameters
+    HyspecPPTModel <|-- Experiment
+    Experiment "1" -->"1" CrosshairParameters
     CrosshairParameters "1" -->"1" SingleCrystalParameters
 
 
     class HyspecPPTModel{
-        +Sample sample
+        +Experiment experiment
     }
 
-    class Sample{
+    class Experiment{
         +float incident_energy_e
         +float detector_tank_angle_s
         +float polarization_direction_angle_p
@@ -37,15 +37,15 @@ every time there are new valid values received from the user (front end).
 
 
     class CrosshairParameters{
-        +enum 'SampleType' current_sample_type
+        +enum 'ExperimentType' current_experiment_type
         +float delta_e
         +float mod_q
         +SingleCrystalParameters sc_parameters
-        +calculate_crosshair(current_sample_type:str, delta_e:float, mod_q:float, sc_parameters:dict)
+        +calculate_crosshair(current_experiment_type:str, delta_e:float, mod_q:float, sc_parameters:dict)
         +get_qmod()
-        +store_data(current_sample_type:str, delta_e:float, mod_q:float, sc_parameters:dictr)
-        +set_sample_type(sample_type:str)
-        +update_sample_type_return_qmod(sample_type:str)
+        +store_data(current_experiment_type:str, delta_e:float, mod_q:float, sc_parameters:dictr)
+        +set_experiment_type(experiment_type:str)
+        +update_experiment_type_return_qmod_data(experiment_type:str)
         +update_sc_return_qmod(sc_data: dict)
     }
 
@@ -63,17 +63,17 @@ every time there are new valid values received from the user (front end).
         +set_parameters()
     }
 
-Sample Settings
-----------------
+Experiment Settings
+--------------------
 
-The parameters' default values for the Sample object are stored in a file, e.g sample_settings.py, next to the model file. They are imported
-in the HyspecPPT Model file and used during the Sample object's initialization and data calculations. The options for sample and plot types are used in HyspecPPT Model and View files.
+The parameters' default values for the Experiment object are stored in a file, e.g experiment_settings.py, next to the model file. They are imported
+in the HyspecPPT Model file and used during the Experiment object's initialization and data calculations. The options for experiment and plot types are used in HyspecPPT Model and View files.
 More specifically the parameters with their values are:
 
-    * sample type options
+    * Experiment type options
         .. code-block:: bash
 
-            class SampleType(Enum):
+            class ExperimentType(Enum):
                 POWDER = "Powder"
                 SINGLECRYSTAL = "Single Crystal"
     * plot type options
@@ -83,7 +83,7 @@ More specifically the parameters with their values are:
                 ALPHA = "alpha_s"
                 COSALPHA = "cos^2(alpha_s)"
                 COSALPHAPLUS1 = "1+cos^2(alpha_s))/2"
-    * default_sample_type = SampleType.POWDER
+    * default_experiment_type = ExperimentType.POWDER
     * default_plot_type = PlotType.COS_2_ALPHA_S
     * incident_energy_e = 20
     * detector_tank_angle_s = 30
@@ -106,9 +106,9 @@ Functions
 
 The function signatures and description are included below.
 
-**-- Sample**
+**-- Experiment**
 
-* def calculate_graph_data(incident_energy_e:float, detector_tank_angle_s:float,polarization_direction_angle_p:float,plot_type:str) --> dict : The function receives data parameters, updates the sample object's field values and calculates and returns the plot data.
+* def calculate_graph_data(incident_energy_e:float, detector_tank_angle_s:float,polarization_direction_angle_p:float,plot_type:str) --> dict : The function receives data parameters, updates the Experiment object's field values and calculates and returns the plot data.
 
     Internally store_data() is called to store the parameters. The returned data dictionary needed for the plot has the following format:
 
@@ -123,15 +123,15 @@ The function signatures and description are included below.
             "scharpf_angle" :[[],], //2-d array
         }
 
-* def store_data(incident_energy_e:float, detector_tank_angle_s:float,polarization_direction_angle_p:float,plot_type:str) --> None : The function receives data parameters and updates the sample object's field values.
+* def store_data(incident_energy_e:float, detector_tank_angle_s:float,polarization_direction_angle_p:float,plot_type:str) --> None : The function receives data parameters and updates the Experiment object's field values.
 * def get_emin(delta_e:float, incident_energy_e:float) --> float : The function returns the e_min value, based on delta_e and incident_energy_e. If delta_e < -incident_energy_e, then e_min =1.2* delta_e, else e_min = delta_e.
 
-The get_emin is only used internally in the Sample Model.
+The get_emin is only used internally in the Experiment Model.
 
 
 **-- CrosshairParameters**
 
-* def calculate_crosshair(current_sample_type:str, delta_e:float, mod_q:float, sc_parameters:dict) --> dict : The function returns the crosshair values. For the SingleCrystal mode it calculates the eline and qline from the sc_parameters. For Powder, it returns delta_e and qmod as eline and qline respectively. The single crystal parameters dictionary have the following format
+* def calculate_crosshair(current_Experiment_type:str, delta_e:float, mod_q:float, sc_parameters:dict) --> dict : The function returns the crosshair values. For the SingleCrystal mode it calculates the eline and qline from the sc_parameters. For Powder, it returns delta_e and qmod as eline and qline respectively. The single crystal parameters dictionary have the following format
 
      .. code-block:: bash
 
@@ -161,13 +161,13 @@ The get_emin is only used internally in the Sample Model.
         }
 
 * def get_qmod() --> float :  The function returns qmod. It calculates the value from the sc_parameters (SingleCrystal mode). It returns the qmod field for Powder.
-* def set_sample_type(sample_type:str) --> None :  The function sets the current_sample_type from the sample_type parameter
-* def store_data(current_sample_type:str, delta_e:float, mod_q:float, sc_parameters:dict) --> None : The function receives data parameters and updates the CrosshairParameters and Single Crystal object's field values e.g.:
+* def set_experiment_type(experiment_type:str) --> None :  The function sets the current_experiment_type from the experiment_type parameter
+* def store_data(current_experiment_type:str, delta_e:float, mod_q:float, sc_parameters:dict) --> None : The function receives data parameters and updates the CrosshairParameters and Single Crystal object's field values e.g.:
 
     .. code-block:: bash
 
         {
-            "current_sample_type": "SingleCrystal",
+            "current_experiment_type": "SingleCrystal",
             "delta_e": <d_e>,
             "mod_q" : <m_q>,
             "sc_parameters" :
@@ -189,13 +189,31 @@ The get_emin is only used internally in the Sample Model.
      .. code-block:: bash
 
         {
-            "current_sample_type": "Powder",
+            "current_experiment_type": "Powder",
             "delta_e": <d_e>,
             "mod_q" : <m_q>,
             "sc_parameters" : {}
         }
 
-* def update_sample_type_return_qmod(sample_type:str) --> float :  The function updates the sample_type value and returns qmod (get_qmod)
+* def update_experiment_type_return_qmod_data(experiment_type:str) --> dict :  The function updates the experiment_type value and returns qmod (get_qmod) and SingleCrystalParameters in the following format
+     .. code-block:: bash
+
+        {
+            "mod_q" : <m_q>,
+            "sc_parameters" :
+            {
+                "lattice_a":<a>,
+                "lattice_b":<b>,
+                "lattice_c":<c>,
+                "lattice_alpha":<alpha>,
+                "lattice_beta":<beta>,
+                "lattice_gamma":<gamma>,
+                "lattice_unit_h":<h>,
+                "lattice_unit_k":<k>,
+                "lattice_unit_l":<l>
+            }
+        }
+
 * def update_sc_return_qmod(sc_data: dict) --> float :  The function updates the SingleCrystalParameters and returns qmod (get_qmod)
 
 **-- SingleCrystalParameters**
@@ -243,12 +261,12 @@ HyspecPPT View
 .. mermaid::
 
  classDiagram
-    HyspecPPTView "1" -->"1" SampleWidget
-    SampleWidget "1" -->"1" CrosshairWidget
+    HyspecPPTView "1" -->"1" ExperimentWidget
+    ExperimentWidget "1" -->"1" CrosshairWidget
     CrosshairWidget "1" -->"1" SingleCrystalParametersWidget
 
     class HyspecPPTView{
-        +SampleWidget:sample
+        +ExperimentWidget:experiment
         +PlotFigure:plot
         +QButton:help_btn
         +update_plot(q_min: list[float],q_max: list[float],energy_transfer: list[float], q2d: list[list[float]],e2d: list[list[float]], scharpf_angle: list[list[float]])
@@ -256,7 +274,7 @@ HyspecPPT View
 
     }
 
-    class SampleWidget{
+    class ExperimentWidget{
         +QLabel:ei_display
         +QLineEdit:ei_value
         +QLabel:s2_display
@@ -273,20 +291,20 @@ HyspecPPT View
     }
 
     class CrosshairWidget{
-        +QLabel:sample_type_display
-        +QRadioButton:sample_type_value
+        +QLabel:Eexperiment_type_display
+        +QRadioButton:experiment_type_value
         +QLabel:delta_e_display
         +QLineEdit:delta_e_value
         +QLabel:qmod_display
         +QLineEdit:qmod_value
         +SingleCrystalParametersWidget:single_crystal_parameters
-        +set_sample_options(sample_types:[str])
+        +set_experiment_options(experiment_types:[str])
         +set_plot_options(plot_types:[str])
         +set_qmod(qmod:float)
         +set_qmod_readonly(readonly:bool)
         +toggle_crystal_parameters(show:bool)
         +validation_status()
-        +sample_type_update()
+        +experiment_type_update()
         +parameters_update()
         +get_parameters()
 
@@ -331,11 +349,11 @@ The function signatures and description are included below.
 
 **-- CrosshairWidget**
 
-* def set_sample_options(sample_types:[str]) --> None : The function sets the Sample options (Single Crystal and Powder) to be used as radio button options during the widget's initialization.
+* def set_experiment_options(experiment_types:[str]) --> None : The function sets the Experiment options (Single Crystal and Powder) to be used as radio button options during the widget's initialization.
 * def set_plot_options(plot_types:[str]) --> None : The function sets the plot type options, e.g. alpha_s, to be used as combobox options during the widget's initialization.
 * def set_qmod(qmod:float) --> None: The function sets the mod_q value from qmod parameter.
 * def set_qmod_readonly(readonly:bool) --> None : The function sets/unsets the qmod text readonly property based on the readonly flag.
-* def sample_type_update() --> None :   The function wraps the Presenter call. Example usage: it is called on sample type radio toggled
+* def experiment_type_update() --> None :   The function wraps the Presenter call. Example usage: it is called on experiment type radio toggled
 * def parameters_update() --> None : The function wraps the Presenter call. Example usage: it is called at every parameter update event.
 * def toggle_crystal_parameters(show:bool) --> None : The function hides/shows the SingleCrystalParametersWidget based on the show flag.
 * def validation_status() --> Bool : The function checks all the CrosshairWidget's parameters' validation status. It returns True, if and only if all parameters are valid, else False.
@@ -343,15 +361,15 @@ The function signatures and description are included below.
      .. code-block:: bash
 
         {
-            "current_sample_type": "Powder",
+            "current_experiment_type": "Powder",
             "delta_e": <d_e>,
             "mod_q" : <m_q>
         }
 
-**-- SampleWidget**
+**-- ExperimentWidget**
 
 * def parameters_update() --> None : The function wraps the Presenter call. Example usage: it is called at every parameter update event.
-* def validation_status() --> Bool : The function checks all the SampleWidget's parameters' validation status. It returns True, if and only if all parameters are valid, else False.
+* def validation_status() --> Bool : The function checks all the ExperimentWidget's parameters' validation status. It returns True, if and only if all parameters are valid, else False.
 * def get_parameters() --> dict : The function packs/returns all parameters in a dictionary format as follows:
      .. code-block:: bash
 
@@ -410,12 +428,12 @@ HyspecPPT Presenter
     class HyspecPPTPresenter{
         -HyspecPPTModel:model
         -HyspecPPTView:view
-        +sample_parameters_update()
+        +experiment_parameters_update()
         +crosshair_parameters_update()
-        +sample_type_update()
+        +experiment_type_update()
         +sc_parameters_update()
         +get_plot_options()
-        +get_sample_type_options()
+        +get_experiment_type_options()
     }
 
     class HyspecPPTModel{
@@ -438,12 +456,12 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Presenter
 
             Note over View,Presenter: Application Start - HyspecPPTView Initialization
-            View->>Presenter: Get all available plot type options - SampleWidget::get_plot_options()
-            Note right of Presenter: get the PlotType Enum from sample_settings file
+            View->>Presenter: Get all available plot type options - ExperimentWidget::get_plot_options()
+            Note right of Presenter: get the PlotType Enum from experiment_settings file
             Presenter->>View: Return the list of plot types (str)
             Note left of View: Set and display the plot types in the plot_type_value combo box
 
-#. Display the available sample type options from the settings files: set_sample_type_options() at the View
+#. Display the available experiment type options from the settings files: set_experiment_type_options() at the View
 
     .. mermaid::
 
@@ -452,12 +470,12 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Presenter
 
             Note over View,Presenter: Application Start
-            View->>Presenter: Get all available sample type options - SampleWidget::get_sample_type_options()
-            Note right of Presenter: get the SampleType Enum from sample_settings file
-            Presenter->>View: Return the list of sample types (str)
-            Note left of View: Set and display the sample types in the sample_type_value radio buttons
+            View->>Presenter: Get all available experiment type options - ExperimentWidget::get_experiment_type_options()
+            Note right of Presenter: get the ExperimentType Enum from experiment_settings file
+            Presenter->>View: Return the list of experiment types (str)
+            Note left of View: Set and display the experiment types in the experiment_type_value radio buttons
 
-#. This describes the sequence of events happening among M-V-P when Sample parameters are updated in order to see a new plot : sample_parameters_update()
+#. This describes the sequence of events happening among M-V-P when Experiment parameters are updated in order to see a new plot : experiment_parameters_update()
 
     * Valid Status:
 
@@ -468,12 +486,12 @@ Any value processing and/or filtering to match the requirements and logic of the
                 participant Presenter
                 participant Model
 
-                Note over View,Model: Plot draw due to any SampleWidget parameter update
-                View->>Presenter: User updates a parameter at SampleWidget: ei_value, s2_value, p_value or plot_type_value
-                Note right of Presenter: Check the validation status of all SampleWidget parameters (SampleWidget.validation_status)
-                Presenter->>View: Gather the SampleWidget parameters (SampleWidget.get_parameters)
-                Presenter->>Model: Send the parameters to calculate plot (Sample.calculate_graph_data)
-                Note right of Model: Store the ei, s2 p and plot_type in Sample (Sample.store_data internally) and calculate plot data
+                Note over View,Model: Plot draw due to any ExperimentWidget parameter update
+                View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
+                Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
+                Presenter->>View: Gather the ExperimentWidget parameters (ExperimentWidget.get_parameters)
+                Presenter->>Model: Send the parameters to calculate plot (Experiment.calculate_graph_data)
+                Note right of Model: Store the ei, s2 p and plot_type in Experiment (Experiment.store_data internally) and calculate plot data
                 Model->>Presenter: Return graph data dictionary
                 Presenter->>View: Return graph data (HyspecPPTView.update_plot)
                 Note left of View: Draw the plot
@@ -487,9 +505,9 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Presenter
             participant Model
 
-            Note over View,Model: Crosshair update due to any SampleWidget parameter update
-            View->>Presenter: User updates a parameter at SampleWidget: ei_value, s2_value, p_value or plot_type_value
-            Note right of Presenter: Check the validation status of all SampleWidget parameters (SampleWidget.validation_status)
+            Note over View,Model: Crosshair update due to any ExperimentWidget parameter update
+            View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
+            Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
             Note right of Presenter: Invalid Status: Nothing
 
 #. This describes the sequence of events happening among M-V-P when Crosshair parameters delta_e_value and qmod_value are updated in order to draw crosshair on the plot : crosshair_parameters_update()
@@ -508,7 +526,7 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
                 Presenter->>View: Gather the CrosshairWidget parameters (CrosshairWidget.get_parameters)
                 Presenter->>Model: Send the parameters to calculate crosshair (CrosshairParameters.calculate_crosshair)
-                Note right of Model: Store the current_sample_type, delta_e, mod_q, sc_parameters in Sample (CrosshairParameters.store_data internally) SingleCrystalParameters (SingleCrystalParameters.store_data internally and calculate crosshair
+                Note right of Model: Store the current_experiment_type, delta_e, mod_q, sc_parameters in CrosshairParameters (CrosshairParameters.store_data internally) SingleCrystalParameters (SingleCrystalParameters.store_data internally and calculate crosshair
                 Model->>Presenter: Return crosshair
                 Presenter->>View: Return crosshair qline and eline (HyspecPPTView.update_crosshair)
                 Note left of View: Display the crosshair on the plot
@@ -526,12 +544,12 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
                 Note right of Presenter: Invalid Status: Nothing
 
-#. This describes the sequence of events happening among M-V-P when Crosshair parameter sample_type_value is updated in order to draw crosshair on the plot : sample_type_update().
-The presenter checks the value of sample_type_value and splits the workflow as follows
+#. This describes the sequence of events happening among M-V-P when Crosshair parameter experiment_type_value is updated in order to draw crosshair on the plot : experiment_type_update().
+The presenter checks the value of experiment_type_value and splits the workflow as follows
 
     * Valid Status:
 
-        * sample_type_value is set to Powder
+        * experiment_type_value is set to Powder
 
             .. mermaid::
 
@@ -540,13 +558,13 @@ The presenter checks the value of sample_type_value and splits the workflow as f
                     participant Presenter
                     participant Model
 
-                    Note over View,Model: Crosshair draw due to CrosshairWidget sample_type_value update
-                    View->>Presenter: User updates sample_type_value to Powder
-                    Presenter->>View: Hide the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and enable the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
+                    Note over View,Model: Crosshair draw due to CrosshairWidget experiment_type_value update
+                    View->>Presenter: User updates experiment_type_value to Powder
                     Presenter->>View: Gather the CrosshairWidget  parameters (CrosshairWidget.get_parameters)
-                    Presenter->>Model: Send the sample type to be saved in the model
+                    Presenter->>Model: Send the experiment type to be saved in the model
+                    Presenter->>View: Hide the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and enable the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
 
-        * sample_type_value is set to Single Crystal
+        * experiment_type_value is set to Single Crystal
 
             .. mermaid::
 
@@ -555,18 +573,18 @@ The presenter checks the value of sample_type_value and splits the workflow as f
                     participant Presenter
                     participant Model
 
-                    Note over View,Model: Crosshair draw due to CrosshairWidget sample_type_value update
-                    View->>Presenter: User updates sample_type_value to Single Crystal
-                    Presenter->>View: Show the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and disable the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
-                    Presenter->>Model: Send the sample type to calculate qmod (CrosshairParameters.update_sample_type_return_qmod)
+                    Note over View,Model: Crosshair draw due to CrosshairWidget experiment_type_value update
+                    View->>Presenter: User updates experiment_type_value to Single Crystal
+                    Presenter->>Model: Send the experiment type to calculate qmod (CrosshairParameters.update_experiment_type_return_qmod_data)
                     Model->>Presenter: Return qmod and stored CrosshairParameters
-                    Presenter->>View: Return qmod (CrosshairWidget.set_qmod), CrosshairParameters.set_parameters()
+                    Presenter->>View: Show the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and disable the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
+                    Presenter->>View: Return qmod (CrosshairWidget.set_qmod), SingleCrystalParametersWidget.set_parameters()
                     Note left of View: Display the qmod_value
-                    Note left of View: Display the CrosshairParameters values
+                    Note left of View: Display the SingleCrystalParameters values
                     Note left of View: crosshair_parameters_update is triggered
 
 
-    On sample type change, qmod is recalculated based on the CrosshairParameters and SingleCrystalParameters. Thus, if the user's qmod value was invalid, it will be ignored.
+    On experiment type change, qmod is recalculated based on SingleCrystalParameters for Single Crystal mode. Thus, if the user's qmod value was invalid, it will be ignored.
 
 
 #. This describes the sequence of events happening among M-V-P when Single Crystal parameters are updated in order to draw crosshair : sc_parameters_update()
