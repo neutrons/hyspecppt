@@ -3,7 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - python>=3.10
-  - pyqt == 6.*
+  - pyqt == 5.*
   - qtpy
   - scipy
   - numpy
