@@ -571,8 +571,7 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
                 Note right of Presenter: Invalid Status: Nothing
 
-#. This describes the sequence of events happening among M-V-P when Crosshair parameter experiment_type_value is updated in order to draw crosshair on the plot : experiment_type_update().
-The presenter checks the value of experiment_type_value and splits the workflow as follows
+#. This describes the sequence of events happening among M-V-P when Crosshair parameter experiment_type_value is updated in order to draw crosshair on the plot : experiment_type_update(). The presenter checks the value of experiment_type_value and splits the workflow as follows
 
     * Valid Status:
 
