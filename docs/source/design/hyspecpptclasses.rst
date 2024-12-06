@@ -543,13 +543,8 @@ The presenter checks the value of sample_type_value and splits the workflow as f
                     Note over View,Model: Crosshair draw due to CrosshairWidget sample_type_value update
                     View->>Presenter: User updates sample_type_value to Powder
                     Presenter->>View: Hide the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and enable the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
-                    Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
                     Presenter->>View: Gather the CrosshairWidget  parameters (CrosshairWidget.get_parameters)
-                    Presenter->>Model: Send the sample type to calculate qmod (CrosshairParameters.update_sample_type_return_qmod)
-                    Model->>Presenter: Return qmod
-                    Presenter->>View: Return qmod (CrosshairWidget.set_qmod)
-                    Note left of View: Display the qmod_value
-                    Note left of View: crosshair_parameters_update is triggered
+                    Presenter->>Model: Send the sample type to be saved in the model
 
         * sample_type_value is set to Single Crystal
 
@@ -563,12 +558,11 @@ The presenter checks the value of sample_type_value and splits the workflow as f
                     Note over View,Model: Crosshair draw due to CrosshairWidget sample_type_value update
                     View->>Presenter: User updates sample_type_value to Single Crystal
                     Presenter->>View: Show the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and disable the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
-                    Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
-                    Presenter->>View:: Gather the CrosshairWidget and SingleCrystalParametersWidget parameters (CrosshairWidget/SingleCrystalParametersWidget.get_parameters)
                     Presenter->>Model: Send the sample type to calculate qmod (CrosshairParameters.update_sample_type_return_qmod)
-                    Model->>Presenter: Return qmod
-                    Presenter->>View: Return qmod (CrosshairWidget.set_qmod)
+                    Model->>Presenter: Return qmod and stored CrosshairParameters
+                    Presenter->>View: Return qmod (CrosshairWidget.set_qmod), CrosshairParameters.set_parameters()
                     Note left of View: Display the qmod_value
+                    Note left of View: Display the CrosshairParameters values
                     Note left of View: crosshair_parameters_update is triggered
 
 
@@ -590,7 +584,7 @@ The presenter checks the value of sample_type_value and splits the workflow as f
                 View->>Presenter: User updates any parameter at SingleCrystalParametersWidget
                 Note right of Presenter: Check the validation status of all SingleCrystalParametersWidget parameters (SingleCrystalParametersWidget.validation_status)
                 Presenter->>View: Gather the SingleCrystalParametersWidget parameters (SingleCrystalParametersWidget.get_parameters)
-                Note right of Model: Send the parameters
+                Presenter->>Model: Send the parameters
                 Note right of Model: Update Single CrystalParameters and calculate the qmod value (update_sc_return_qmod)
                 Model->>Presenter: Return qmod
                 Presenter->>View: Return qmod (CrosshairWidget.set_qmod)
