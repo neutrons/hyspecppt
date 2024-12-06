@@ -471,7 +471,7 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Note over View,Model: Plot draw due to any SampleWidget parameter update
                 View->>Presenter: User updates a parameter at SampleWidget: ei_value, s2_value, p_value or plot_type_value
                 Note right of Presenter: Check the validation status of all SampleWidget parameters (SampleWidget.validation_status)
-                Note right of Presenter: Valid Status: Gather the SampleWidget parameters (SampleWidget.get_parameters)
+                Presenter->>View: Gather the SampleWidget parameters (SampleWidget.get_parameters)
                 Presenter->>Model: Send the parameters to calculate plot (Sample.calculate_graph_data)
                 Note right of Model: Store the ei, s2 p and plot_type in Sample (Sample.store_data internally) and calculate plot data
                 Model->>Presenter: Return graph data dictionary
@@ -494,22 +494,37 @@ Any value processing and/or filtering to match the requirements and logic of the
 
 #. This describes the sequence of events happening among M-V-P when Crosshair parameters delta_e_value and qmod_value are updated in order to draw crosshair on the plot : crosshair_parameters_update()
 
-    .. mermaid::
+    * Valid Status:
 
-        sequenceDiagram
-            participant View
-            participant Presenter
-            participant Model
+        .. mermaid::
 
-            Note over View,Model: Crosshair draw due to CrosshairWidget delta_e_value or qmod_value update
-            View->>Presenter: User (or programmatically) updates a parameter at CrosshairWidget: delta_e_value or qmod_value
-            Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
-            Note right of Presenter: Valid Status: Gather the CrosshairWidget parameters (CrosshairWidget.get_parameters)
-            Presenter->>Model: Send the parameters to calculate crosshair (CrosshairParameters.calculate_crosshair)
-            Note right of Model: Store the current_sample_type, delta_e, mod_q, sc_parameters in Sample (CrosshairParameters.store_data internally) SingleCrystalParameters (SingleCrystalParameters.store_data internally and calculate crosshair
-            Model->>Presenter: Return crosshair
-            Presenter->>View: Return crosshair qline and eline (HyspecPPTView.update_crosshair)
-            Note left of View: Display the crosshair on the plot
+            sequenceDiagram
+                participant View
+                participant Presenter
+                participant Model
+
+                Note over View,Model: Crosshair draw due to CrosshairWidget delta_e_value or qmod_value update
+                View->>Presenter: User (or programmatically) updates a parameter at CrosshairWidget: delta_e_value or qmod_value
+                Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
+                Presenter->>View: Gather the CrosshairWidget parameters (CrosshairWidget.get_parameters)
+                Presenter->>Model: Send the parameters to calculate crosshair (CrosshairParameters.calculate_crosshair)
+                Note right of Model: Store the current_sample_type, delta_e, mod_q, sc_parameters in Sample (CrosshairParameters.store_data internally) SingleCrystalParameters (SingleCrystalParameters.store_data internally and calculate crosshair
+                Model->>Presenter: Return crosshair
+                Presenter->>View: Return crosshair qline and eline (HyspecPPTView.update_crosshair)
+                Note left of View: Display the crosshair on the plot
+
+    * Invalid Status:
+        .. mermaid::
+
+            sequenceDiagram
+                participant View
+                participant Presenter
+                participant Model
+
+                Note over View,Model: Crosshair draw due to CrosshairWidget delta_e_value or qmod_value update
+                View->>Presenter: User (or programmatically) updates a parameter at CrosshairWidget: delta_e_value or qmod_value
+                Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
+                Note right of Presenter: Invalid Status: Nothing
 
 #. This describes the sequence of events happening among M-V-P when Crosshair parameter sample_type_value is updated in order to draw crosshair on the plot : sample_type_update().
 The presenter checks the value of sample_type_value and splits the workflow as follows
@@ -529,7 +544,7 @@ The presenter checks the value of sample_type_value and splits the workflow as f
                     View->>Presenter: User updates sample_type_value to Powder
                     Presenter->>View: Hide the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and enable the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
                     Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
-                    Note right of Presenter: Valid Status
+                    Presenter->>View:: Gather the CrosshairWidget  parameters (CrosshairWidget.get_parameters)
                     Presenter->>Model: Send the sample type to calculate qmod (CrosshairParameters.update_sample_type_return_qmod)
                     Model->>Presenter: Return qmod
                     Presenter->>View: Return qmod (CrosshairWidget.set_qmod)
@@ -549,7 +564,7 @@ The presenter checks the value of sample_type_value and splits the workflow as f
                     View->>Presenter: User updates sample_type_value to Single Crystal
                     Presenter->>View: Show the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and disable the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
                     Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
-                    Note right of Presenter: Valid Status: Gather the CrosshairWidget and SingleCrystalParametersWidget parameters (CrosshairWidget/SingleCrystalParametersWidget.get_parameters)
+                    Presenter->>View:: Gather the CrosshairWidget and SingleCrystalParametersWidget parameters (CrosshairWidget/SingleCrystalParametersWidget.get_parameters)
                     Presenter->>Model: Send the sample type to calculate qmod (CrosshairParameters.update_sample_type_return_qmod)
                     Model->>Presenter: Return qmod
                     Presenter->>View: Return qmod (CrosshairWidget.set_qmod)
@@ -574,7 +589,7 @@ The presenter checks the value of sample_type_value and splits the workflow as f
                 Note over View,Model: Crosshair update due to any SingleCrystalParametersWidget parameter update
                 View->>Presenter: User updates any parameter at SingleCrystalParametersWidget
                 Note right of Presenter: Check the validation status of all SingleCrystalParametersWidget parameters (SingleCrystalParametersWidget.validation_status)
-                Note right of Presenter: Valid Status: Gather the SingleCrystalParametersWidget parameters (SingleCrystalParametersWidget.get_parameters)
+                Presenter->>View: Gather the SingleCrystalParametersWidget parameters (SingleCrystalParametersWidget.get_parameters)
                 Note right of Model: Send the parameters
                 Note right of Model: Update Single CrystalParameters and calculate the qmod value (update_sc_return_qmod)
                 Model->>Presenter: Return qmod
