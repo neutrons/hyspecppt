@@ -5,6 +5,7 @@ dependencies:
   - python>=3.10
   - pyqt == 5.*
   - qtpy
+  - scipy
   - numpy
   - matplotlib #resolves pyside 6 error * !! 0we want the latest version
   - pre-commit
