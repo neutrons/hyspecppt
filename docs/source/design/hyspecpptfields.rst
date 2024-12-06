@@ -145,6 +145,7 @@ Validation
 ----------
 
 Regarding validation, if all fields are valid, then the front end triggers the backend to send the current parameters and receive the new data and plot the graph.
+If a user types an invalid value, then a red border appears.
 
 
 Front end side validation can include:
