@@ -33,7 +33,6 @@ every time there are new valid values received from the user (front end).
         +calculate_graph_data(incident_energy_e:float, detector_tank_angle_s:float,polarization_direction_angle_p:float,plot_type:str)
         +store_data(incident_energy_e:float, detector_tank_angle_s:float,polarization_direction_angle_p:float,plot_type:str)
         -get_emin(delta_e, incident_energy_e)
-        +get_qmod()
     }
 
 
@@ -47,6 +46,7 @@ every time there are new valid values received from the user (front end).
         +store_data(current_sample_type:str, delta_e:float, mod_q:float, sc_parameters:dictr)
         +set_sample_type(sample_type:str)
         +update_sample_type_return_qmod(sample_type:str)
+        +update_sc_return_qmod(sc_data: dict)
     }
 
     class SingleCrystalParameters{
@@ -426,8 +426,6 @@ HyspecPPT Presenter
         #from above
     }
 
-
-
 The Presenter describes the main workflows that require communication and coordination between the Model and View through the Presenter. Additionally, it includes 2 functions that retrieves the options  from the settings files for the View.
 Any value processing and/or filtering to match the requirements and logic of the View and Model side should happen on the Presenter.
 
@@ -562,7 +560,7 @@ The presenter checks the value of sample_type_value and splits the workflow as f
     On sample type change, qmod is recalculated based on the CrosshairParameters and SingleCrystalParameters. Thus, if the qmod value was invalid, it will be ignored.
 
 
-#. This describes the sequence of events happening among M-V-P when Single Crystal parameters are updated in order to see a new plot : sc_parameters_update()
+#. This describes the sequence of events happening among M-V-P when Single Crystal parameters are updated in order to draw crosshair : sc_parameters_update()
 
     * Valid Status:
 
