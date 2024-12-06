@@ -430,8 +430,12 @@ HyspecPPT Presenter
     class HyspecPPTPresenter{
         -HyspecPPTModel:model
         -HyspecPPTView:view
-        +update_plot()
-        +update_crosshair()
+        -update_plot() //might not be needed
+        -update_crosshair()
+        +sample_parameters_update()
+        +crosshair_parameters_update()
+        +sample_type_update
+        +sc_parameters_update
         +get_plot_options()
         +get_sample_type_options()
     }
@@ -444,44 +448,9 @@ HyspecPPT Presenter
         #from above
     }
 
-* parameters_update
-* sample parameters_update
-* sample sample type update
-* sc parameters_update
 
-* def check_parameters_and_send_data() --> dict : The function checks the status of all parameters, (validation_status) and if every parameter is valid it packs/returns the parameters in a dictionary. Example usage: on every text editingFinished, and combobox currentIndexChanged
 
-    .. code-block:: bash
-
-        {
-            "current_sample_type": <sample_type>,
-            "delta_e": <d_e>,
-            "mod_q" : <m_q>,
-            "sc_parameters" :
-            {
-                "lattice_a":<a>,
-                "lattice_b":<b>,
-                "lattice_c":<c>,
-                "lattice_alpha":<alpha>,
-                "lattice_beta":<beta>,
-                "lattice_gamma":<gamma>,
-                "lattice_unit_h":<h>,
-                "lattice_unit_k":<k>,
-                "lattice_unit_l":<l>
-            }
-        }
-
-* def check_parameters_and_send_data() --> dict : The function checks the status of all parameters, (validation_status) and if every parameter is valid it packs/returns the parameters in a dictionary. Example usage: on every text editingFinished, and combobox currentIndexChanged
-    .. code-block:: bash
-
-        {
-            "incident_energy_e": <e>,
-            "detector_tank_angle_s" : <s2>,
-            "polarization_direction_angle_p" :<ao>,
-            "delta_e": <d_e>,
-        }
-
-The Presenter describes the 2 main workflows that require communication and coordination between the Model and View through the Presenter. Additionally, it includes 2 functions that retrieves the options  from the settings files for the View.
+The Presenter describes the main workflows that require communication and coordination between the Model and View through the Presenter. Additionally, it includes 2 functions that retrieves the options  from the settings files for the View.
 Any value processing and/or filtering to match the requirements and logic of the View and Model side should happen on the Presenter.
 
 #. Get available plot types from the settings files: get_plot_options()
@@ -493,10 +462,11 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Presenter
 
             Note over View,Presenter: Application Start - HyspecPPTView Initialization
+            Note right of View: HyspecPPTView Initialization - set_sample_options
             View->>Presenter: Get all available plot type options - SampleWidget::get_plot_options()
             Note right of Presenter: get the PlotType Enum from sample_settings file
             Presenter->>View: Return the list of plot types (str)
-            Note left of View: Display the plot types in the plot_type_value combo box
+            Note left of View: Set and display the plot types in the plot_type_value combo box
 
 #. Get available sample type options from the settings files: get_sample_type_options()
 
@@ -506,13 +476,14 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant View
             participant Presenter
 
-            Note over View,Presenter: Application Start - HyspecPPTView Initialization
+            Note over View,Presenter: Application Start
+            Note right of View: HyspecPPTView Initialization - set_plot_options
             View->>Presenter: Get all available sample type options - SampleWidget::get_sample_type_options()
             Note right of Presenter: get the SampleType Enum from sample_settings file
             Presenter->>View: Return the list of sample types (str)
-            Note left of View: Display the sample types in the plot_type_value radio buttons
+            Note left of View: Set and display the sample types in the plot_type_value radio buttons
 
-#. This describes the sequence of events happening among M-V-P when Sample parameters (except from sample type) are updated in order to see a new plot : update_plot()
+#. This describes the sequence of events happening among M-V-P when Sample parameters (except from sample type) are updated in order to see a new plot : sample_parameters_update()
 
     .. mermaid::
 
@@ -521,13 +492,13 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Presenter
             participant Model
 
-            Note over View,Model: Plot Update due to any Sample parameter (except from sample type) update
+            Note over View,Model: Crosshair update due to any Sample parameter (except from sample type) update
             View->>Presenter: User updates a parameter at SampleWidget (except from sample type)
             Note right of Presenter: get the SampleType Enum from sample_settings file
             Presenter->>View: Return the list of sample types (str)
             Note left of View: Display the sample types in the plot_type_value radio buttons
 
-#. This describes the sequence of events happening among M-V-P when Single Crystal parameters are updated in order to see a new plot : update_plot()
+#. This describes the sequence of events happening among M-V-P when Sample parameters (except from sample type) are updated in order to see a new plot : crosshair_parameters_update()
 
     .. mermaid::
 
@@ -536,14 +507,29 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Presenter
             participant Model
 
-            Note over View,Model: Plot Update due to any Single Crystal parameter
+            Note over View,Model: Crosshair update due to any Sample parameter (except from sample type) update
+            View->>Presenter: User updates a parameter at SampleWidget (except from sample type)
+            Note right of Presenter: get the SampleType Enum from sample_settings file
+            Presenter->>View: Return the list of sample types (str)
+            Note left of View: Display the sample types in the plot_type_value radio buttons
+
+#. This describes the sequence of events happening among M-V-P when Single Crystal parameters are updated in order to see a new plot : sc_parameters_update()
+
+    .. mermaid::
+
+        sequenceDiagram
+            participant View
+            participant Presenter
+            participant Model
+
+            Note over View,Model: Crosshair update due to any Single Crystal parameter
             View->>Presenter: User updates a parameter at SingleCrystalWidget
             Note right of Presenter: get the SampleType Enum from sample_settings file
             Presenter->>View: Return the list of sample types (str)
             Note left of View: Display the sample types in the plot_type_value radio buttons
 
 
-#. This describes the sequence of events happening among M-V-P when only the sample type is updated in order to see a new plot : update_crosshair()  //qmod value field, and sc parameters values block
+#. This describes the sequence of events happening among M-P when update_crosshair() is called from the Presenter
 
     .. mermaid::
 
@@ -552,11 +538,13 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Presenter
             participant Model
 
-            Note over View,Model: Plot update due to sample type change
-            View->>Presenter: User updates the sample_type_value at SampleWidget
+            Note over View,Model: Crosshair update due to any Single Crystal parameter
+            View->>Presenter: User updates a parameter at SingleCrystalWidget
             Note right of Presenter: get the SampleType Enum from sample_settings file
             Presenter->>View: Return the list of sample types (str)
             Note left of View: Display the sample types in the plot_type_value radio buttons
+
+
 
 
 
