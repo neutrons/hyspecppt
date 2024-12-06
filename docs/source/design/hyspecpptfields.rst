@@ -55,13 +55,13 @@ Below are the fields of SingleCrystal and Powder sample Models
     -
     - 0
     -
-    - no
+    - yes
   * - mod Q (\|Q\|)
     - Double
     -
     - 0
     - 0 <= \|Q\| <=10
-    - no
+    - yes
   * - Plot Type
     - String
     - predefined choices: :math:`[ \alpha_s, \cos^2(\alpha_s),  (1+\cos^2(\alpha_s))/2 ]`

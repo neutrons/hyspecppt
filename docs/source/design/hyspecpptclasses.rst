@@ -285,6 +285,8 @@ HyspecPPT View
         +QLineEdit:s2_value
         +QLabel:p_display
         +QLineEdit:p_value
+        +QLabel:plot_type_display
+        +QComboBox:plot_type_value
         +CrosshairWidget:crosshair_parameters
         +validation_status()
         +parameters_update()
@@ -299,12 +301,11 @@ HyspecPPT View
         +QLineEdit:delta_e_value
         +QLabel:qmod_display
         +QLineEdit:qmod_value
-        +QLabel:plot_type_display
-        +QComboBox:plot_type_value
         +SingleCrystalParametersWidget:single_crystal_parameters
         +set_sample_options(sample_types:[str])
         +set_plot_options(plot_types:[str])
         +set_qmod(qmod:float)
+        +set_qmod_readonly(readonly:bool)
         +toggle_crystal_parameters(show:bool)
         +validation_status()
         +sample_type_update()
@@ -355,6 +356,7 @@ The function signatures and description are included below.
 * def set_sample_options(sample_types:[str]) --> None : The function sets the Sample options (Single Crystal and Powder) to be used as radio button options during the widget's initialization.
 * def set_plot_options(plot_types:[str]) --> None : The function sets the plot type options, e.g. alpha_s, to be used as combobox options during the widget's initialization.
 * def set_qmod(qmod:float) --> None: The function sets the mod_q value from qmod parameter.
+* def set_qmod_readonly(readonly:bool) --> None : The function sets/unsets the qmod text readonly property based on the readonly flag.
 * def sample_type_update() --> None :   The function wraps the Presenter call. Example usage: it is called on sample type radio toggled
 * def parameters_update() --> None : The function wraps the Presenter call. Example usage: it is called at every parameter update event.
 * def toggle_crystal_parameters(show:bool) --> None : The function hides/shows the SingleCrystalParametersWidget based on the show flag.
@@ -365,8 +367,7 @@ The function signatures and description are included below.
         {
             "current_sample_type": "Powder",
             "delta_e": <d_e>,
-            "mod_q" : <m_q>,
-            "plot_type" : <g_a>,
+            "mod_q" : <m_q>
         }
 
 **-- SampleWidget**
@@ -380,6 +381,7 @@ The function signatures and description are included below.
             "incident_energy_e": <e>,
             "detector_tank_angle_s" : <s2>,
             "polarization_direction_angle_p" :<ao>,
+            "plot_type" : <g_a>
         }
 
 **-- SingleCrystalParametersWidget**
@@ -430,12 +432,10 @@ HyspecPPT Presenter
     class HyspecPPTPresenter{
         -HyspecPPTModel:model
         -HyspecPPTView:view
-        -update_plot() //might not be needed
-        -update_crosshair()
         +sample_parameters_update()
         +crosshair_parameters_update()
-        +sample_type_update
-        +sc_parameters_update
+        +sample_type_update()
+        +sc_parameters_update()
         +get_plot_options()
         +get_sample_type_options()
     }
@@ -453,7 +453,7 @@ HyspecPPT Presenter
 The Presenter describes the main workflows that require communication and coordination between the Model and View through the Presenter. Additionally, it includes 2 functions that retrieves the options  from the settings files for the View.
 Any value processing and/or filtering to match the requirements and logic of the View and Model side should happen on the Presenter.
 
-#. Get available plot types from the settings files: get_plot_options()
+#. Display the available plot types from the settings files: set_plot_options() at the View
 
     .. mermaid::
 
@@ -462,13 +462,12 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Presenter
 
             Note over View,Presenter: Application Start - HyspecPPTView Initialization
-            Note right of View: HyspecPPTView Initialization - set_sample_options
             View->>Presenter: Get all available plot type options - SampleWidget::get_plot_options()
             Note right of Presenter: get the PlotType Enum from sample_settings file
             Presenter->>View: Return the list of plot types (str)
             Note left of View: Set and display the plot types in the plot_type_value combo box
 
-#. Get available sample type options from the settings files: get_sample_type_options()
+#. Display the available sample type options from the settings files: set_sample_type_options() at the View
 
     .. mermaid::
 
@@ -477,13 +476,33 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Presenter
 
             Note over View,Presenter: Application Start
-            Note right of View: HyspecPPTView Initialization - set_plot_options
             View->>Presenter: Get all available sample type options - SampleWidget::get_sample_type_options()
             Note right of Presenter: get the SampleType Enum from sample_settings file
             Presenter->>View: Return the list of sample types (str)
-            Note left of View: Set and display the sample types in the plot_type_value radio buttons
+            Note left of View: Set and display the sample types in the sample_type_value radio buttons
 
-#. This describes the sequence of events happening among M-V-P when Sample parameters (except from sample type) are updated in order to see a new plot : sample_parameters_update()
+#. This describes the sequence of events happening among M-V-P when Sample parameters are updated in order to see a new plot : sample_parameters_update()
+
+    * Valid Status:
+
+        .. mermaid::
+
+            sequenceDiagram
+                participant View
+                participant Presenter
+                participant Model
+
+                Note over View,Model: Plot draw due to any SampleWidget parameter update
+                View->>Presenter: User updates a parameter at SampleWidget: ei_value, s2_value, p_value or plot_type_value
+                Note right of Presenter: Check the validation status of all SampleWidget parameters (SampleWidget.validation_status)
+                Note right of Presenter: Valid Status: Gather the SampleWidget parameters (SampleWidget.get_parameters)
+                Presenter->>Model: Send the parameters to calculate plot (Sample.calculate_graph_data)
+                Note right of Model: Store the ei, s2 p and plot_type in Sample (Sample.store_data internally) and calculate plot data
+                Model->>Presenter: Return graph data dictionary
+                Presenter->>View: Return graph data (HyspecPPTView.update_plot)
+                Note left of View: Draw the plot
+
+    * Invalid Status:
 
     .. mermaid::
 
@@ -492,13 +511,12 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Presenter
             participant Model
 
-            Note over View,Model: Crosshair update due to any Sample parameter (except from sample type) update
-            View->>Presenter: User updates a parameter at SampleWidget (except from sample type)
-            Note right of Presenter: get the SampleType Enum from sample_settings file
-            Presenter->>View: Return the list of sample types (str)
-            Note left of View: Display the sample types in the plot_type_value radio buttons
+            Note over View,Model: Crosshair update due to any SampleWidget parameter update
+            View->>Presenter: User updates a parameter at SampleWidget: ei_value, s2_value, p_value or plot_type_value
+            Note right of Presenter: Check the validation status of all SampleWidget parameters (SampleWidget.validation_status)
+            Note right of Presenter: Invalid Status: Nothing
 
-#. This describes the sequence of events happening among M-V-P when Sample parameters (except from sample type) are updated in order to see a new plot : crosshair_parameters_update()
+#. This describes the sequence of events happening among M-V-P when Crosshair parameters delta_e_value and qmod_value are updated in order to draw crosshair on the plot : crosshair_parameters_update()
 
     .. mermaid::
 
@@ -507,55 +525,115 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Presenter
             participant Model
 
-            Note over View,Model: Crosshair update due to any Sample parameter (except from sample type) update
-            View->>Presenter: User updates a parameter at SampleWidget (except from sample type)
-            Note right of Presenter: get the SampleType Enum from sample_settings file
-            Presenter->>View: Return the list of sample types (str)
-            Note left of View: Display the sample types in the plot_type_value radio buttons
+            Note over View,Model: Crosshair draw due to CrosshairWidget delta_e_value or qmod_value update
+            View->>Presenter: User (or programmatically) updates a parameter at CrosshairWidget: delta_e_value or qmod_value
+            Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
+            Note right of Presenter: Valid Status: Gather the CrosshairWidget parameters (CrosshairWidget.get_parameters)
+            Presenter->>Model: Send the parameters to calculate crosshair (Sample.calculate_crosshair)
+            Note right of Model: Store the current_sample_type, delta_e, mod_q, sc_parameters in Sample (Sample.store_data internally) SingleCrystalParameters (SingleCrystalParameters.store_data internally and calculate crosshair
+            Model->>Presenter: Return crosshair
+            Presenter->>View: Return crosshair qline and eline (HyspecPPTView.update_crosshair)
+            Note left of View: Display the crosshair on the plot
+
+#. This describes the sequence of events happening among M-V-P when Crosshair parameter sample_type_value is updated in order to draw crosshair on the plot : sample_type_update().
+The presenter checks the value of sample_type_value and splits the workflow as follows
+
+    * Valid Status:
+
+        * sample_type_value is set to Powder
+
+            .. mermaid::
+
+                sequenceDiagram
+                    participant View
+                    participant Presenter
+                    participant Model
+
+                    Note over View,Model: Crosshair draw due to CrosshairWidget sample_type_value update
+                    View->>Presenter: User updates sample_type_value to Powder
+                    Presenter->>View: Hide the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and enable the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
+                    Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
+                    Note right of Presenter: Valid Status: Gather the CrosshairWidget parameters (CrosshairWidget.get_parameters)
+                    Presenter->>Model: Send the parameters to calculate crosshair (Sample.calculate_crosshair)
+                    Note right of Model: Store the parameters in Sample (Sample.store_data internally) and calculate crosshair
+                    Model->>Presenter: Return crosshair
+                    Presenter->>View: Return crosshair qline and eline (HyspecPPTView.update_crosshair)
+                    Note left of View: Display the crosshair on the plot
+
+        * sample_type_value is set to Single Crystal
+
+            .. mermaid::
+
+                sequenceDiagram
+                    participant View
+                    participant Presenter
+                    participant Model
+
+                    Note over View,Model: Crosshair draw due to CrosshairWidget sample_type_value update
+                    View->>Presenter: User updates sample_type_value to Single Crystal
+                    Presenter->>View: Show the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and disable the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
+                    Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
+                    Note right of Presenter: Valid Status: Gather the CrosshairWidget and SingleCrystalParametersWidget parameters (CrosshairWidget/SingleCrystalParametersWidget.get_parameters)
+                    Presenter->>Model: Send the parameters to calculate crosshair (Sample.calculate_crosshair)
+                    Note right of Model: Store the parameters in Sample (Sample/SingleCrystalParameters.store_data internally) and calculate crosshair
+                    Model->>Presenter: Return crosshair
+                    Presenter->>View: Return crosshair qline and eline (HyspecPPTView.update_crosshair)
+                    Note left of View: Display the crosshair on the plot
+
+    * Invalid qmod:
+
+        .. mermaid::
+
+            sequenceDiagram
+                participant View
+                participant Presenter
+                participant Model
+
+                Note over View,Model: Crosshair draw due to CrosshairWidget sample_type_value update
+                View->>Presenter: User updates a parameter at CrosshairWidget: sample_type_value
+                Presenter->>View: Toggle the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and enables/disables the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
+                Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
+                Note right of Presenter: Valid Status except from qmod: Gather the CrosshairWidget parameters (CrosshairWidget.get_parameters)
+                Presenter->>Model: Get the stored qmod (Sample.get_qmod)
+                Model->>Presenter: Return qmod
+                Presenter->>View: Return qmod (CrosshairWidget.set_qmod)
+                Note left of View: Display the qmod_value
+                Note left of View: crosshair_parameters_update is triggered
+
+
 
 #. This describes the sequence of events happening among M-V-P when Single Crystal parameters are updated in order to see a new plot : sc_parameters_update()
 
-    .. mermaid::
+    * Valid Status:
 
-        sequenceDiagram
-            participant View
-            participant Presenter
-            participant Model
+        .. mermaid::
 
-            Note over View,Model: Crosshair update due to any Single Crystal parameter
-            View->>Presenter: User updates a parameter at SingleCrystalWidget
-            Note right of Presenter: get the SampleType Enum from sample_settings file
-            Presenter->>View: Return the list of sample types (str)
-            Note left of View: Display the sample types in the plot_type_value radio buttons
+            sequenceDiagram
+                participant View
+                participant Presenter
+                participant Model
 
-
-#. This describes the sequence of events happening among M-P when update_crosshair() is called from the Presenter
-
-    .. mermaid::
-
-        sequenceDiagram
-            participant View
-            participant Presenter
-            participant Model
-
-            Note over View,Model: Crosshair update due to any Single Crystal parameter
-            View->>Presenter: User updates a parameter at SingleCrystalWidget
-            Note right of Presenter: get the SampleType Enum from sample_settings file
-            Presenter->>View: Return the list of sample types (str)
-            Note left of View: Display the sample types in the plot_type_value radio buttons
+                Note over View,Model: Crosshair update due to any SingleCrystalParametersWidget parameter update
+                View->>Presenter: User updates any parameter at SingleCrystalParametersWidget
+                Note right of Presenter: Check the validation status of all SingleCrystalParametersWidget parameters (SingleCrystalParametersWidget.validation_status)
+                Note right of Presenter: Valid Status: Gather the SingleCrystalParametersWidget parameters (SingleCrystalParametersWidget.get_parameters)
+                Presenter->>Model: Send the parameters to calculate qmod (Sample.update_qmod)
+                Note right of Model: Calculate and store the qmod value in Sample (Sample.store_data internally)
+                Model->>Presenter: Return qmod
+                Presenter->>View: Return qmod (CrosshairWidget.set_qmod)
+                Note left of View: Display the qmod_value
+                Note left of View: crosshair_parameters_update is triggered
 
 
+    * Invalid Status:
 
+        .. mermaid::
 
-
-Powder: crosshair (x,y lines) are updated from deltaE and Qmod.
-If only Qmod is updated, then the crosshair can be updated in the front end. The only thing needed at this point is to store the new Qmod in the model.
-if only DeltaE is updated:
-* check if the plot data need to redrawned
-* redraw the crosshair
-in the model split crosshair and plot data calculations
-Single Crystal: parameters are responsible only for the mod Q
-
-update_crosshair
-update_plot
-when switching from Powder to Single Crystal and back, the only thing affected is the (modQ) crosshair. Only mod Q is kept and updated between sample switches
+            sequenceDiagram
+                participant View
+                participant Presenter
+                participant Model
+                Note over View,Model: Crosshair update due to any SingleCrystalParametersWidget parameter update
+                View->>Presenter: User updates any parameter at SingleCrystalParametersWidget
+                Note right of Presenter: Check the validation status of all SingleCrystalParametersWidget parameters (SingleCrystalParametersWidget.validation_status)
+                Note right of Presenter: Invalid Status: Nothing
