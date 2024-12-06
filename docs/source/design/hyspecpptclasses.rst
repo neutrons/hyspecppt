@@ -544,7 +544,7 @@ The presenter checks the value of sample_type_value and splits the workflow as f
                     View->>Presenter: User updates sample_type_value to Powder
                     Presenter->>View: Hide the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and enable the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
                     Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
-                    Presenter->>View:: Gather the CrosshairWidget  parameters (CrosshairWidget.get_parameters)
+                    Presenter->>View: Gather the CrosshairWidget  parameters (CrosshairWidget.get_parameters)
                     Presenter->>Model: Send the sample type to calculate qmod (CrosshairParameters.update_sample_type_return_qmod)
                     Model->>Presenter: Return qmod
                     Presenter->>View: Return qmod (CrosshairWidget.set_qmod)
@@ -572,7 +572,7 @@ The presenter checks the value of sample_type_value and splits the workflow as f
                     Note left of View: crosshair_parameters_update is triggered
 
 
-    On sample type change, qmod is recalculated based on the CrosshairParameters and SingleCrystalParameters. Thus, if the qmod value was invalid, it will be ignored.
+    On sample type change, qmod is recalculated based on the CrosshairParameters and SingleCrystalParameters. Thus, if the user's qmod value was invalid, it will be ignored.
 
 
 #. This describes the sequence of events happening among M-V-P when Single Crystal parameters are updated in order to draw crosshair : sc_parameters_update()
