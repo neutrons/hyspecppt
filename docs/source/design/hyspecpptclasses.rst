@@ -37,8 +37,7 @@ every time there are new valid values received from the user (front end).
         +get_data()
         +store_data()
         -get_emin(delta_e, incident_energy_e)
-        +get_qmod() //when switching from Powder to Single Crystal ?
-        //+update_qmod()
+        +get_qmod()
     }
 
     class SingleCrystalParameters{
@@ -594,6 +593,8 @@ The presenter checks the value of sample_type_value and splits the workflow as f
                 Presenter->>View: Toggle the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and enables/disables the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
                 Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
                 Note right of Presenter: Valid Status except from qmod: Gather the CrosshairWidget parameters (CrosshairWidget.get_parameters)
+                Presenter->>Model: Send the parameters (Sample.set_data)
+                Note right of Model: Save the parameters (sample_type)
                 Presenter->>Model: Get the stored qmod (Sample.get_qmod)
                 Model->>Presenter: Return qmod
                 Presenter->>View: Return qmod (CrosshairWidget.set_qmod)
