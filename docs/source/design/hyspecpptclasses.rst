@@ -156,9 +156,9 @@ The get_emin is only used internally in the Experiment Model.
      .. code-block:: bash
 
         {
-            eline: list[float], // 2 values in the list
-            qline:list[float] // 2 values in the list
-        }
+            eline: float, //
+            qline: float //
+                    }
 
 * def get_qmod() --> float :  The function returns qmod. It calculates the value from the sc_parameters (SingleCrystal mode). It returns the qmod field for Powder.
 * def set_experiment_type(experiment_type:str) --> None :  The function sets the current_experiment_type from the experiment_type parameter
@@ -270,7 +270,7 @@ HyspecPPT View
         +PlotFigure:plot
         +QButton:help_btn
         +update_plot(q_min: list[float],q_max: list[float],energy_transfer: list[float], q2d: list[list[float]],e2d: list[list[float]], scharpf_angle: list[list[float]])
-        +update_crosshair(eline: list[float], qline:list[float])
+        +update_crosshair(eline: float, qline: float)
 
     }
 
@@ -346,7 +346,7 @@ The function signatures and description are included below.
 **-- HyspecPPTView**
 
 * def update_plot(q_min: list[float],q_max: list[float],energy_transfer: list[float], q2d: list[list[float]],e2d: list[list[float]], scharpf_angle: list[list[float]]) --> None : The function updates the plot with the given parameters.
-* def update_crosshair(eline: list[float], qline:list[float]) --> None : The function updates the crosshair lines at the plot with the given parameters.
+* def update_crosshair(eline: float, qline: float]) --> None : The function updates the crosshair lines at the plot with the given parameters.
 
 **-- CrosshairWidget**
 
