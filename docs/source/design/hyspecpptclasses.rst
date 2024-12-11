@@ -532,7 +532,7 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Presenter
             participant Model
 
-            Note over View,Model: Crosshair update due to any ExperimentWidget parameter update
+            Note over View,Model: Plot draw due to any ExperimentWidget parameter update
             View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
             Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
             Note right of Presenter: Invalid Status: Nothing
