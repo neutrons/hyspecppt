@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger("hyspecppt")
 
 
-class HomeModel:
+class HyspecPPTModel:
     """Main model"""
 
     def __init__(self):

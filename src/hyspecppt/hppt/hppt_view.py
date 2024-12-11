@@ -3,7 +3,7 @@
 from qtpy.QtWidgets import QHBoxLayout, QWidget
 
 
-class Home(QWidget):
+class HyspecPPTView(QWidget):
     """Main widget"""
 
     def __init__(self, parent=None):

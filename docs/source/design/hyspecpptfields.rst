@@ -53,15 +53,15 @@ Below are the fields of SingleCrystal and Powder sample Models
   * - Delta E
     - Double
     -
-    - 0 (for Power mode)
+    - 0
     -
-    - no
+    - yes
   * - mod Q (\|Q\|)
     - Double
     -
-    - 0 (for Power mode)
+    - 0
     - 0 <= \|Q\| <=10
-    - no
+    - yes
   * - Plot Type
     - String
     - predefined choices: :math:`[ \alpha_s, \cos^2(\alpha_s),  (1+\cos^2(\alpha_s))/2 ]`
@@ -145,6 +145,7 @@ Validation
 ----------
 
 Regarding validation, if all fields are valid, then the front end triggers the backend to send the current parameters and receive the new data and plot the graph.
+If a user types an invalid value, then a red border appears on the related field.
 
 
 Front end side validation can include:
@@ -154,5 +155,4 @@ Front end side validation can include:
 
 
 Backend side validation can include:
-  * qmod calculation
-  * graph data calculations
+  * matplotlib save figure?

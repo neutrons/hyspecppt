@@ -1,7 +1,7 @@
 """Presenter for the Main tab"""
 
 
-class HomePresenter:
+class HyspecPPTPresenter:
     """Main presenter"""
 
     def __init__(self, view, model):
