@@ -15,15 +15,6 @@ logger = logging.getLogger("hyspecppt")
 
 class HyspecPPT(QMainWindow):
     """Main Package window"""
-
-    __instance = None
-
-    def __new__(cls):
-        """Create new instance of the HyspecPPT"""
-        if not cls.__instance:
-            cls.__instance = super(HyspecPPT, cls).__new__(cls)
-        return cls.__instance
-
     def __init__(self, parent=None):
         """Constructor"""
         super().__init__(parent)
