@@ -3,7 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - python>=3.10
-  - pyqt == 5.*
+  - pyside6
   - qtpy
   - scipy
   - numpy
@@ -15,7 +15,7 @@ dependencies:
   - libarchive
   - anaconda-client
   - boa
-  - conda-build < 4  # conda-build 24.x has a bug, missing update_index from conda_build.index
+  - conda-build # < 4  # conda-build 24.x has a bug, missing update_index from conda_build.index
   - conda-verify
   - python-build
   - twine  # for uploading to pypi and testpypi
