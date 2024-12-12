@@ -15,6 +15,7 @@ logger = logging.getLogger("hyspecppt")
 
 class HyspecPPT(QMainWindow):
     """Main Package window"""
+
     def __init__(self, parent=None):
         """Constructor"""
         super().__init__(parent)
