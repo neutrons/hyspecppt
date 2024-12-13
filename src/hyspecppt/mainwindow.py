@@ -1,6 +1,6 @@
 """Main Qt window"""
 
-from qtpy.QtWidgets import QHBoxLayout, QPushButton, QTabWidget, QVBoxLayout, QWidget
+from qtpy.QtWidgets import QHBoxLayout, QPushButton, QTabWidget, QVBoxLayout, QWidget, QLabel, QLineEdit, QGridLayout
 
 from hyspecppt.help.help_model import help_function
 from hyspecppt.hppt.hppt_model import HyspecPPTModel
@@ -15,18 +15,18 @@ class MainWindow(QWidget):
         """Constructor"""
         super().__init__(parent)
 
-        ### Create tabs here ###
+        ### Create widgets here ###
 
         ### Main tab
-        self.tabs = QTabWidget()
-        home = HyspecPPTView(self)
-        home_model = HyspecPPTModel()
-        self.home_presenter = HyspecPPTPresenter(home, home_model)
-        self.tabs.addTab(home, "Home")
+        # self.tabs = QTabWidget()
+        HPPT_view = HyspecPPTView(self)
+        HPPT_model = HyspecPPTModel()
+        self.HPPT_presenter = HyspecPPTPresenter(HPPT_view, HPPT_model)
+        # self.tabs.addTab(home, "Home")
 
         ### Set tab layout
         layout = QVBoxLayout()
-        layout.addWidget(self.tabs)
+        layout.addWidget(HPPT_view)
 
         ### Create bottom interface here ###
 
@@ -43,13 +43,13 @@ class MainWindow(QWidget):
         self.setLayout(layout)
 
         # register child widgets to make testing easier
-        self.home = home
+        self.HPPT_view = HPPT_view
 
     def handle_help(self):
         """Get current tab type and open the corresponding help page"""
-        open_tab = self.tabs.currentWidget()
+        open_tab = self.HPPT_view.parentWidget()
         if isinstance(open_tab, HyspecPPTView):
-            context = "home"
+            context = "HPPT_View"
         else:
             context = ""
         help_function(context=context)
