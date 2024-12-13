@@ -1,6 +1,6 @@
 """Main Qt window"""
 
-from qtpy.QtWidgets import QHBoxLayout, QPushButton, QTabWidget, QVBoxLayout, QWidget, QLabel, QLineEdit, QGridLayout
+from qtpy.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QWidget
 
 from hyspecppt.help.help_model import help_function
 from hyspecppt.hppt.hppt_model import HyspecPPTModel

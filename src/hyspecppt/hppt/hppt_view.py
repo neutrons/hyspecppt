@@ -1,6 +1,6 @@
 """PyQt widget for the main tab"""
 
-from qtpy.QtWidgets import QHBoxLayout, QWidget, QLineEdit, QGridLayout, QLabel, QVBoxLayout, QComboBox
+from qtpy.QtWidgets import QComboBox, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QVBoxLayout, QWidget
 
 
 class HyspecPPTView(QWidget):
@@ -19,14 +19,15 @@ class HyspecPPTView(QWidget):
         self.CW = CrosshairWidget(self)
         layoutLeft.addWidget(self.CW)
 
-        self.PW = QLineEdit() # replace this with plot
+        self.PW = QLineEdit()  # replace this with plot
         layout.addWidget(self.PW)
-        self.EW.initalizeCombo(['1','2','3'])
-        
+        self.EW.initalizeCombo(["1", "2", "3"])
+
+
 class ExperimentWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        
+
         self.Ei_edit = QLineEdit(self)
         self.Ei_label = QLabel("&Ei:", self)
         self.Ei_label.setBuddy(self.Ei_edit)
@@ -47,7 +48,7 @@ class ExperimentWidget(QWidget):
         self.setLayout(layout)
         layout.addWidget(self.Ei_label, 0, 0)
         layout.addWidget(self.Ei_edit, 0, 1)
-        
+
         layout.addWidget(self.Pangle_label, 0, 2)
         layout.addWidget(self.Pangle_edit, 0, 3)
 
@@ -57,14 +58,14 @@ class ExperimentWidget(QWidget):
         layout.addWidget(self.Type_label, 1, 2)
         layout.addWidget(self.Type_combobox, 1, 3)
 
-    def initalizeCombo(self,options):
+    def initalizeCombo(self, options):
         self.Type_combobox.addItems(options)
 
 
 class CrosshairWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        
+
         DeltaE_edit = QLineEdit(self)
         DeltaE_label = QLabel("&DeltaE:", self)
         DeltaE_label.setBuddy(DeltaE_edit)
