@@ -1,7 +1,8 @@
 """PyQt widget for the main tab"""
 
-from qtpy.QtWidgets import QComboBox, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QVBoxLayout, QWidget
-
+from qtpy.QtWidgets import (QComboBox, QGridLayout, QHBoxLayout, QLabel,
+                            QLineEdit, QVBoxLayout, QWidget)
+from qtpy.QtGui import QDoubleValidator
 
 class HyspecPPTView(QWidget):
     """Main widget"""
@@ -31,6 +32,9 @@ class ExperimentWidget(QWidget):
         self.Ei_edit = QLineEdit(self)
         self.Ei_label = QLabel("&Ei:", self)
         self.Ei_label.setBuddy(self.Ei_edit)
+        self.Ei_validator = QDoubleValidator(bottom=0, top=100, parent=self)
+        self.Ei_validator.setNotation(QDoubleValidator.StandardNotation)
+        self.Ei_edit.setValidator(self.Ei_validator)
 
         self.Pangle_edit = QLineEdit(self)
         self.Pangle_label = QLabel("&Polarization angle:", self)
@@ -58,8 +62,17 @@ class ExperimentWidget(QWidget):
         layout.addWidget(self.Type_label, 1, 2)
         layout.addWidget(self.Type_combobox, 1, 3)
 
+        # connections
+        self.Ei_edit.editingFinished.connect(self.validate_inputs)
+
     def initalizeCombo(self, options):
         self.Type_combobox.addItems(options)
+
+    def validate_inputs(self,*dummy_args, **dummy_kwargs):
+        """
+        check validity of the fields and set the stylesheet
+        """
+        print(self.sender)
 
 
 class CrosshairWidget(QWidget):

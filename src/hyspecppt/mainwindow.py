@@ -16,15 +16,11 @@ class MainWindow(QWidget):
         super().__init__(parent)
 
         ### Create widgets here ###
-
-        ### Main tab
-        # self.tabs = QTabWidget()
         HPPT_view = HyspecPPTView(self)
         HPPT_model = HyspecPPTModel()
         self.HPPT_presenter = HyspecPPTPresenter(HPPT_view, HPPT_model)
-        # self.tabs.addTab(home, "Home")
 
-        ### Set tab layout
+        ### Set the layout
         layout = QVBoxLayout()
         layout.addWidget(HPPT_view)
 
@@ -37,7 +33,6 @@ class MainWindow(QWidget):
         # Set bottom interface layout
         hor_layout = QHBoxLayout()
         hor_layout.addWidget(help_button)
-
         layout.addLayout(hor_layout)
 
         self.setLayout(layout)
@@ -46,10 +41,4 @@ class MainWindow(QWidget):
         self.HPPT_view = HPPT_view
 
     def handle_help(self):
-        """Get current tab type and open the corresponding help page"""
-        open_tab = self.HPPT_view.parentWidget()
-        if isinstance(open_tab, HyspecPPTView):
-            context = "HPPT_View"
-        else:
-            context = ""
-        help_function(context=context)
+        help_function(context="HPPT_View")
