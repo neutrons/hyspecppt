@@ -1,8 +1,8 @@
 """PyQt widget for the main tab"""
 
-from qtpy.QtWidgets import (QComboBox, QGridLayout, QHBoxLayout, QLabel,
-                            QLineEdit, QVBoxLayout, QWidget)
 from qtpy.QtGui import QDoubleValidator
+from qtpy.QtWidgets import QComboBox, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QVBoxLayout, QWidget
+
 
 class HyspecPPTView(QWidget):
     """Main widget"""
@@ -68,10 +68,8 @@ class ExperimentWidget(QWidget):
     def initalizeCombo(self, options):
         self.Type_combobox.addItems(options)
 
-    def validate_inputs(self,*dummy_args, **dummy_kwargs):
-        """
-        check validity of the fields and set the stylesheet
-        """
+    def validate_inputs(self, *dummy_args, **dummy_kwargs):
+        """Check validity of the fields and set the stylesheet"""
         print(self.sender)
 
 
