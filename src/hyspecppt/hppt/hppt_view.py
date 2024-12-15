@@ -147,15 +147,15 @@ class SingleCrystalWidget(QWidget):
         self.setLayout(lattice_layout)
 
     def set_values(self, values):
-        self.a_edit.setText(str(values['a']))
-        self.b_edit.setText(str(values['b']))
-        self.c_edit.setText(str(values['c']))
-        self.alpha_edit.setText(str(values['alpha']))
-        self.beta_edit.setText(str(values['beta']))
-        self.gamma_edit.setText(str(values['gamma']))
-        self.h_edit.setText(str(values['h']))
-        self.k_edit.setText(str(values['k']))
-        self.l_edit.setText(str(values['l']))
+        self.a_edit.setText(str(values["a"]))
+        self.b_edit.setText(str(values["b"]))
+        self.c_edit.setText(str(values["c"]))
+        self.alpha_edit.setText(str(values["alpha"]))
+        self.beta_edit.setText(str(values["beta"]))
+        self.gamma_edit.setText(str(values["gamma"]))
+        self.h_edit.setText(str(values["h"]))
+        self.k_edit.setText(str(values["k"]))
+        self.l_edit.setText(str(values["l"]))
 
 
 class ExperimentWidget(QWidget):
