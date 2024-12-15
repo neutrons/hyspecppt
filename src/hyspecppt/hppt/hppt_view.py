@@ -8,6 +8,7 @@ from qtpy.QtWidgets import (
     QButtonGroup,
     QComboBox,
     QGridLayout,
+    QGroupBox,
     QHBoxLayout,
     QLabel,
     QLineEdit,
@@ -18,6 +19,7 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
+from .hppt_defaults import PLOT_TYPES, DEFAULT_LATTICE, alpha, beta, gamma
 
 class HyspecPPTView(QWidget):
     """Main widget"""
@@ -45,8 +47,9 @@ class HyspecPPTView(QWidget):
 
         self.switch_to_SC()
 
-        self.EW.initalizeCombo(["1", "2", "3"])
-        self.SCW.set_values(dict(a=1, b=2, c=3, alpha=90, beta=90, gamma=120, h=1, k=1, l=0))
+        # DELETEME and replace with real initialization
+        self.EW.initalizeCombo(PLOT_TYPES)
+        self.SCW.set_values(DEFAULT_LATTICE)
 
     def switch_to_SC(self):
         self.SCW.setVisible(True)
@@ -88,6 +91,8 @@ class SingleCrystalWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        layout = QVBoxLayout()
+        groupBox = QGroupBox("Lattice parameters")
         lattice_layout = QGridLayout()
         self.a_edit = QLineEdit(self)
         self.a_label = QLabel("&a:", self)
@@ -102,27 +107,27 @@ class SingleCrystalWidget(QWidget):
         self.c_label.setBuddy(self.c_edit)
 
         self.alpha_edit = QLineEdit(self)
-        self.alpha_label = QLabel("alpha:", self)
+        self.alpha_label = QLabel(alpha+":", self)
         self.alpha_label.setBuddy(self.alpha_edit)
 
         self.beta_edit = QLineEdit(self)
-        self.beta_label = QLabel("beta:", self)
+        self.beta_label = QLabel(beta+":", self)
         self.beta_label.setBuddy(self.beta_edit)
 
         self.gamma_edit = QLineEdit(self)
-        self.gamma_label = QLabel("gamma:", self)
+        self.gamma_label = QLabel(gamma+":", self)
         self.gamma_label.setBuddy(self.gamma_edit)
 
         self.h_edit = QLineEdit(self)
-        self.h_label = QLabel("h:", self)
+        self.h_label = QLabel("H:", self)
         self.h_label.setBuddy(self.h_edit)
 
         self.k_edit = QLineEdit(self)
-        self.k_label = QLabel("k:", self)
+        self.k_label = QLabel("K:", self)
         self.k_label.setBuddy(self.k_edit)
 
         self.l_edit = QLineEdit(self)
-        self.l_label = QLabel("l:", self)
+        self.l_label = QLabel("L:", self)
         self.l_label.setBuddy(self.l_edit)
 
         lattice_layout.addWidget(self.a_label, 0, 0)
@@ -144,7 +149,9 @@ class SingleCrystalWidget(QWidget):
         lattice_layout.addWidget(self.l_label, 2, 4)
         lattice_layout.addWidget(self.l_edit, 2, 5)
 
-        self.setLayout(lattice_layout)
+        groupBox.setLayout(lattice_layout)
+        layout.addWidget(groupBox)
+        self.setLayout(layout)
 
     def set_values(self, values):
         self.a_edit.setText(str(values["a"]))
@@ -163,7 +170,7 @@ class ExperimentWidget(QWidget):
         super().__init__(parent)
 
         self.Ei_edit = QLineEdit(self)
-        self.Ei_label = QLabel("&Ei:", self)
+        self.Ei_label = QLabel("Incident energy &Ei:", self)
         self.Ei_label.setBuddy(self.Ei_edit)
         self.Ei_validator = QDoubleValidator(bottom=0, top=100, parent=self)
         self.Ei_validator.setNotation(QDoubleValidator.StandardNotation)
@@ -174,7 +181,7 @@ class ExperimentWidget(QWidget):
         self.Pangle_label.setBuddy(self.Pangle_edit)
 
         self.S2_edit = QLineEdit(self)
-        self.S2_label = QLabel("&S2:", self)
+        self.S2_label = QLabel("Detector angle &S2:", self)
         self.S2_label.setBuddy(self.S2_edit)
 
         self.Type_combobox = QComboBox(self)
@@ -211,6 +218,7 @@ class CrosshairWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        layout = QVBoxLayout()
         DeltaE_edit = QLineEdit(self)
         DeltaE_label = QLabel("&DeltaE:", self)
         DeltaE_label.setBuddy(DeltaE_edit)
@@ -219,13 +227,17 @@ class CrosshairWidget(QWidget):
         self.modQ_label = QLabel("|&Q|:", self)
         self.modQ_label.setBuddy(self.modQ_edit)
 
-        layout = QHBoxLayout()
-        self.setLayout(layout)
-        layout.addWidget(DeltaE_label)
-        layout.addWidget(DeltaE_edit)
+        box_layout = QHBoxLayout()
+        box_layout.addWidget(DeltaE_label)
+        box_layout.addWidget(DeltaE_edit)
 
-        layout.addWidget(self.modQ_label)
-        layout.addWidget(self.modQ_edit)
+        box_layout.addWidget(self.modQ_label)
+        box_layout.addWidget(self.modQ_edit)
+
+        groupBox = QGroupBox("Crosshair position")
+        groupBox.setLayout(box_layout)
+        layout.addWidget(groupBox)
+        self.setLayout(layout)
 
     def set_Qmod_enabled(self, state):
         self.modQ_edit.setEnabled(state)
