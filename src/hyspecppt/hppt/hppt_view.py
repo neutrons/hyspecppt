@@ -204,7 +204,7 @@ class ExperimentWidget(QWidget):
     def validate_inputs(self, *dummy_args, **dummy_kwargs):
         """Check validity of the fields and set the stylesheet"""
         print(self.sender)
-        print('args: ', dummy_args, ' kwargs: ', dummy_kwargs)
+        print("args: ", dummy_args, " kwargs: ", dummy_kwargs)
 
 
 class CrosshairWidget(QWidget):
