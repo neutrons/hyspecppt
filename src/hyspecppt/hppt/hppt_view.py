@@ -46,6 +46,7 @@ class HyspecPPTView(QWidget):
         self.switch_to_SC()
 
         self.EW.initalizeCombo(["1", "2", "3"])
+        self.SCW.set_values(dict(a=1, b=2, c=3, alpha=90, beta=90, gamma=120, h=1, k=1, l=0))
 
     def switch_to_SC(self):
         self.SCW.setVisible(True)
@@ -144,6 +145,17 @@ class SingleCrystalWidget(QWidget):
         lattice_layout.addWidget(self.l_edit, 2, 5)
 
         self.setLayout(lattice_layout)
+
+    def set_values(self, values):
+        self.a_edit.setText(str(values['a']))
+        self.b_edit.setText(str(values['b']))
+        self.c_edit.setText(str(values['c']))
+        self.alpha_edit.setText(str(values['alpha']))
+        self.beta_edit.setText(str(values['beta']))
+        self.gamma_edit.setText(str(values['gamma']))
+        self.h_edit.setText(str(values['h']))
+        self.k_edit.setText(str(values['k']))
+        self.l_edit.setText(str(values['l']))
 
 
 class ExperimentWidget(QWidget):
