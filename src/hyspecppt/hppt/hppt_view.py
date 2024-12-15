@@ -1,12 +1,22 @@
 """PyQt widget for the main tab"""
-from qtpy.QtWidgets import (QComboBox, QGridLayout, QHBoxLayout, QLabel,
-                            QLineEdit, QVBoxLayout, QWidget,QButtonGroup,
-                            QRadioButton, QSpacerItem, QSizePolicy)
-from qtpy.QtGui import QDoubleValidator
+
 from matplotlib.backends.backend_qtagg import FigureCanvas
-from matplotlib.backends.backend_qtagg import \
-    NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+from qtpy.QtGui import QDoubleValidator
+from qtpy.QtWidgets import (
+    QButtonGroup,
+    QComboBox,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QRadioButton,
+    QSizePolicy,
+    QSpacerItem,
+    QVBoxLayout,
+    QWidget,
+)
 
 
 class HyspecPPTView(QWidget):
@@ -55,6 +65,7 @@ class PrintWidget(QWidget):
         layoutRight.addWidget(NavigationToolbar(self.static_canvas, self))
         self.setLayout(layoutRight)
 
+
 class SelectorWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -70,6 +81,7 @@ class SelectorWidget(QWidget):
         selector_layout.addWidget(self.powder_rb)
         selector_layout.addWidget(self.sc_rb)
         self.setLayout(selector_layout)
+
 
 class SingleCrystalWidget(QWidget):
     def __init__(self, parent=None):
