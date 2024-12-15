@@ -19,7 +19,8 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from .hppt_defaults import PLOT_TYPES, DEFAULT_LATTICE, alpha, beta, gamma
+from .hppt_defaults import DEFAULT_LATTICE, PLOT_TYPES, alpha, beta, gamma
+
 
 class HyspecPPTView(QWidget):
     """Main widget"""
@@ -107,15 +108,15 @@ class SingleCrystalWidget(QWidget):
         self.c_label.setBuddy(self.c_edit)
 
         self.alpha_edit = QLineEdit(self)
-        self.alpha_label = QLabel(alpha+":", self)
+        self.alpha_label = QLabel(alpha + ":", self)
         self.alpha_label.setBuddy(self.alpha_edit)
 
         self.beta_edit = QLineEdit(self)
-        self.beta_label = QLabel(beta+":", self)
+        self.beta_label = QLabel(beta + ":", self)
         self.beta_label.setBuddy(self.beta_edit)
 
         self.gamma_edit = QLineEdit(self)
-        self.gamma_label = QLabel(gamma+":", self)
+        self.gamma_label = QLabel(gamma + ":", self)
         self.gamma_label.setBuddy(self.gamma_edit)
 
         self.h_edit = QLineEdit(self)
