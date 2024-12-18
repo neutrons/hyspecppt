@@ -21,12 +21,10 @@ def test_Experiment_widget(qtbot):
     assert ExpWidget.Type_label.text() == "&Type:"
 
 
-
 def test_SC_widget(qtbot):
     """Test the names of the Qlabel are correct and line edits can takes in values (assumes values are valid)"""
     SCWidget = hppt_view.SingleCrystalWidget()
     qtbot.addWidget(SCWidget)
-
 
     qtbot.keyClicks(SCWidget.a_edit, "5.0")
     assert SCWidget.a_label.text() == "&a:"
@@ -65,16 +63,13 @@ def test_SC_widget(qtbot):
     assert SCWidget.l_edit.text() == "2.5"
 
 
-
 def test_Crosshair_widget(qtbot):
     """Test the names of the Qlabel are correct and line edits can takes in values (assumes values are valid)"""
     CHWidget = hppt_view.CrosshairWidget()
     qtbot.addWidget(CHWidget)
-
 
     qtbot.keyClicks(CHWidget.DeltaE_edit, "20.0")
     assert CHWidget.DeltaE_label.text() == "&DeltaE:"
     assert CHWidget.DeltaE_edit.text() == "20.0"
 
     assert CHWidget.modQ_label.text() == "|&Q|:"
-
