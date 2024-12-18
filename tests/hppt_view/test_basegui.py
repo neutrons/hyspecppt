@@ -86,3 +86,19 @@ def test_Selector_widget(qtbot):
 
     assert SELWidget.powder_rb.text() == "Po&wder"
     assert SELWidget.sc_rb.text() == "Single C&rystal"
+
+
+def test_switch_to_SC():
+    """Test switch_to_SC() set SingleCrystalWidget visible"""
+    view = hppt_view.HyspecPPTView()
+    view.switch_to_SC()
+    assert view.SCW.isVisibleTo(view)
+    assert not view.CW.modQ_edit.isEnabled()
+
+
+def test_switch_to_Powder():
+    """Test switch_to_Powder() set SingleCrystalWidget visible"""
+    view = hppt_view.HyspecPPTView()
+    view.switch_to_Powder()
+    assert not view.SCW.isVisibleTo(view)
+    assert view.CW.modQ_edit.isEnabled()
