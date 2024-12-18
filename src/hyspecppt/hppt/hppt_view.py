@@ -220,17 +220,17 @@ class CrosshairWidget(QWidget):
         super().__init__(parent)
 
         layout = QVBoxLayout()
-        DeltaE_edit = QLineEdit(self)
-        DeltaE_label = QLabel("&DeltaE:", self)
-        DeltaE_label.setBuddy(DeltaE_edit)
+        self.DeltaE_edit = QLineEdit(self)
+        self.DeltaE_label = QLabel("&DeltaE:", self)
+        self.DeltaE_label.setBuddy(self.DeltaE_edit)
 
         self.modQ_edit = QLineEdit(self)
         self.modQ_label = QLabel("|&Q|:", self)
         self.modQ_label.setBuddy(self.modQ_edit)
 
         box_layout = QHBoxLayout()
-        box_layout.addWidget(DeltaE_label)
-        box_layout.addWidget(DeltaE_edit)
+        box_layout.addWidget(self.DeltaE_label)
+        box_layout.addWidget(self.DeltaE_edit)
 
         box_layout.addWidget(self.modQ_label)
         box_layout.addWidget(self.modQ_edit)
