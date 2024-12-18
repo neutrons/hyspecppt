@@ -1,5 +1,5 @@
 import hyspecppt.hppt.hppt_view as hppt_view
-from hyspecppt.hppt.hppt_defaults import alpha, beta, gamma
+from hyspecppt.hppt.hppt_defaults import PLOT_TYPES, alpha, beta, gamma
 
 
 def test_Experiment_widget(qtbot):
@@ -19,6 +19,10 @@ def test_Experiment_widget(qtbot):
     assert ExpWidget.S2_edit.text() == "50"
 
     assert ExpWidget.Type_label.text() == "&Type:"
+    # check QCombobox has been correctly initialized. All items are added.
+    ExpWidget.initalizeCombo(PLOT_TYPES)
+    for i in range(len(PLOT_TYPES)):
+        assert ExpWidget.Type_combobox.findText(PLOT_TYPES[i]) == i
 
 
 def test_SC_widget(qtbot):
@@ -73,3 +77,12 @@ def test_Crosshair_widget(qtbot):
     assert CHWidget.DeltaE_edit.text() == "20.0"
 
     assert CHWidget.modQ_label.text() == "|&Q|:"
+
+
+def test_Selector_widget(qtbot):
+    """Test the names of the Qlabel are correct and line edits can takes in values (assumes values are valid)"""
+    SELWidget = hppt_view.SelectorWidget()
+    qtbot.addWidget(SELWidget)
+
+    assert SELWidget.powder_rb.text() == "Po&wder"
+    assert SELWidget.sc_rb.text() == "Single C&rystal"
