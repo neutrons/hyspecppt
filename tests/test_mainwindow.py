@@ -4,7 +4,7 @@ import subprocess
 
 import pytest
 
-from hyspecppt.hyspecppt import __version__
+from hyspecppt.hyspecpptmain import __version__
 
 
 def test_appwindow(hyspec_app, qtbot):

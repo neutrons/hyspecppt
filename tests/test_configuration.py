@@ -195,7 +195,10 @@ def test_conf_init_invalid(capsys, user_conf_file, monkeypatch):
     monkeypatch.setattr("hyspecppt.configuration.Configuration.is_valid", mock_is_valid)
     with pytest.raises(SystemExit):
         # initialization
-        _ = QApplication([])
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication([])
+        # _ = QApplication([])
         hyspec = Hyspecppt()
         hyspec.show()
 
