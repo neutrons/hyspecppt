@@ -90,7 +90,7 @@ class PrintWidget(QWidget):
 
 
 class SelectorWidget(QWidget):
-    """Widget that slects Powder/Single Crystal mode"""
+    """Widget that selects Powder/Single Crystal mode"""
 
     def __init__(self, parent: Optional["QObject"] = None) -> None:
         """Constructor for the selector widget
