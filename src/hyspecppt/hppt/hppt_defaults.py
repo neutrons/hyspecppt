@@ -1,6 +1,4 @@
-"""
-Definition of constants and default parameters
-"""
+"""Definition of constants and default parameters"""
 
 # unicode
 alpha = "\u03b1"
