@@ -10,6 +10,6 @@ def Hyspecppt():  # noqa: N802
     """This is needed for backward compatibility because mantid workbench does
     "from hyspecppt import Hyspecppt"
     """
-    from .hyspecppt import HyspecPPT as hyspecppt  # noqa: E501, N813
+    from .hyspecpptmain import HyspecPPT as hyspecppt  # noqa: E501, N813
 
     return hyspecppt()

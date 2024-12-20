@@ -48,7 +48,7 @@ exclude = ["tests*", "scripts*", "docs*"]
 "*" = ["*.yml","*.yaml","*.ini"]
 
 [project.gui-scripts]
-hyspecppt = "hyspecppt.hyspecppt:gui"
+hyspecppt = "hyspecppt.hyspecpptmain:gui"
 
 [tool.pytest.ini_options]
 pythonpath = [

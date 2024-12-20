@@ -50,3 +50,4 @@ def gui():
         window = HyspecPPT()
         window.show()
         sys.exit(app.exec_())
+
