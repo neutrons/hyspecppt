@@ -1,8 +1,9 @@
-"""PyQt widget for the main tab"""
+"""Widgets for the main window"""
 
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+from qtpy.QtCore import QObject
 from qtpy.QtGui import QDoubleValidator
 from qtpy.QtWidgets import (
     QButtonGroup,
@@ -18,6 +19,7 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from typing import Optional
 
 from .hppt_defaults import DEFAULT_LATTICE, PLOT_TYPES, alpha, beta, gamma
 
@@ -25,8 +27,13 @@ from .hppt_defaults import DEFAULT_LATTICE, PLOT_TYPES, alpha, beta, gamma
 class HyspecPPTView(QWidget):
     """Main widget"""
 
-    def __init__(self, parent=None):
-        """Constructor"""
+    def __init__(self, parent: Optional['QObject'] = None) -> None:
+        """
+        Constructor for the main widget
+
+        Args:
+            parent (QObject): Optional parent
+        """
         super().__init__(parent)
 
         layout = QHBoxLayout()
@@ -52,17 +59,27 @@ class HyspecPPTView(QWidget):
         self.EW.initalizeCombo(PLOT_TYPES)
         self.SCW.set_values(DEFAULT_LATTICE)
 
-    def switch_to_SC(self):
+    def switch_to_SC(self) -> None:
+        """Set visibility for Single Crystal mode"""
         self.SCW.setVisible(True)
         self.CW.set_Qmod_enabled(False)
 
-    def switch_to_Powder(self):
+    def switch_to_Powder(self) -> None:
+        """Set visibility for Powder mode"""
         self.SCW.setVisible(False)
         self.CW.set_Qmod_enabled(True)
 
 
 class PrintWidget(QWidget):
-    def __init__(self, parent=None):
+    """Widget that displays the plot"""
+
+    def __init__(self, parent: Optional['QObject'] = None) -> None:
+        """
+        Constructor for the plotting widget
+
+        Args:
+            parent (QObject): Optional parent
+        """
         super().__init__(parent)
         layoutRight = QVBoxLayout()
         self.static_canvas = FigureCanvas(Figure(figsize=(5, 3)))
@@ -72,7 +89,15 @@ class PrintWidget(QWidget):
 
 
 class SelectorWidget(QWidget):
-    def __init__(self, parent=None):
+    """Widget that slects Powder/Single Crystal mode"""
+
+    def __init__(self, parent: Optional['QObject'] = None) -> None:
+        """
+        Constructor for the selector widget
+
+        Args:
+            parent (QObject): Optional parent
+        """
         super().__init__(parent)
         selector_layout = QHBoxLayout()
 
@@ -89,7 +114,15 @@ class SelectorWidget(QWidget):
 
 
 class SingleCrystalWidget(QWidget):
-    def __init__(self, parent=None):
+    """Widget for inputting single crystal parameters"""
+
+    def __init__(self, parent: Optional['QObject'] = None) -> None:
+        """
+        Constructor for the single crystal input parameters widget
+
+        Args:
+            parent (QObject): Optional parent
+        """
         super().__init__(parent)
 
         layout = QVBoxLayout()
@@ -154,7 +187,15 @@ class SingleCrystalWidget(QWidget):
         layout.addWidget(groupBox)
         self.setLayout(layout)
 
-    def set_values(self, values):
+    def set_values(self, values: dict[str, float]) -> None:
+        """
+        Sets widget display based on the values dictionary
+
+        Args:
+            values (dict): a dictionary that contains
+            a, b, c, alpha, beta, gamma lattice parameters
+            and h, k, l reciprocal lattice coordinates
+        """
         self.a_edit.setText(str(values["a"]))
         self.b_edit.setText(str(values["b"]))
         self.c_edit.setText(str(values["c"]))
@@ -167,7 +208,15 @@ class SingleCrystalWidget(QWidget):
 
 
 class ExperimentWidget(QWidget):
-    def __init__(self, parent=None):
+    """Widget for setting experiment parameters"""
+
+    def __init__(self, parent: Optional['QObject'] = None) -> None:
+        """
+        Constructor for the experiment input parameters widget
+
+        Args:
+            parent (QObject): Optional parent
+        """
         super().__init__(parent)
 
         self.Ei_edit = QLineEdit(self)
@@ -206,17 +255,32 @@ class ExperimentWidget(QWidget):
         # connections
         self.Ei_edit.editingFinished.connect(self.validate_inputs)
 
-    def initalizeCombo(self, options):
+    def initalizeCombo(self, options: list[str]) -> None:
+        """
+        Initialize the plot types in the combo box
+
+        Args:
+            options (list): list of strings describing what the user can show
+                            in the plot
+        """
         self.Type_combobox.addItems(options)
 
-    def validate_inputs(self, *dummy_args, **dummy_kwargs):
+    def validate_inputs(self, *dummy_args, **dummy_kwargs) -> None:
         """Check validity of the fields and set the stylesheet"""
         print(self.sender)
         print("args: ", dummy_args, " kwargs: ", dummy_kwargs)
 
 
 class CrosshairWidget(QWidget):
-    def __init__(self, parent=None):
+    """ Widget to enter/display crosshair parameters"""
+
+    def __init__(self, parent: Optional['QObject'] = None) -> None:
+        """
+        Constructor for the crosshair input parameters widget
+
+        Args:
+            parent (QObject): Optional parent
+        """
         super().__init__(parent)
 
         layout = QVBoxLayout()
@@ -240,5 +304,11 @@ class CrosshairWidget(QWidget):
         layout.addWidget(groupBox)
         self.setLayout(layout)
 
-    def set_Qmod_enabled(self, state):
+    def set_Qmod_enabled(self, state: bool) -> None:
+        """
+        Enable/disable the modQ line edit
+
+        Args:
+            state (bool): enable editing modQ (True) or disable it(False)
+        """
         self.modQ_edit.setEnabled(state)
