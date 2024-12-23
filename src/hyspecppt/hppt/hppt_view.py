@@ -266,7 +266,18 @@ class ExperimentWidget(QWidget):
         """Check validity of the fields and set the stylesheet"""
         print(self.sender)
         print("args: ", dummy_args, " kwargs: ", dummy_kwargs)
+    
+    def set_values(self, values: dict[str, float]) -> None:
+        """Sets widget display based on the values dictionary
 
+        Args:
+            values (dict): a dictionary that contains
+            Ei, S2, alpha_p, plot_types values
+        """
+        self.Ei_edit.setText(str(values["Ei"]))
+        self.S2_edit.setText(str(values["s2"]))
+        self.Pangle_edit.setText(str(values["alpha_p"]))
+        # self.Type_combobox.setItemText(0,str(values["plot_type"]))
 
 class CrosshairWidget(QWidget):
     """Widget to enter/display crosshair parameters"""
@@ -309,3 +320,13 @@ class CrosshairWidget(QWidget):
 
         """
         self.modQ_edit.setEnabled(state)
+
+    def set_values(self, values: dict[str, float]) -> None:
+        """Sets widget display based on the values dictionary
+
+        Args:
+            values (dict): a dictionary that contains
+            deltaE and mod_Q values
+        """
+        self.DeltaE_edit.setText(str(values["DeltaE"]))
+        self.modQ_edit.setText(str(values["modQ"]))
