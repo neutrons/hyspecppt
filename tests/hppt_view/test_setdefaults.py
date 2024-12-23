@@ -17,7 +17,6 @@ def test_set_Experimentwidget_Default_Values(qtbot):
         assert ExpWidget.Type_combobox.findText(PLOT_TYPES[i]) == i
 
 
-
 def test_set_SC_Default_Values(qtbot):
     """Test the default SC values are set correctly"""
     SCWidget = hppt_view.SingleCrystalWidget()
@@ -36,7 +35,6 @@ def test_set_SC_Default_Values(qtbot):
     assert SCWidget.l_edit.text() == "0"
 
 
-
 def test_set_Crosshair_widget_Default_Values(qtbot):
     """Test the default crosshair values are set correctly"""
     CHWidget = hppt_view.CrosshairWidget()
@@ -46,7 +44,6 @@ def test_set_Crosshair_widget_Default_Values(qtbot):
     assert CHWidget.DeltaE_edit.text() == "0"
 
     assert CHWidget.modQ_edit.text() == "0"
-
 
 
 def test_set_Selector_widget_Default_Values(qtbot):
