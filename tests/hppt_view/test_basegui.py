@@ -1,5 +1,5 @@
 import hyspecppt.hppt.hppt_view as hppt_view
-from hyspecppt.hppt.hppt_defaults import PLOT_TYPES, alpha, beta, gamma
+from hyspecppt.hppt.experiment_settings import PLOT_TYPES, alpha, beta, gamma
 
 
 def test_Experiment_widget(qtbot):
