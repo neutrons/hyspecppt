@@ -111,7 +111,6 @@ class SelectorWidget(QWidget):
 
     def set_SC_toggle(self, toggle: bool) -> None:
         """Sets widget display based on the values dictionary
-
         Args:
             Bool
 
