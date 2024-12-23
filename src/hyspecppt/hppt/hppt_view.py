@@ -114,8 +114,10 @@ class SelectorWidget(QWidget):
 
         Args:
             Bool
+
         """
         self.sc_rb.setChecked(toggle)
+
 
 class SingleCrystalWidget(QWidget):
     """Widget for inputting single crystal parameters"""
