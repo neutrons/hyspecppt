@@ -1,6 +1,6 @@
 """Presenter for the Main tab"""
 
-from .experiment_settings import DEFAULT_LATTICE, DEFAULT_EXPERIMENT, PLOT_TYPES, DEFAULT_CROSSHAIR
+from .experiment_settings import DEFAULT_CROSSHAIR, DEFAULT_EXPERIMENT, DEFAULT_LATTICE, PLOT_TYPES
 
 
 class HyspecPPTPresenter:
