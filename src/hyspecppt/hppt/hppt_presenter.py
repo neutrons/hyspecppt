@@ -1,5 +1,7 @@
 """Presenter for the Main tab"""
 
+from .experiment_settings import DEFAULT_LATTICE, PLOT_TYPES
+
 
 class HyspecPPTPresenter:
     """Main presenter"""
@@ -8,6 +10,8 @@ class HyspecPPTPresenter:
         """Constructor"""
         self._view = view
         self._model = model
+        self.view.SCW.set_values(DEFAULT_LATTICE)
+        self.view.EW.initializeCombo(PLOT_TYPES)
 
     @property
     def view(self):

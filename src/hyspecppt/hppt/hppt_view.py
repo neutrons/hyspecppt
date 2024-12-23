@@ -22,7 +22,7 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from .hppt_defaults import DEFAULT_LATTICE, PLOT_TYPES, alpha, beta, gamma
+from .experiment_settings import alpha, beta, gamma
 
 
 class HyspecPPTView(QWidget):
@@ -55,10 +55,6 @@ class HyspecPPTView(QWidget):
         layout.addWidget(self.PW)
 
         self.switch_to_SC()
-
-        # DELETEME and replace with real initialization
-        self.EW.initalizeCombo(PLOT_TYPES)
-        self.SCW.set_values(DEFAULT_LATTICE)
 
     def switch_to_SC(self) -> None:
         """Set visibility for Single Crystal mode"""
@@ -256,7 +252,7 @@ class ExperimentWidget(QWidget):
         # connections
         self.Ei_edit.editingFinished.connect(self.validate_inputs)
 
-    def initalizeCombo(self, options: list[str]) -> None:
+    def initializeCombo(self, options: list[str]) -> None:
         """Initialize the plot types in the combo box
 
         Args:
