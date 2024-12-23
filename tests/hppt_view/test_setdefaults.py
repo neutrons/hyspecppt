@@ -1,14 +1,5 @@
-import hyspecppt.hppt.hppt_presenter as hppt_presenter
 import hyspecppt.hppt.hppt_view as hppt_view
-from hyspecppt.hppt.experiment_settings import (
-    DEFAULT_CROSSHAIR,
-    DEFAULT_EXPERIMENT,
-    DEFAULT_LATTICE,
-    PLOT_TYPES,
-    alpha,
-    beta,
-    gamma,
-)
+from hyspecppt.hppt.experiment_settings import DEFAULT_CROSSHAIR, DEFAULT_EXPERIMENT, DEFAULT_LATTICE, PLOT_TYPES
 
 
 def test_set_Experimentwidget_Default_Values(qtbot):
@@ -20,9 +11,11 @@ def test_set_Experimentwidget_Default_Values(qtbot):
     assert ExpWidget.S2_edit.text() == "30"
     assert ExpWidget.Pangle_edit.text() == "0"
     # check QCombobox has been correctly initialized. All items are added.
+    # check QCombobox has been correctly initialized. All items are added.
     ExpWidget.initializeCombo(PLOT_TYPES)
     for i in range(len(PLOT_TYPES)):
         assert ExpWidget.Type_combobox.findText(PLOT_TYPES[i]) == i
+
 
 
 def test_set_SC_Default_Values(qtbot):
@@ -43,6 +36,7 @@ def test_set_SC_Default_Values(qtbot):
     assert SCWidget.l_edit.text() == "0"
 
 
+
 def test_set_Crosshair_widget_Default_Values(qtbot):
     """Test the default crosshair values are set correctly"""
     CHWidget = hppt_view.CrosshairWidget()
@@ -54,11 +48,12 @@ def test_set_Crosshair_widget_Default_Values(qtbot):
     assert CHWidget.modQ_edit.text() == "0"
 
 
+
 def test_set_Selector_widget_Default_Values(qtbot):
     """Test the default SC mode is toggled"""
     SelWidget = hppt_view.SelectorWidget()
     SelWidget.set_SC_toggle(True)
     qtbot.addWidget(SelWidget)
 
-    assert SelWidget.sc_rb.isChecked() == True
-    assert SelWidget.powder_rb.isChecked() == False
+    assert SelWidget.sc_rb.isChecked()
+    assert not SelWidget.powder_rb.isChecked()
