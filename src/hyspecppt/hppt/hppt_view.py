@@ -285,7 +285,6 @@ class ExperimentWidget(QWidget):
         self.Ei_edit.setText(str(values["Ei"]))
         self.S2_edit.setText(str(values["s2"]))
         self.Pangle_edit.setText(str(values["alpha_p"]))
-        # self.Type_combobox.setItemText(0,str(values["plot_type"]))
 
 
 class CrosshairWidget(QWidget):
