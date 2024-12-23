@@ -109,6 +109,13 @@ class SelectorWidget(QWidget):
         selector_layout.addWidget(self.sc_rb)
         self.setLayout(selector_layout)
 
+    def set_SC_toggle(self, toggle: bool) -> None:
+        """Sets widget display based on the values dictionary
+
+        Args:
+            Bool
+        """
+        self.sc_rb.setChecked(toggle)
 
 class SingleCrystalWidget(QWidget):
     """Widget for inputting single crystal parameters"""

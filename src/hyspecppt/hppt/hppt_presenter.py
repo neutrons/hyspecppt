@@ -14,6 +14,7 @@ class HyspecPPTPresenter:
         self.view.EW.initializeCombo(PLOT_TYPES)
         self.view.EW.set_values(DEFAULT_EXPERIMENT)
         self.view.CW.set_values(DEFAULT_CROSSHAIR)
+        self.view.SelW.set_SC_toggle(True)
 
     @property
     def view(self):
