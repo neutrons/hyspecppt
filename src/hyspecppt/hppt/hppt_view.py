@@ -113,7 +113,6 @@ class SelectorWidget(QWidget):
         """Sets widget display based on the values dictionary
         Args:
             Bool
-
         """
         self.sc_rb.setChecked(toggle)
 
