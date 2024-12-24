@@ -1,12 +1,13 @@
 """Widgets for the main window"""
-
+import copy
+import numpy as np
 from typing import Optional
 
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 from qtpy.QtCore import QObject
-from qtpy.QtGui import QDoubleValidator
+from qtpy.QtGui import QDoubleValidator, QValidator
 from qtpy.QtWidgets import (
     QButtonGroup,
     QComboBox,
@@ -22,7 +23,48 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from .hppt_defaults import DEFAULT_LATTICE, PLOT_TYPES, alpha, beta, gamma
+from .experiment_settings import DEFAULT_LATTICE, PLOT_TYPES, alpha, beta, gamma, INVALID_QLINEEDIT
+
+
+class absValidator(QDoubleValidator):
+    """Abolute value validator"""
+
+    def __init__(self, parent: Optional["QObject"] = None, bottom: float = 0, top: float = np.inf, decimals: int = -1) -> None:
+        """Constructor for the absolute value validator. All the parameters
+           are the same as for QDoubleValidator, but the valid value is between a
+           positive bottom and top, or between -top and -bottom
+
+        Args:
+            parent (QObject): Optional parent
+            bottom (float): the minimum positive value (set to 0 if not positive)
+            top (float): the highest top value (set to infinity if not greater than bottom)
+            decimals (int): the number of digits after the decimal point.
+
+        """
+        if bottom < 0:
+            bottom = 0
+        if top <= bottom:
+            top = np.inf
+        super().__init__(parent=parent, bottom=bottom, top=top, decimals=decimals)
+
+    def validate(self,inp: str, pos:int) -> tuple[QValidator.State, str, int]:
+        """Override for validate method
+
+        Args:
+            inp (str): the input string
+            pos (int): cursor position
+        """
+        original_str = copy.copy(inp)
+        original_pos = pos
+        if inp == '-':
+            return QValidator.Intermediate
+        try:
+            inp = str(abs(float(inp)))
+        except ValueError:
+            pass
+        x= super().validate(inp, pos)
+        # do not "fix" the input
+        return x[0], original_str, original_pos
 
 
 class HyspecPPTView(QWidget):
@@ -51,7 +93,7 @@ class HyspecPPTView(QWidget):
         layoutLeft.addWidget(self.CW)
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         layoutLeft.addItem(spacer)
-        self.PW = PrintWidget(self)
+        self.PW = PlotWidget(self)
         layout.addWidget(self.PW)
 
         self.switch_to_SC()
@@ -71,7 +113,7 @@ class HyspecPPTView(QWidget):
         self.CW.set_Qmod_enabled(True)
 
 
-class PrintWidget(QWidget):
+class PlotWidget(QWidget):
     """Widget that displays the plot"""
 
     def __init__(self, parent: Optional["QObject"] = None) -> None:
@@ -230,10 +272,16 @@ class ExperimentWidget(QWidget):
         self.Pangle_edit = QLineEdit(self)
         self.Pangle_label = QLabel("&Polarization angle:", self)
         self.Pangle_label.setBuddy(self.Pangle_edit)
+        self.Pangle_validator = QDoubleValidator(bottom=-180, top=180, parent=self)
+        self.Pangle_validator.setNotation(QDoubleValidator.StandardNotation)
+        self.Pangle_edit.setValidator(self.Pangle_validator)
 
         self.S2_edit = QLineEdit(self)
         self.S2_label = QLabel("Detector angle &S2:", self)
         self.S2_label.setBuddy(self.S2_edit)
+        self.S2_validator = absValidator(bottom=30, top=100, parent=self)
+        self.S2_validator.setNotation(QDoubleValidator.StandardNotation)
+        self.S2_edit.setValidator(self.S2_validator)
 
         self.Type_combobox = QComboBox(self)
         self.Type_label = QLabel("&Type:", self)
@@ -254,7 +302,12 @@ class ExperimentWidget(QWidget):
         layout.addWidget(self.Type_combobox, 1, 3)
 
         # connections
-        self.Ei_edit.editingFinished.connect(self.validate_inputs)
+        self.Ei_edit.editingFinished.connect(self.validate_all_inputs)
+        self.Ei_edit.textEdited.connect(self.validate_inputs)
+        self.S2_edit.editingFinished.connect(self.validate_all_inputs)
+        self.S2_edit.textEdited.connect(self.validate_inputs)
+        self.Pangle_edit.editingFinished.connect(self.validate_all_inputs)
+        self.Pangle_edit.textEdited.connect(self.validate_inputs)
 
     def initalizeCombo(self, options: list[str]) -> None:
         """Initialize the plot types in the combo box
@@ -268,8 +321,13 @@ class ExperimentWidget(QWidget):
 
     def validate_inputs(self, *dummy_args, **dummy_kwargs) -> None:
         """Check validity of the fields and set the stylesheet"""
-        print(self.sender)
-        print("args: ", dummy_args, " kwargs: ", dummy_kwargs)
+        if not self.sender().hasAcceptableInput():
+            self.sender().setStyleSheet(INVALID_QLINEEDIT)
+        else:
+            self.sender().setStyleSheet("")
+
+    def validate_all_inputs(self):
+        print('here')
 
 
 class CrosshairWidget(QWidget):
