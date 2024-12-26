@@ -112,7 +112,8 @@ class SelectorWidget(QWidget):
     def set_SC_toggle(self, toggle: bool) -> None:
         """Sets widget display based on the values dictionary
         Args:
-            Bool
+            toggle: True - Single Crystal radio button is toggled
+            toggle: False - Single Crystal radio button is not toggled
         """
         self.sc_rb.setChecked(toggle)
 
@@ -283,7 +284,7 @@ class ExperimentWidget(QWidget):
 
         """
         self.Ei_edit.setText(str(values["Ei"]))
-        self.S2_edit.setText(str(values["s2"]))
+        self.S2_edit.setText(str(values["S2"]))
         self.Pangle_edit.setText(str(values["alpha_p"]))
 
 

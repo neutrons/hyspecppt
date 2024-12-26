@@ -1,13 +1,18 @@
 """Presenter for the Main tab"""
 
+from qtpy.QtWidgets import QWidget
+
 from .experiment_settings import DEFAULT_CROSSHAIR, DEFAULT_EXPERIMENT, DEFAULT_LATTICE, PLOT_TYPES
 
 
 class HyspecPPTPresenter:
     """Main presenter"""
 
-    def __init__(self, view, model):
-        """Constructor"""
+    def __init__(self, view: "[QWidget]", model: "[QWidget]"):
+        """Constructor
+        :view: hppt_view class type
+        :model:hppt_model class type
+        """
         self._view = view
         self._model = model
         self.view.SCW.set_values(DEFAULT_LATTICE)

@@ -277,8 +277,8 @@ HyspecPPT View
     class ExperimentWidget{
         +QLabel:ei_display
         +QLineEdit:ei_value
-        +QLabel:s2_display
-        +QLineEdit:s2_value
+        +QLabel:S2_display
+        +QLineEdit:S2_value
         +QLabel:p_display
         +QLineEdit:p_value
         +QLabel:plot_type_display
