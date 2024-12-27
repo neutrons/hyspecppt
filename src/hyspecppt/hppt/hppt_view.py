@@ -495,3 +495,10 @@ class CrosshairWidget(QWidget):
         """
         self.DeltaE_edit.setText(str(values["DeltaE"]))
         self.modQ_edit.setText(str(values["modQ"]))
+
+    def validate_inputs(self, *dummy_args, **dummy_kwargs) -> None:
+        """Check validity of the fields and set the stylesheet"""
+        if not self.sender().hasAcceptableInput():
+            self.sender().setStyleSheet(INVALID_QLINEEDIT)
+        else:
+            self.sender().setStyleSheet("")
