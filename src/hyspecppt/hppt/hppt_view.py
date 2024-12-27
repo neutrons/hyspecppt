@@ -171,41 +171,60 @@ class SingleCrystalWidget(QWidget):
         layout = QVBoxLayout()
         groupBox = QGroupBox("Lattice parameters")
         lattice_layout = QGridLayout()
+
+        self.lattice_length_validator = QDoubleValidator(bottom=1, top=100, parent=self)
+        self.lattice_length_validator.setNotation(QDoubleValidator.StandardNotation)
+
+        self.lattice_angle_validator = QDoubleValidator(bottom=30, top=150, parent=self)
+        self.lattice_angle_validator.setNotation(QDoubleValidator.StandardNotation)
+
+        self.rlu_validator = QDoubleValidator(bottom=-100, top=100, parent=self)
+        self.rlu_validator.setNotation(QDoubleValidator.StandardNotation)
+
         self.a_edit = QLineEdit(self)
         self.a_label = QLabel("&a:", self)
         self.a_label.setBuddy(self.a_edit)
+        self.a_edit.setValidator(self.lattice_length_validator)
 
         self.b_edit = QLineEdit(self)
         self.b_label = QLabel("b:", self)
         self.b_label.setBuddy(self.b_edit)
+        self.b_edit.setValidator(self.lattice_length_validator)
 
         self.c_edit = QLineEdit(self)
         self.c_label = QLabel("c:", self)
         self.c_label.setBuddy(self.c_edit)
+        self.c_edit.setValidator(self.lattice_length_validator)
 
         self.alpha_edit = QLineEdit(self)
         self.alpha_label = QLabel(alpha + ":", self)
         self.alpha_label.setBuddy(self.alpha_edit)
+        self.alpha_edit.setValidator(self.lattice_angle_validator)
 
         self.beta_edit = QLineEdit(self)
         self.beta_label = QLabel(beta + ":", self)
         self.beta_label.setBuddy(self.beta_edit)
+        self.beta_edit.setValidator(self.lattice_angle_validator)
 
         self.gamma_edit = QLineEdit(self)
         self.gamma_label = QLabel(gamma + ":", self)
         self.gamma_label.setBuddy(self.gamma_edit)
+        self.gamma_edit.setValidator(self.lattice_angle_validator)
 
         self.h_edit = QLineEdit(self)
         self.h_label = QLabel("H:", self)
         self.h_label.setBuddy(self.h_edit)
+        self.h_edit.setValidator(self.rlu_validator)
 
         self.k_edit = QLineEdit(self)
         self.k_label = QLabel("K:", self)
         self.k_label.setBuddy(self.k_edit)
+        self.k_edit.setValidator(self.rlu_validator)
 
         self.l_edit = QLineEdit(self)
         self.l_label = QLabel("L:", self)
         self.l_label.setBuddy(self.l_edit)
+        self.l_edit.setValidator(self.rlu_validator)
 
         lattice_layout.addWidget(self.a_label, 0, 0)
         lattice_layout.addWidget(self.a_edit, 0, 1)
@@ -230,6 +249,27 @@ class SingleCrystalWidget(QWidget):
         layout.addWidget(groupBox)
         self.setLayout(layout)
 
+        #conections
+        self.a_edit.editingFinished.connect(self.validate_all_inputs)
+        self.a_edit.textEdited.connect(self.validate_inputs)
+        self.b_edit.editingFinished.connect(self.validate_all_inputs)
+        self.b_edit.textEdited.connect(self.validate_inputs)
+        self.c_edit.editingFinished.connect(self.validate_all_inputs)
+        self.c_edit.textEdited.connect(self.validate_inputs)
+        self.alpha_edit.editingFinished.connect(self.validate_all_inputs)
+        self.alpha_edit.textEdited.connect(self.validate_inputs)
+        self.beta_edit.editingFinished.connect(self.validate_all_inputs)
+        self.beta_edit.textEdited.connect(self.validate_inputs)
+        self.gamma_edit.editingFinished.connect(self.validate_all_inputs)
+        self.gamma_edit.textEdited.connect(self.validate_inputs)
+        self.h_edit.editingFinished.connect(self.validate_all_inputs)
+        self.h_edit.textEdited.connect(self.validate_inputs)
+        self.k_edit.editingFinished.connect(self.validate_all_inputs)
+        self.k_edit.textEdited.connect(self.validate_inputs)
+        self.l_edit.editingFinished.connect(self.validate_all_inputs)
+        self.l_edit.textEdited.connect(self.validate_inputs)
+
+
     def set_values(self, values: dict[str, float]) -> None:
         """Sets widget display based on the values dictionary
 
@@ -248,6 +288,16 @@ class SingleCrystalWidget(QWidget):
         self.h_edit.setText(str(values["h"]))
         self.k_edit.setText(str(values["k"]))
         self.l_edit.setText(str(values["l"]))
+
+    def validate_inputs(self, *dummy_args, **dummy_kwargs) -> None:
+        """Check validity of the fields and set the stylesheet"""
+        if not self.sender().hasAcceptableInput():
+            self.sender().setStyleSheet(INVALID_QLINEEDIT)
+        else:
+            self.sender().setStyleSheet("")
+
+    def validate_all_inputs(self):
+        print('here')
 
 
 class ExperimentWidget(QWidget):
@@ -371,3 +421,10 @@ class CrosshairWidget(QWidget):
 
         """
         self.modQ_edit.setEnabled(state)
+
+    def validate_inputs(self, *dummy_args, **dummy_kwargs) -> None:
+        """Check validity of the fields and set the stylesheet"""
+        if not self.sender().hasAcceptableInput():
+            self.sender().setStyleSheet(INVALID_QLINEEDIT)
+        else:
+            self.sender().setStyleSheet("")
