@@ -16,7 +16,7 @@ class PresenterTests(unittest.TestCase):
         mock_view.EW.set_values.assert_called_once_with(DEFAULT_EXPERIMENT)
         mock_view.CW.set_values.assert_called_once_with(DEFAULT_CROSSHAIR)
         mock_view.SelW.set_SC_toggle.assert_called_once_with(True)
-        #maybe move these to a function in the view
+        # maybe move these to a function in the view
         mock_view.EW.Ei_edit.text.assert_called_once()
         mock_view.EW.Pangle_edit.text.assert_called_once()
         mock_view.EW.S2_edit.text.assert_called_once()
