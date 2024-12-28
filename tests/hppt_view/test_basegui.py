@@ -1,5 +1,5 @@
 import hyspecppt.hppt.hppt_view as hppt_view
-from hyspecppt.hppt.hppt_defaults import PLOT_TYPES, alpha, beta, gamma
+from hyspecppt.hppt.experiment_settings import PLOT_TYPES, alpha, beta, gamma
 
 
 def test_Experiment_widget(qtbot):
@@ -20,7 +20,7 @@ def test_Experiment_widget(qtbot):
 
     assert ExpWidget.Type_label.text() == "&Type:"
     # check QCombobox has been correctly initialized. All items are added.
-    ExpWidget.initalizeCombo(PLOT_TYPES)
+    ExpWidget.initializeCombo(PLOT_TYPES)
     for i in range(len(PLOT_TYPES)):
         assert ExpWidget.Type_combobox.findText(PLOT_TYPES[i]) == i
 
