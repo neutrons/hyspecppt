@@ -22,7 +22,6 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-
 from .experiment_settings import DEFAULT_LATTICE, PLOT_TYPES, alpha, beta, gamma, INVALID_QLINEEDIT
 
 
@@ -98,10 +97,6 @@ class HyspecPPTView(QWidget):
 
         self.switch_to_SC()
 
-        # DELETEME and replace with real initialization
-        self.EW.initalizeCombo(PLOT_TYPES)
-        self.SCW.set_values(DEFAULT_LATTICE)
-
     def switch_to_SC(self) -> None:
         """Set visibility for Single Crystal mode"""
         self.SCW.setVisible(True)
@@ -154,6 +149,14 @@ class SelectorWidget(QWidget):
         selector_layout.addWidget(self.powder_rb)
         selector_layout.addWidget(self.sc_rb)
         self.setLayout(selector_layout)
+
+    def set_SC_toggle(self, toggle: bool) -> None:
+        """Sets widget display based on the values dictionary
+        Args:
+            toggle: True - Single Crystal radio button is toggled
+            toggle: False - Single Crystal radio button is not toggled
+        """
+        self.sc_rb.setChecked(toggle)
 
 
 class SingleCrystalWidget(QWidget):
@@ -359,7 +362,7 @@ class ExperimentWidget(QWidget):
         self.Pangle_edit.editingFinished.connect(self.validate_all_inputs)
         self.Pangle_edit.textEdited.connect(self.validate_inputs)
 
-    def initalizeCombo(self, options: list[str]) -> None:
+    def initializeCombo(self, options: list[str]) -> None:
         """Initialize the plot types in the combo box
 
         Args:
@@ -378,6 +381,18 @@ class ExperimentWidget(QWidget):
 
     def validate_all_inputs(self):
         print('here')
+
+    def set_values(self, values: dict[str, float]) -> None:
+        """Sets widget display based on the values dictionary
+
+        Args:
+            values (dict): a dictionary that contains
+            Ei, S2, alpha_p, plot_types values
+
+        """
+        self.Ei_edit.setText(str(values["Ei"]))
+        self.S2_edit.setText(str(values["S2"]))
+        self.Pangle_edit.setText(str(values["alpha_p"]))
 
 
 class CrosshairWidget(QWidget):
@@ -428,3 +443,14 @@ class CrosshairWidget(QWidget):
             self.sender().setStyleSheet(INVALID_QLINEEDIT)
         else:
             self.sender().setStyleSheet("")
+
+    def set_values(self, values: dict[str, float]) -> None:
+        """Sets widget display based on the values dictionary
+
+        Args:
+            values (dict): a dictionary that contains
+            deltaE and mod_Q values
+
+        """
+        self.DeltaE_edit.setText(str(values["DeltaE"]))
+        self.modQ_edit.setText(str(values["modQ"]))
