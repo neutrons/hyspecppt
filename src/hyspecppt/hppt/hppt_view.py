@@ -24,54 +24,10 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from .experiment_settings import DEFAULT_LATTICE, INVALID_QLINEEDIT, PLOT_TYPES, alpha, beta, gamma
+from .experiment_settings import INVALID_QLINEEDIT, alpha, beta, gamma
 
 
-class absValidator(QDoubleValidator):
-    """Abolute value validator"""
-
-    def __init__(
-        self, parent: Optional["QObject"] = None, bottom: float = 0, top: float = np.inf, decimals: int = -1
-    ) -> None:
-        """Constructor for the absolute value validator. All the parameters
-           are the same as for QDoubleValidator, but the valid value is between a
-           positive bottom and top, or between -top and -bottom
-
-        Args:
-            parent (QObject): Optional parent
-            bottom (float): the minimum positive value (set to 0 if not positive)
-            top (float): the highest top value (set to infinity if not greater than bottom)
-            decimals (int): the number of digits after the decimal point.
-
-        """
-        if bottom < 0:
-            bottom = 0
-        if top <= bottom:
-            top = np.inf
-        super().__init__(parent=parent, bottom=bottom, top=top, decimals=decimals)
-
-    def validate(self, inp: str, pos: int) -> tuple[QValidator.State, str, int]:
-        """Override for validate method
-
-        Args:
-            inp (str): the input string
-            pos (int): cursor position
-
-        """
-        original_str = copy.copy(inp)
-        original_pos = pos
-        if inp == "-":
-            return QValidator.Intermediate
-        try:
-            inp = str(abs(float(inp)))
-        except ValueError:
-            pass
-        x = super().validate(inp, pos)
-        # do not "fix" the input
-        return x[0], original_str, original_pos
-
-
-class absValidator(QDoubleValidator):
+class AbsValidator(QDoubleValidator):
     """Abolute value validator"""
 
     def __init__(
@@ -340,7 +296,7 @@ class SingleCrystalWidget(QWidget):
         self.k_edit.setText(str(values["k"]))
         self.l_edit.setText(str(values["l"]))
 
-    def validate_inputs(self, *dummy_args, **dummy_kwargs) -> None:
+    def validate_inputs(self, *_, **__) -> None:
         """Check validity of the fields and set the stylesheet"""
         if not self.sender().hasAcceptableInput():
             self.sender().setStyleSheet(INVALID_QLINEEDIT)
@@ -380,7 +336,7 @@ class ExperimentWidget(QWidget):
         self.S2_edit = QLineEdit(self)
         self.S2_label = QLabel("Detector angle &S2:", self)
         self.S2_label.setBuddy(self.S2_edit)
-        self.S2_validator = absValidator(bottom=30, top=100, parent=self)
+        self.S2_validator = AbsValidator(bottom=30, top=100, parent=self)
         self.S2_validator.setNotation(QDoubleValidator.StandardNotation)
         self.S2_edit.setValidator(self.S2_validator)
 
@@ -420,7 +376,7 @@ class ExperimentWidget(QWidget):
         """
         self.Type_combobox.addItems(options)
 
-    def validate_inputs(self, *dummy_args, **dummy_kwargs) -> None:
+    def validate_inputs(self, *_, **__) -> None:
         """Check validity of the fields and set the stylesheet"""
         if not self.sender().hasAcceptableInput():
             self.sender().setStyleSheet(INVALID_QLINEEDIT)
@@ -429,18 +385,6 @@ class ExperimentWidget(QWidget):
 
     def validate_all_inputs(self):
         print("EW here")
-
-    def set_values(self, values: dict[str, float]) -> None:
-        """Sets widget display based on the values dictionary
-
-        Args:
-            values (dict): a dictionary that contains
-            Ei, S2, alpha_p, plot_types values
-
-        """
-        self.Ei_edit.setText(str(values["Ei"]))
-        self.S2_edit.setText(str(values["S2"]))
-        self.Pangle_edit.setText(str(values["alpha_p"]))
 
     def set_values(self, values: dict[str, float]) -> None:
         """Sets widget display based on the values dictionary
@@ -521,7 +465,7 @@ class CrosshairWidget(QWidget):
         self.DeltaE_edit.setText(str(values["DeltaE"]))
         self.modQ_edit.setText(str(values["modQ"]))
 
-    def validate_inputs(self, *dummy_args, **dummy_kwargs) -> None:
+    def validate_inputs(self, *_, **__) -> None:
         """Check validity of the fields and set the stylesheet"""
         if not self.sender().hasAcceptableInput():
             self.sender().setStyleSheet(INVALID_QLINEEDIT)
