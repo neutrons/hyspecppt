@@ -79,7 +79,6 @@ class absValidator(QDoubleValidator):
             bottom (float): the minimum positive value (set to 0 if not positive)
             top (float): the highest top value (set to infinity if not greater than bottom)
             decimals (int): the number of digits after the decimal point.
-
         """
         if bottom < 0:
             bottom = 0
@@ -403,6 +402,7 @@ class ExperimentWidget(QWidget):
         self.Pangle_edit.editingFinished.connect(self.validate_all_inputs)
         self.Pangle_edit.textEdited.connect(self.validate_inputs)
 
+
     def initializeCombo(self, options: list[str]) -> None:
         """Initialize the plot types in the combo box
 
@@ -422,6 +422,18 @@ class ExperimentWidget(QWidget):
 
     def validate_all_inputs(self):
         print('EW here')
+
+    def set_values(self, values: dict[str, float]) -> None:
+        """Sets widget display based on the values dictionary
+
+        Args:
+            values (dict): a dictionary that contains
+            Ei, S2, alpha_p, plot_types values
+
+        """
+        self.Ei_edit.setText(str(values["Ei"]))
+        self.S2_edit.setText(str(values["S2"]))
+        self.Pangle_edit.setText(str(values["alpha_p"]))
 
     def set_values(self, values: dict[str, float]) -> None:
         """Sets widget display based on the values dictionary
@@ -490,13 +502,6 @@ class CrosshairWidget(QWidget):
 
         """
         self.modQ_edit.setEnabled(state)
-
-    def validate_inputs(self, *dummy_args, **dummy_kwargs) -> None:
-        """Check validity of the fields and set the stylesheet"""
-        if not self.sender().hasAcceptableInput():
-            self.sender().setStyleSheet(INVALID_QLINEEDIT)
-        else:
-            self.sender().setStyleSheet("")
 
     def set_values(self, values: dict[str, float]) -> None:
         """Sets widget display based on the values dictionary
