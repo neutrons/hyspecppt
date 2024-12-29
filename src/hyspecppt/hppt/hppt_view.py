@@ -28,7 +28,7 @@ from .experiment_settings import INVALID_QLINEEDIT, alpha, beta, gamma
 
 
 class AbsValidator(QDoubleValidator):
-    """Abolute value validator"""
+    """Absolute value validator"""
 
     def __init__(
         self, parent: Optional["QObject"] = None, bottom: float = 0, top: float = np.inf, decimals: int = -1
@@ -257,7 +257,7 @@ class SingleCrystalWidget(QWidget):
         layout.addWidget(groupBox)
         self.setLayout(layout)
 
-        # conections
+        # connections
         self.a_edit.editingFinished.connect(self.validate_all_inputs)
         self.a_edit.textEdited.connect(self.validate_inputs)
         self.b_edit.editingFinished.connect(self.validate_all_inputs)
