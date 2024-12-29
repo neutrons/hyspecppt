@@ -1,8 +1,9 @@
 """Widgets for the main window"""
+
 import copy
-import numpy as np
 from typing import Optional
 
+import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
@@ -22,13 +23,16 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from .experiment_settings import DEFAULT_LATTICE, PLOT_TYPES, alpha, beta, gamma, INVALID_QLINEEDIT
+
+from .experiment_settings import DEFAULT_LATTICE, INVALID_QLINEEDIT, PLOT_TYPES, alpha, beta, gamma
 
 
 class absValidator(QDoubleValidator):
     """Abolute value validator"""
 
-    def __init__(self, parent: Optional["QObject"] = None, bottom: float = 0, top: float = np.inf, decimals: int = -1) -> None:
+    def __init__(
+        self, parent: Optional["QObject"] = None, bottom: float = 0, top: float = np.inf, decimals: int = -1
+    ) -> None:
         """Constructor for the absolute value validator. All the parameters
            are the same as for QDoubleValidator, but the valid value is between a
            positive bottom and top, or between -top and -bottom
@@ -46,22 +50,23 @@ class absValidator(QDoubleValidator):
             top = np.inf
         super().__init__(parent=parent, bottom=bottom, top=top, decimals=decimals)
 
-    def validate(self,inp: str, pos:int) -> tuple[QValidator.State, str, int]:
+    def validate(self, inp: str, pos: int) -> tuple[QValidator.State, str, int]:
         """Override for validate method
 
         Args:
             inp (str): the input string
             pos (int): cursor position
+
         """
         original_str = copy.copy(inp)
         original_pos = pos
-        if inp == '-':
+        if inp == "-":
             return QValidator.Intermediate
         try:
             inp = str(abs(float(inp)))
         except ValueError:
             pass
-        x= super().validate(inp, pos)
+        x = super().validate(inp, pos)
         # do not "fix" the input
         return x[0], original_str, original_pos
 
@@ -69,7 +74,9 @@ class absValidator(QDoubleValidator):
 class absValidator(QDoubleValidator):
     """Abolute value validator"""
 
-    def __init__(self, parent: Optional["QObject"] = None, bottom: float = 0, top: float = np.inf, decimals: int = -1) -> None:
+    def __init__(
+        self, parent: Optional["QObject"] = None, bottom: float = 0, top: float = np.inf, decimals: int = -1
+    ) -> None:
         """Constructor for the absolute value validator. All the parameters
            are the same as for QDoubleValidator, but the valid value is between a
            positive bottom and top, or between -top and -bottom
@@ -79,6 +86,7 @@ class absValidator(QDoubleValidator):
             bottom (float): the minimum positive value (set to 0 if not positive)
             top (float): the highest top value (set to infinity if not greater than bottom)
             decimals (int): the number of digits after the decimal point.
+
         """
         if bottom < 0:
             bottom = 0
@@ -86,22 +94,23 @@ class absValidator(QDoubleValidator):
             top = np.inf
         super().__init__(parent=parent, bottom=bottom, top=top, decimals=decimals)
 
-    def validate(self,inp: str, pos:int) -> tuple[QValidator.State, str, int]:
+    def validate(self, inp: str, pos: int) -> tuple[QValidator.State, str, int]:
         """Override for validate method
 
         Args:
             inp (str): the input string
             pos (int): cursor position
+
         """
         original_str = copy.copy(inp)
         original_pos = pos
-        if inp == '-':
+        if inp == "-":
             return QValidator.Intermediate
         try:
             inp = str(abs(float(inp)))
         except ValueError:
             pass
-        x= super().validate(inp, pos)
+        x = super().validate(inp, pos)
         # do not "fix" the input
         return x[0], original_str, original_pos
 
@@ -292,7 +301,7 @@ class SingleCrystalWidget(QWidget):
         layout.addWidget(groupBox)
         self.setLayout(layout)
 
-        #conections
+        # conections
         self.a_edit.editingFinished.connect(self.validate_all_inputs)
         self.a_edit.textEdited.connect(self.validate_inputs)
         self.b_edit.editingFinished.connect(self.validate_all_inputs)
@@ -311,7 +320,6 @@ class SingleCrystalWidget(QWidget):
         self.k_edit.textEdited.connect(self.validate_inputs)
         self.l_edit.editingFinished.connect(self.validate_all_inputs)
         self.l_edit.textEdited.connect(self.validate_inputs)
-
 
     def set_values(self, values: dict[str, float]) -> None:
         """Sets widget display based on the values dictionary
@@ -340,7 +348,7 @@ class SingleCrystalWidget(QWidget):
             self.sender().setStyleSheet("")
 
     def validate_all_inputs(self):
-        print('SC here')
+        print("SC here")
 
 
 class ExperimentWidget(QWidget):
@@ -402,7 +410,6 @@ class ExperimentWidget(QWidget):
         self.Pangle_edit.editingFinished.connect(self.validate_all_inputs)
         self.Pangle_edit.textEdited.connect(self.validate_inputs)
 
-
     def initializeCombo(self, options: list[str]) -> None:
         """Initialize the plot types in the combo box
 
@@ -421,7 +428,7 @@ class ExperimentWidget(QWidget):
             self.sender().setStyleSheet("")
 
     def validate_all_inputs(self):
-        print('EW here')
+        print("EW here")
 
     def set_values(self, values: dict[str, float]) -> None:
         """Sets widget display based on the values dictionary
@@ -522,4 +529,4 @@ class CrosshairWidget(QWidget):
             self.sender().setStyleSheet("")
 
     def validate_all_inputs(self):
-        print('CH here')
+        print("CH here")

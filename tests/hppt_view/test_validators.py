@@ -3,7 +3,7 @@ from hyspecppt.hppt.experiment_settings import INVALID_QLINEEDIT
 
 
 def test_Experiment_validators(qtbot):
-    """test validators for the experiment widget"""
+    """Test validators for the experiment widget"""
     ExpWidget = hppt_view.ExperimentWidget()
     qtbot.addWidget(ExpWidget)
 
@@ -20,7 +20,7 @@ def test_Experiment_validators(qtbot):
     qtbot.keyClicks(ExpWidget.Pangle_edit, "\b")
     assert ExpWidget.Pangle_edit.text() == "-45"
     assert ExpWidget.Pangle_edit.styleSheet() == ""
-    
+
     qtbot.keyClicks(ExpWidget.S2_edit, "-450")
     assert ExpWidget.S2_edit.text() == "-450"
     assert ExpWidget.S2_edit.styleSheet() == INVALID_QLINEEDIT
@@ -33,10 +33,10 @@ def test_Experiment_validators(qtbot):
 
 
 def test_Single_Crystal_validators(qtbot):
-    """test validators for the single crystal widget"""
+    """Test validators for the single crystal widget"""
     SCWidget = hppt_view.SingleCrystalWidget()
     qtbot.addWidget(SCWidget)
-    
+
     lattice = [SCWidget.a_edit, SCWidget.b_edit, SCWidget.c_edit]
     for latt_edit in lattice:
         qtbot.keyClicks(latt_edit, "450")
@@ -64,8 +64,9 @@ def test_Single_Crystal_validators(qtbot):
         assert hkl_edit.text() == "-45"
         assert hkl_edit.styleSheet() == ""
 
+
 def test_Crosshairs_validators(qtbot):
-    """test validators for the single crystal widget"""
+    """Test validators for the single crystal widget"""
     CHWidget = hppt_view.CrosshairWidget()
     qtbot.addWidget(CHWidget)
 
