@@ -341,7 +341,7 @@ class SingleCrystalWidget(QWidget):
             self.sender().setStyleSheet("")
 
     def validate_all_inputs(self):
-        print('here')
+        print('SC here')
 
 
 class ExperimentWidget(QWidget):
@@ -421,7 +421,7 @@ class ExperimentWidget(QWidget):
             self.sender().setStyleSheet("")
 
     def validate_all_inputs(self):
-        print('here')
+        print('EW here')
 
     def set_values(self, values: dict[str, float]) -> None:
         """Sets widget display based on the values dictionary
@@ -464,6 +464,19 @@ class CrosshairWidget(QWidget):
         box_layout.addWidget(self.modQ_label)
         box_layout.addWidget(self.modQ_edit)
 
+        self.DeltaE_validator = QDoubleValidator(parent=self)
+        self.DeltaE_validator.setNotation(QDoubleValidator.StandardNotation)
+        self.DeltaE_edit.setValidator(self.DeltaE_validator)
+        self.modQ_validator = QDoubleValidator(bottom=0, top=10, parent=self)
+        self.modQ_validator.setNotation(QDoubleValidator.StandardNotation)
+        self.modQ_edit.setValidator(self.modQ_validator)
+
+        # connections
+        self.DeltaE_edit.editingFinished.connect(self.validate_all_inputs)
+        self.DeltaE_edit.textEdited.connect(self.validate_inputs)
+        self.modQ_edit.editingFinished.connect(self.validate_all_inputs)
+        self.modQ_edit.textEdited.connect(self.validate_inputs)
+
         groupBox = QGroupBox("Crosshair position")
         groupBox.setLayout(box_layout)
         layout.addWidget(groupBox)
@@ -502,3 +515,6 @@ class CrosshairWidget(QWidget):
             self.sender().setStyleSheet(INVALID_QLINEEDIT)
         else:
             self.sender().setStyleSheet("")
+
+    def validate_all_inputs(self):
+        print('CH here')
