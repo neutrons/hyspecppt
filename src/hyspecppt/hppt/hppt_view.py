@@ -1,13 +1,13 @@
 """Widgets for the main window"""
 
 import copy
-from typing import Optional
+from typing import Optional, Union
 
 import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-from qtpy.QtCore import QObject
+from qtpy.QtCore import QObject, Signal
 from qtpy.QtGui import QDoubleValidator, QValidator
 from qtpy.QtWidgets import (
     QButtonGroup,
@@ -24,7 +24,7 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from .experiment_settings import INVALID_QLINEEDIT, alpha, beta, gamma
+from .experiment_settings import INVALID_QLINEEDIT, PLOT_TYPES, alpha, beta, gamma
 
 
 class AbsValidator(QDoubleValidator):
@@ -167,6 +167,8 @@ class SelectorWidget(QWidget):
 class SingleCrystalWidget(QWidget):
     """Widget for inputting single crystal parameters"""
 
+    validSignal = Signal(dict)
+
     def __init__(self, parent: Optional["QObject"] = None) -> None:
         """Constructor for the single crystal input parameters widget
 
@@ -304,11 +306,24 @@ class SingleCrystalWidget(QWidget):
             self.sender().setStyleSheet("")
 
     def validate_all_inputs(self):
-        print("SC here")
+        inputs = [self.a_edit, self.b_edit, self.c_edit,
+                  self.alpha_edit, self.beta_edit, self.gamma_edit,
+                  self.h_edit, self.k_edit, self.l_edit]
+        keys = ["a", "b", "c", "alpha", "beta", "gamma", "h", "k", "l"]
+        out_signal = dict()
+
+        for k,edit in zip(keys,inputs):
+            if edit.hasAcceptableInput():
+                out_signal[k] = float(edit.text())
+
+        if len(out_signal) == 9:
+            self.validSignal.emit(out_signal)
 
 
 class ExperimentWidget(QWidget):
     """Widget for setting experiment parameters"""
+
+    validSignal = Signal(dict)
 
     def __init__(self, parent: Optional["QObject"] = None) -> None:
         """Constructor for the experiment input parameters widget
@@ -365,6 +380,7 @@ class ExperimentWidget(QWidget):
         self.S2_edit.textEdited.connect(self.validate_inputs)
         self.Pangle_edit.editingFinished.connect(self.validate_all_inputs)
         self.Pangle_edit.textEdited.connect(self.validate_inputs)
+        self.Type_combobox.currentIndexChanged.connect(self.validate_all_inputs)
 
     def initializeCombo(self, options: list[str]) -> None:
         """Initialize the plot types in the combo box
@@ -383,10 +399,19 @@ class ExperimentWidget(QWidget):
         else:
             self.sender().setStyleSheet("")
 
-    def validate_all_inputs(self):
-        print("EW here")
+    def validate_all_inputs(self) -> None:
+        """If all inputs are valid emit a validSignal"""
+        inputs = [self.Ei_edit, self.S2_edit, self.Pangle_edit]
+        keys = ["Ei", "S2", "alpha_p"]
 
-    def set_values(self, values: dict[str, float]) -> None:
+        out_signal = dict(plot_type=self.Type_combobox.currentText())
+        for k,edit in zip(keys,inputs):
+            if edit.hasAcceptableInput():
+                out_signal[k] = float(edit.text())
+        if len(out_signal) == 4:
+            self.validSignal.emit(out_signal)
+
+    def set_values(self, values: dict[str, Union[float, str]]) -> None:
         """Sets widget display based on the values dictionary
 
         Args:
@@ -397,10 +422,13 @@ class ExperimentWidget(QWidget):
         self.Ei_edit.setText(str(values["Ei"]))
         self.S2_edit.setText(str(values["S2"]))
         self.Pangle_edit.setText(str(values["alpha_p"]))
+        self.Type_combobox.setCurrentIndex(PLOT_TYPES.index(values["plot_type"]))
 
 
 class CrosshairWidget(QWidget):
     """Widget to enter/display crosshair parameters"""
+
+    validSignal = Signal(dict)
 
     def __init__(self, parent: Optional["QObject"] = None) -> None:
         """Constructor for the crosshair input parameters widget
@@ -473,4 +501,13 @@ class CrosshairWidget(QWidget):
             self.sender().setStyleSheet("")
 
     def validate_all_inputs(self):
-        print("CH here")
+        """If all inputs are valid emit a validSignal"""
+        inputs = [self.DeltaE_edit, self.modQ_edit]
+        keys = ["DeltaE", "modQ"]
+
+        out_signal = dict()
+        for k,edit in zip(keys,inputs):
+            if edit.hasAcceptableInput():
+                out_signal[k] = float(edit.text())
+        if len(out_signal) == 2:
+            self.validSignal.emit(out_signal)
