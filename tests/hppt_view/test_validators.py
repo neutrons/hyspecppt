@@ -37,7 +37,7 @@ def test_Experiment_validators(qtbot):
 
     # validate_all_inputs
     mock_slot = MagicMock()
-    ExpWidget.validSignal.connect(mock_slot)
+    ExpWidget.valid_signal.connect(mock_slot)
     # invalid S2
     ExpWidget.S2_edit.editingFinished.emit()
     mock_slot.assert_not_called()
@@ -81,7 +81,7 @@ def test_Single_Crystal_validators(qtbot):
 
     # validate_all_inputs
     mock_slot = MagicMock()
-    SCWidget.validSignal.connect(mock_slot)
+    SCWidget.valid_signal.connect(mock_slot)
     # invalid h
     qtbot.keyClicks(SCWidget.h_edit, "0")
     SCWidget.a_edit.editingFinished.emit()
@@ -122,7 +122,7 @@ def test_Crosshairs_validators(qtbot):
 
     # validate_all_inputs
     mock_slot = MagicMock()
-    CHWidget.validSignal.connect(mock_slot)
+    CHWidget.valid_signal.connect(mock_slot)
     # invalid modQ
     CHWidget.DeltaE_edit.editingFinished.emit()
     mock_slot.assert_not_called()

@@ -167,7 +167,7 @@ class SelectorWidget(QWidget):
 class SingleCrystalWidget(QWidget):
     """Widget for inputting single crystal parameters"""
 
-    validSignal = Signal(dict)
+    valid_signal = Signal(dict)
 
     def __init__(self, parent: Optional["QObject"] = None) -> None:
         """Constructor for the single crystal input parameters widget
@@ -325,13 +325,13 @@ class SingleCrystalWidget(QWidget):
                 out_signal[k] = float(edit.text())
 
         if len(out_signal) == 9:
-            self.validSignal.emit(out_signal)
+            self.valid_signal.emit(out_signal)
 
 
 class ExperimentWidget(QWidget):
     """Widget for setting experiment parameters"""
 
-    validSignal = Signal(dict)
+    valid_signal = Signal(dict)
 
     def __init__(self, parent: Optional["QObject"] = None) -> None:
         """Constructor for the experiment input parameters widget
@@ -408,7 +408,7 @@ class ExperimentWidget(QWidget):
             self.sender().setStyleSheet("")
 
     def validate_all_inputs(self) -> None:
-        """If all inputs are valid emit a validSignal"""
+        """If all inputs are valid emit a valid_signal"""
         inputs = [self.Ei_edit, self.S2_edit, self.Pangle_edit]
         keys = ["Ei", "S2", "alpha_p"]
 
@@ -417,7 +417,7 @@ class ExperimentWidget(QWidget):
             if edit.hasAcceptableInput():
                 out_signal[k] = float(edit.text())
         if len(out_signal) == 4:
-            self.validSignal.emit(out_signal)
+            self.valid_signal.emit(out_signal)
 
     def set_values(self, values: dict[str, Union[float, str]]) -> None:
         """Sets widget display based on the values dictionary
@@ -436,7 +436,7 @@ class ExperimentWidget(QWidget):
 class CrosshairWidget(QWidget):
     """Widget to enter/display crosshair parameters"""
 
-    validSignal = Signal(dict)
+    valid_signal = Signal(dict)
 
     def __init__(self, parent: Optional["QObject"] = None) -> None:
         """Constructor for the crosshair input parameters widget
@@ -509,7 +509,7 @@ class CrosshairWidget(QWidget):
             self.sender().setStyleSheet("")
 
     def validate_all_inputs(self):
-        """If all inputs are valid emit a validSignal"""
+        """If all inputs are valid emit a valid_signal"""
         inputs = [self.DeltaE_edit, self.modQ_edit]
         keys = ["DeltaE", "modQ"]
 
@@ -518,4 +518,4 @@ class CrosshairWidget(QWidget):
             if edit.hasAcceptableInput():
                 out_signal[k] = float(edit.text())
         if len(out_signal) == 2:
-            self.validSignal.emit(out_signal)
+            self.valid_signal.emit(out_signal)
