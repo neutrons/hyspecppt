@@ -306,13 +306,21 @@ class SingleCrystalWidget(QWidget):
             self.sender().setStyleSheet("")
 
     def validate_all_inputs(self):
-        inputs = [self.a_edit, self.b_edit, self.c_edit,
-                  self.alpha_edit, self.beta_edit, self.gamma_edit,
-                  self.h_edit, self.k_edit, self.l_edit]
+        inputs = [
+            self.a_edit,
+            self.b_edit,
+            self.c_edit,
+            self.alpha_edit,
+            self.beta_edit,
+            self.gamma_edit,
+            self.h_edit,
+            self.k_edit,
+            self.l_edit,
+        ]
         keys = ["a", "b", "c", "alpha", "beta", "gamma", "h", "k", "l"]
         out_signal = dict()
 
-        for k,edit in zip(keys,inputs):
+        for k, edit in zip(keys, inputs):
             if edit.hasAcceptableInput():
                 out_signal[k] = float(edit.text())
 
@@ -405,7 +413,7 @@ class ExperimentWidget(QWidget):
         keys = ["Ei", "S2", "alpha_p"]
 
         out_signal = dict(plot_type=self.Type_combobox.currentText())
-        for k,edit in zip(keys,inputs):
+        for k, edit in zip(keys, inputs):
             if edit.hasAcceptableInput():
                 out_signal[k] = float(edit.text())
         if len(out_signal) == 4:
@@ -506,7 +514,7 @@ class CrosshairWidget(QWidget):
         keys = ["DeltaE", "modQ"]
 
         out_signal = dict()
-        for k,edit in zip(keys,inputs):
+        for k, edit in zip(keys, inputs):
             if edit.hasAcceptableInput():
                 out_signal[k] = float(edit.text())
         if len(out_signal) == 2:

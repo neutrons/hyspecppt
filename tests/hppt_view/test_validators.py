@@ -1,6 +1,7 @@
+from unittest.mock import MagicMock
+
 import hyspecppt.hppt.hppt_view as hppt_view
 from hyspecppt.hppt.experiment_settings import INVALID_QLINEEDIT, PLOT_TYPES
-from unittest.mock import MagicMock
 
 
 def test_Experiment_validators(qtbot):
@@ -34,16 +35,16 @@ def test_Experiment_validators(qtbot):
     assert ExpWidget.S2_edit.text() == "-4"
     assert ExpWidget.S2_edit.styleSheet() == INVALID_QLINEEDIT
 
-    #validate_all_inputs
+    # validate_all_inputs
     mock_slot = MagicMock()
     ExpWidget.validSignal.connect(mock_slot)
-    #invalid S2
+    # invalid S2
     ExpWidget.S2_edit.editingFinished.emit()
     mock_slot.assert_not_called()
-    #all valid
+    # all valid
     qtbot.keyClicks(ExpWidget.S2_edit, "0")
     ExpWidget.S2_edit.editingFinished.emit()
-    mock_slot.assert_called_once_with({'Ei': 30.0, 'S2': -40.0, 'alpha_p': -45.0, 'plot_type': PLOT_TYPES[0]})
+    mock_slot.assert_called_once_with({"Ei": 30.0, "S2": -40.0, "alpha_p": -45.0, "plot_type": PLOT_TYPES[0]})
 
 
 def test_Single_Crystal_validators(qtbot):
@@ -78,17 +79,29 @@ def test_Single_Crystal_validators(qtbot):
         assert hkl_edit.text() == "-45"
         assert hkl_edit.styleSheet() == ""
 
-    #validate_all_inputs
+    # validate_all_inputs
     mock_slot = MagicMock()
     SCWidget.validSignal.connect(mock_slot)
-    #invalid h
+    # invalid h
     qtbot.keyClicks(SCWidget.h_edit, "0")
     SCWidget.a_edit.editingFinished.emit()
     mock_slot.assert_not_called()
-    #all valid
+    # all valid
     qtbot.keyClicks(SCWidget.h_edit, "\b")
     SCWidget.a_edit.editingFinished.emit()
-    mock_slot.assert_called_once_with({'a': 45.0, 'alpha': 45.0, 'b': 45.0, 'beta': 45.0, 'c': 45.0, 'gamma': 45.0, 'h': -45.0, 'k': -45.0, 'l': -45.0})
+    mock_slot.assert_called_once_with(
+        {
+            "a": 45.0,
+            "alpha": 45.0,
+            "b": 45.0,
+            "beta": 45.0,
+            "c": 45.0,
+            "gamma": 45.0,
+            "h": -45.0,
+            "k": -45.0,
+            "l": -45.0,
+        }
+    )
 
 
 def test_Crosshairs_validators(qtbot):
@@ -107,13 +120,13 @@ def test_Crosshairs_validators(qtbot):
     assert CHWidget.modQ_edit.text() == "20"
     assert CHWidget.modQ_edit.styleSheet() == INVALID_QLINEEDIT
 
-    #validate_all_inputs
+    # validate_all_inputs
     mock_slot = MagicMock()
     CHWidget.validSignal.connect(mock_slot)
-    #invalid modQ
+    # invalid modQ
     CHWidget.DeltaE_edit.editingFinished.emit()
     mock_slot.assert_not_called()
-    #all valid
+    # all valid
     qtbot.keyClicks(CHWidget.modQ_edit, "\b")
     CHWidget.DeltaE_edit.editingFinished.emit()
-    mock_slot.assert_called_once_with({'DeltaE': -1.0, 'modQ': 2.0})
+    mock_slot.assert_called_once_with({"DeltaE": -1.0, "modQ": 2.0})
