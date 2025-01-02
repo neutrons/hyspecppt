@@ -163,18 +163,11 @@ class SelectorWidget(QWidget):
         """Update fields based on selected mode
         Args:
         """
-        if self.powder_rb.isChecked():
-            self.parent().switch_to_Powder()
-        else:
-            self.parent().switch_to_SC()
-
-    def set_SC_toggle(self, toggle: bool) -> None:
-        """Sets widget display based on the values dictionary
-        Args:
-            toggle: True - Single Crystal radio button is toggled
-            toggle: False - Single Crystal radio button is not toggled
-        """
-        self.sc_rb.setChecked(toggle)
+        if self.parent():
+            if self.powder_rb.isChecked():
+                self.parent().switch_to_Powder()
+            else:
+                self.parent().switch_to_SC()
 
 
 class SingleCrystalWidget(QWidget):
