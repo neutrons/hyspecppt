@@ -89,18 +89,16 @@ class HyspecPPTView(QWidget):
         layout.addLayout(layoutLeft)
         self.EW = ExperimentWidget(self)
         layoutLeft.addWidget(self.EW)
+        self.SCW = SingleCrystalWidget(self)
+        self.CW = CrosshairWidget(self)
         self.SelW = SelectorWidget(self)
         layoutLeft.addWidget(self.SelW)
-        self.SCW = SingleCrystalWidget(self)
         layoutLeft.addWidget(self.SCW)
-        self.CW = CrosshairWidget(self)
         layoutLeft.addWidget(self.CW)
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         layoutLeft.addItem(spacer)
         self.PW = PlotWidget(self)
         layout.addWidget(self.PW)
-
-        self.switch_to_SC()
 
     def switch_to_SC(self) -> None:
         """Set visibility for Single Crystal mode"""
@@ -154,6 +152,21 @@ class SelectorWidget(QWidget):
         selector_layout.addWidget(self.powder_rb)
         selector_layout.addWidget(self.sc_rb)
         self.setLayout(selector_layout)
+
+        self.powder_rb.toggled.connect(self.sc_toggle)
+        self.sc_rb.toggled.connect(self.sc_toggle)
+
+        # default mode is SC
+        self.sc_rb.setChecked(True)
+
+    def sc_toggle(self) -> None:
+        """Update fields based on selected mode
+        Args:
+        """
+        if self.powder_rb.isChecked():
+            self.parent().switch_to_Powder()
+        else:
+            self.parent().switch_to_SC()
 
     def set_SC_toggle(self, toggle: bool) -> None:
         """Sets widget display based on the values dictionary

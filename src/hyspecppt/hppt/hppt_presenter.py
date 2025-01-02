@@ -19,7 +19,6 @@ class HyspecPPTPresenter:
         self.view.EW.initializeCombo(PLOT_TYPES)
         self.view.EW.set_values(DEFAULT_EXPERIMENT)
         self.view.CW.set_values(DEFAULT_CROSSHAIR)
-        self.view.SelW.set_SC_toggle(True)
 
         self.get_Experiment_values()
         self.get_SingleCrystal_values()
