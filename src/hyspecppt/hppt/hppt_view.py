@@ -1,12 +1,14 @@
 """Widgets for the main window"""
 
-from typing import Optional
+import copy
+from typing import Optional, Union
 
+import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-from qtpy.QtCore import QObject
-from qtpy.QtGui import QDoubleValidator
+from qtpy.QtCore import QObject, Signal
+from qtpy.QtGui import QDoubleValidator, QValidator
 from qtpy.QtWidgets import (
     QButtonGroup,
     QComboBox,
@@ -22,7 +24,51 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from .experiment_settings import alpha, beta, gamma
+from .experiment_settings import INVALID_QLINEEDIT, PLOT_TYPES, alpha, beta, gamma
+
+
+class AbsValidator(QDoubleValidator):
+    """Absolute value validator"""
+
+    def __init__(
+        self, parent: Optional["QObject"] = None, bottom: float = 0, top: float = np.inf, decimals: int = -1
+    ) -> None:
+        """Constructor for the absolute value validator. All the parameters
+           are the same as for QDoubleValidator, but the valid value is between a
+           positive bottom and top, or between -top and -bottom
+
+        Args:
+            parent (QObject): Optional parent
+            bottom (float): the minimum positive value (set to 0 if not positive)
+            top (float): the highest top value (set to infinity if not greater than bottom)
+            decimals (int): the number of digits after the decimal point.
+
+        """
+        if bottom < 0:
+            bottom = 0
+        if top <= bottom:
+            top = np.inf
+        super().__init__(parent=parent, bottom=bottom, top=top, decimals=decimals)
+
+    def validate(self, inp: str, pos: int) -> tuple[QValidator.State, str, int]:
+        """Override for validate method
+
+        Args:
+            inp (str): the input string
+            pos (int): cursor position
+
+        """
+        original_str = copy.copy(inp)
+        original_pos = pos
+        if inp == "-":
+            return QValidator.Intermediate
+        try:
+            inp = str(abs(float(inp)))
+        except ValueError:
+            pass
+        x = super().validate(inp, pos)
+        # do not "fix" the input
+        return x[0], original_str, original_pos
 
 
 class HyspecPPTView(QWidget):
@@ -51,7 +97,7 @@ class HyspecPPTView(QWidget):
         layoutLeft.addWidget(self.CW)
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         layoutLeft.addItem(spacer)
-        self.PW = PrintWidget(self)
+        self.PW = PlotWidget(self)
         layout.addWidget(self.PW)
 
         self.switch_to_SC()
@@ -67,7 +113,7 @@ class HyspecPPTView(QWidget):
         self.CW.set_Qmod_enabled(True)
 
 
-class PrintWidget(QWidget):
+class PlotWidget(QWidget):
     """Widget that displays the plot"""
 
     def __init__(self, parent: Optional["QObject"] = None) -> None:
@@ -121,6 +167,8 @@ class SelectorWidget(QWidget):
 class SingleCrystalWidget(QWidget):
     """Widget for inputting single crystal parameters"""
 
+    valid_signal = Signal(dict)
+
     def __init__(self, parent: Optional["QObject"] = None) -> None:
         """Constructor for the single crystal input parameters widget
 
@@ -133,41 +181,60 @@ class SingleCrystalWidget(QWidget):
         layout = QVBoxLayout()
         groupBox = QGroupBox("Lattice parameters")
         lattice_layout = QGridLayout()
+
+        self.lattice_length_validator = QDoubleValidator(bottom=1, top=100, parent=self)
+        self.lattice_length_validator.setNotation(QDoubleValidator.StandardNotation)
+
+        self.lattice_angle_validator = QDoubleValidator(bottom=30, top=150, parent=self)
+        self.lattice_angle_validator.setNotation(QDoubleValidator.StandardNotation)
+
+        self.rlu_validator = QDoubleValidator(bottom=-100, top=100, parent=self)
+        self.rlu_validator.setNotation(QDoubleValidator.StandardNotation)
+
         self.a_edit = QLineEdit(self)
         self.a_label = QLabel("&a:", self)
         self.a_label.setBuddy(self.a_edit)
+        self.a_edit.setValidator(self.lattice_length_validator)
 
         self.b_edit = QLineEdit(self)
         self.b_label = QLabel("b:", self)
         self.b_label.setBuddy(self.b_edit)
+        self.b_edit.setValidator(self.lattice_length_validator)
 
         self.c_edit = QLineEdit(self)
         self.c_label = QLabel("c:", self)
         self.c_label.setBuddy(self.c_edit)
+        self.c_edit.setValidator(self.lattice_length_validator)
 
         self.alpha_edit = QLineEdit(self)
         self.alpha_label = QLabel(alpha + ":", self)
         self.alpha_label.setBuddy(self.alpha_edit)
+        self.alpha_edit.setValidator(self.lattice_angle_validator)
 
         self.beta_edit = QLineEdit(self)
         self.beta_label = QLabel(beta + ":", self)
         self.beta_label.setBuddy(self.beta_edit)
+        self.beta_edit.setValidator(self.lattice_angle_validator)
 
         self.gamma_edit = QLineEdit(self)
         self.gamma_label = QLabel(gamma + ":", self)
         self.gamma_label.setBuddy(self.gamma_edit)
+        self.gamma_edit.setValidator(self.lattice_angle_validator)
 
         self.h_edit = QLineEdit(self)
         self.h_label = QLabel("H:", self)
         self.h_label.setBuddy(self.h_edit)
+        self.h_edit.setValidator(self.rlu_validator)
 
         self.k_edit = QLineEdit(self)
         self.k_label = QLabel("K:", self)
         self.k_label.setBuddy(self.k_edit)
+        self.k_edit.setValidator(self.rlu_validator)
 
         self.l_edit = QLineEdit(self)
         self.l_label = QLabel("L:", self)
         self.l_label.setBuddy(self.l_edit)
+        self.l_edit.setValidator(self.rlu_validator)
 
         lattice_layout.addWidget(self.a_label, 0, 0)
         lattice_layout.addWidget(self.a_edit, 0, 1)
@@ -192,6 +259,26 @@ class SingleCrystalWidget(QWidget):
         layout.addWidget(groupBox)
         self.setLayout(layout)
 
+        # connections
+        self.a_edit.editingFinished.connect(self.validate_all_inputs)
+        self.a_edit.textEdited.connect(self.validate_inputs)
+        self.b_edit.editingFinished.connect(self.validate_all_inputs)
+        self.b_edit.textEdited.connect(self.validate_inputs)
+        self.c_edit.editingFinished.connect(self.validate_all_inputs)
+        self.c_edit.textEdited.connect(self.validate_inputs)
+        self.alpha_edit.editingFinished.connect(self.validate_all_inputs)
+        self.alpha_edit.textEdited.connect(self.validate_inputs)
+        self.beta_edit.editingFinished.connect(self.validate_all_inputs)
+        self.beta_edit.textEdited.connect(self.validate_inputs)
+        self.gamma_edit.editingFinished.connect(self.validate_all_inputs)
+        self.gamma_edit.textEdited.connect(self.validate_inputs)
+        self.h_edit.editingFinished.connect(self.validate_all_inputs)
+        self.h_edit.textEdited.connect(self.validate_inputs)
+        self.k_edit.editingFinished.connect(self.validate_all_inputs)
+        self.k_edit.textEdited.connect(self.validate_inputs)
+        self.l_edit.editingFinished.connect(self.validate_all_inputs)
+        self.l_edit.textEdited.connect(self.validate_inputs)
+
     def set_values(self, values: dict[str, float]) -> None:
         """Sets widget display based on the values dictionary
 
@@ -211,9 +298,40 @@ class SingleCrystalWidget(QWidget):
         self.k_edit.setText(str(values["k"]))
         self.l_edit.setText(str(values["l"]))
 
+    def validate_inputs(self, *_, **__) -> None:
+        """Check validity of the fields and set the stylesheet"""
+        if not self.sender().hasAcceptableInput():
+            self.sender().setStyleSheet(INVALID_QLINEEDIT)
+        else:
+            self.sender().setStyleSheet("")
+
+    def validate_all_inputs(self):
+        inputs = [
+            self.a_edit,
+            self.b_edit,
+            self.c_edit,
+            self.alpha_edit,
+            self.beta_edit,
+            self.gamma_edit,
+            self.h_edit,
+            self.k_edit,
+            self.l_edit,
+        ]
+        keys = ["a", "b", "c", "alpha", "beta", "gamma", "h", "k", "l"]
+        out_signal = dict()
+
+        for k, edit in zip(keys, inputs):
+            if edit.hasAcceptableInput():
+                out_signal[k] = float(edit.text())
+
+        if len(out_signal) == 9:
+            self.valid_signal.emit(out_signal)
+
 
 class ExperimentWidget(QWidget):
     """Widget for setting experiment parameters"""
+
+    valid_signal = Signal(dict)
 
     def __init__(self, parent: Optional["QObject"] = None) -> None:
         """Constructor for the experiment input parameters widget
@@ -234,10 +352,16 @@ class ExperimentWidget(QWidget):
         self.Pangle_edit = QLineEdit(self)
         self.Pangle_label = QLabel("&Polarization angle:", self)
         self.Pangle_label.setBuddy(self.Pangle_edit)
+        self.Pangle_validator = QDoubleValidator(bottom=-180, top=180, parent=self)
+        self.Pangle_validator.setNotation(QDoubleValidator.StandardNotation)
+        self.Pangle_edit.setValidator(self.Pangle_validator)
 
         self.S2_edit = QLineEdit(self)
         self.S2_label = QLabel("Detector angle &S2:", self)
         self.S2_label.setBuddy(self.S2_edit)
+        self.S2_validator = AbsValidator(bottom=30, top=100, parent=self)
+        self.S2_validator.setNotation(QDoubleValidator.StandardNotation)
+        self.S2_edit.setValidator(self.S2_validator)
 
         self.Type_combobox = QComboBox(self)
         self.Type_label = QLabel("&Type:", self)
@@ -258,7 +382,13 @@ class ExperimentWidget(QWidget):
         layout.addWidget(self.Type_combobox, 1, 3)
 
         # connections
-        self.Ei_edit.editingFinished.connect(self.validate_inputs)
+        self.Ei_edit.editingFinished.connect(self.validate_all_inputs)
+        self.Ei_edit.textEdited.connect(self.validate_inputs)
+        self.S2_edit.editingFinished.connect(self.validate_all_inputs)
+        self.S2_edit.textEdited.connect(self.validate_inputs)
+        self.Pangle_edit.editingFinished.connect(self.validate_all_inputs)
+        self.Pangle_edit.textEdited.connect(self.validate_inputs)
+        self.Type_combobox.currentIndexChanged.connect(self.validate_all_inputs)
 
     def initializeCombo(self, options: list[str]) -> None:
         """Initialize the plot types in the combo box
@@ -270,12 +400,26 @@ class ExperimentWidget(QWidget):
         """
         self.Type_combobox.addItems(options)
 
-    def validate_inputs(self, *dummy_args, **dummy_kwargs) -> None:
+    def validate_inputs(self, *_, **__) -> None:
         """Check validity of the fields and set the stylesheet"""
-        print(self.sender)
-        print("args: ", dummy_args, " kwargs: ", dummy_kwargs)
+        if not self.sender().hasAcceptableInput():
+            self.sender().setStyleSheet(INVALID_QLINEEDIT)
+        else:
+            self.sender().setStyleSheet("")
 
-    def set_values(self, values: dict[str, float]) -> None:
+    def validate_all_inputs(self) -> None:
+        """If all inputs are valid emit a valid_signal"""
+        inputs = [self.Ei_edit, self.S2_edit, self.Pangle_edit]
+        keys = ["Ei", "S2", "alpha_p"]
+
+        out_signal = dict(plot_type=self.Type_combobox.currentText())
+        for k, edit in zip(keys, inputs):
+            if edit.hasAcceptableInput():
+                out_signal[k] = float(edit.text())
+        if len(out_signal) == 4:
+            self.valid_signal.emit(out_signal)
+
+    def set_values(self, values: dict[str, Union[float, str]]) -> None:
         """Sets widget display based on the values dictionary
 
         Args:
@@ -286,10 +430,13 @@ class ExperimentWidget(QWidget):
         self.Ei_edit.setText(str(values["Ei"]))
         self.S2_edit.setText(str(values["S2"]))
         self.Pangle_edit.setText(str(values["alpha_p"]))
+        self.Type_combobox.setCurrentIndex(PLOT_TYPES.index(values["plot_type"]))
 
 
 class CrosshairWidget(QWidget):
     """Widget to enter/display crosshair parameters"""
+
+    valid_signal = Signal(dict)
 
     def __init__(self, parent: Optional["QObject"] = None) -> None:
         """Constructor for the crosshair input parameters widget
@@ -316,6 +463,19 @@ class CrosshairWidget(QWidget):
         box_layout.addWidget(self.modQ_label)
         box_layout.addWidget(self.modQ_edit)
 
+        self.DeltaE_validator = QDoubleValidator(parent=self)
+        self.DeltaE_validator.setNotation(QDoubleValidator.StandardNotation)
+        self.DeltaE_edit.setValidator(self.DeltaE_validator)
+        self.modQ_validator = QDoubleValidator(bottom=0, top=10, parent=self)
+        self.modQ_validator.setNotation(QDoubleValidator.StandardNotation)
+        self.modQ_edit.setValidator(self.modQ_validator)
+
+        # connections
+        self.DeltaE_edit.editingFinished.connect(self.validate_all_inputs)
+        self.DeltaE_edit.textEdited.connect(self.validate_inputs)
+        self.modQ_edit.editingFinished.connect(self.validate_all_inputs)
+        self.modQ_edit.textEdited.connect(self.validate_inputs)
+
         groupBox = QGroupBox("Crosshair position")
         groupBox.setLayout(box_layout)
         layout.addWidget(groupBox)
@@ -340,3 +500,22 @@ class CrosshairWidget(QWidget):
         """
         self.DeltaE_edit.setText(str(values["DeltaE"]))
         self.modQ_edit.setText(str(values["modQ"]))
+
+    def validate_inputs(self, *_, **__) -> None:
+        """Check validity of the fields and set the stylesheet"""
+        if not self.sender().hasAcceptableInput():
+            self.sender().setStyleSheet(INVALID_QLINEEDIT)
+        else:
+            self.sender().setStyleSheet("")
+
+    def validate_all_inputs(self):
+        """If all inputs are valid emit a valid_signal"""
+        inputs = [self.DeltaE_edit, self.modQ_edit]
+        keys = ["DeltaE", "modQ"]
+
+        out_signal = dict()
+        for k, edit in zip(keys, inputs):
+            if edit.hasAcceptableInput():
+                out_signal[k] = float(edit.text())
+        if len(out_signal) == 2:
+            self.valid_signal.emit(out_signal)
