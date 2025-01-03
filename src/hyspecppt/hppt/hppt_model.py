@@ -1,12 +1,15 @@
 """Model for the polarization planning tool"""
-import numpy as np
+
 import logging
 
+import numpy as np
 
 logger = logging.getLogger("hyspecppt")
 
+
 class SingleCrystalParameters:
     """Model for single crystal calculations"""
+
     a: float
     b: float
     c: float
@@ -22,7 +25,7 @@ class SingleCrystalParameters:
         return
 
     def set_parameters(self, params: dict[str, float]) -> None:
-        """store single crystal parameters
+        """Store single crystal parameters
 
         Args:
             params: dict - contains the following keys:
@@ -40,14 +43,24 @@ class SingleCrystalParameters:
         self.l = params["l"]
 
     def get_paramters(self) -> dict[str, float]:
-        """returns all the parameters as a dictionary"""
+        """Returns all the parameters as a dictionary"""
         try:
-            return dict(a=self.a, b=self.b, c=self.c, alpha=self.alpha, beta=self.beta, gamma=self.gamma, h=self.h, k=self.k, l=self.l)
+            return dict(
+                a=self.a,
+                b=self.b,
+                c=self.c,
+                alpha=self.alpha,
+                beta=self.beta,
+                gamma=self.gamma,
+                h=self.h,
+                k=self.k,
+                l=self.l,
+            )
         except AttributeError:
             logger.error("The parameters were not initialized")
 
     def calculate_modQ(self) -> float:
-        """returns |Q| from lattice parameters and h, k, l"""
+        """Returns |Q| from lattice parameters and h, k, l"""
         try:
             ca = np.cos(np.radians(self.alpha))
             sa = np.sin(np.radians(self.alpha))
@@ -80,17 +93,24 @@ class SingleCrystalParameters:
 
 class CrosshairParameters:
     """Model for the crosshair parameters"""
+
     modQ: float
     DeltaE: float
     current_experiment_type: str
     sc_parameters: SingleCrystalParameters
 
     def __init__(self):
-        self.sc_parameters=SingleCrystalParameters()
+        self.sc_parameters = SingleCrystalParameters()
 
-    def store_data(self, *, current_experiment_type: str = None, DeltaE: float = None,
-                    modQ: float = None, sc_parameters:dict[str, float] = None) -> None:
-        """store crosshair parameters including in SC mode"""
+    def store_data(
+        self,
+        *,
+        current_experiment_type: str = None,
+        DeltaE: float = None,
+        modQ: float = None,
+        sc_parameters: dict[str, float] = None,
+    ) -> None:
+        """Store crosshair parameters including in SC mode"""
         if current_experiment_type is not None:
             self.current_experiment_type = current_experiment_type
         if DeltaE is not None:
@@ -101,7 +121,7 @@ class CrosshairParameters:
             self.sc_parameters.set_parameters(sc_parameters)
 
     def get_crosshair(self) -> dict[str, float]:
-        """get the crosshair"""
+        """Get the crosshair"""
         if self.current_experiment_type == "crystal":
             self.modQ = self.sc_parameters.calculate_modQ()
         return dict(DeltaE=self.DeltaE, modQ=self.modQ)
@@ -109,6 +129,7 @@ class CrosshairParameters:
 
 class HyspecPPTModel:
     """Main model"""
+
     Ei: float = 0
     S2: float = 0
     alpha_p: float = 0
@@ -125,7 +146,9 @@ class HyspecPPTModel:
         self.alpha_p = alpha_p
         self.plot_type = plot_type
 
-    def store_crosshair_data(self, *, current_experiment_type: str = None, DeltaE: float = None, modQ: float = None) -> None:
+    def store_crosshair_data(
+        self, *, current_experiment_type: str = None, DeltaE: float = None, modQ: float = None
+    ) -> None:
         self.cp.store_data(current_experiment_type=current_experiment_type, DeltaE=DeltaE, modQ=modQ)
 
     def store_single_crystal_data(self, params: dict[str, float]) -> None:
@@ -135,4 +158,4 @@ class HyspecPPTModel:
         return self.cp.get_crosshair()
 
     def calculate_graph_data(self):
-        return [1,2,3]
+        return [1, 2, 3]

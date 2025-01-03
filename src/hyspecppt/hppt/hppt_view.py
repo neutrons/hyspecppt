@@ -328,7 +328,7 @@ class SingleCrystalWidget(QWidget):
                 out_signal[k] = float(edit.text())
 
         if len(out_signal) == 9:
-            print('sc view emmit')
+            print("sc view emmit")
             self.valid_signal.emit(out_signal)
 
 
