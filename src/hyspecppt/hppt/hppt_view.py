@@ -38,7 +38,8 @@ class HyspecPPTView(QWidget):
         """
         super().__init__(parent)
         # callback functions
-        self.ei_callback = None
+        self.fields_callback = None
+        self.powder_mode_switch_callback = None
 
         # callback functions defined by the presenter
         self.fields_callback = None
@@ -441,18 +442,22 @@ class ExperimentWidget(QWidget):
         out_signal["data"] = dict(plot_type=self.Type_combobox.currentText())
         for k, edit in zip(keys, inputs):
             if edit.hasAcceptableInput():
-<<<<<<< HEAD
                 out_signal["data"][k] = float(edit.text())
         if len(out_signal["data"]) == 4:
-=======
-                out_signal[k] = float(edit.text())
-        if len(out_signal) == 4:
-            # to be removed
->>>>>>> 9834b19 (ei value update and passed from view-presenter-model through callback functions)
             self.valid_signal.emit(out_signal)
-            # send the values
-            if self.parent():
-                self.parent().values_update(self.Ei_edit.text())
+
+    def set_values(self, values: dict[str, Union[float, str]]) -> None:
+        """Sets widget display based on the values dictionary
+
+        Args:
+            values (dict): a dictionary that contains
+            Ei, S2, alpha_p, plot_types values
+
+        """
+        self.Ei_edit.setText(str(values["Ei"]))
+        self.S2_edit.setText(str(values["S2"]))
+        self.Pangle_edit.setText(str(values["alpha_p"]))
+        self.Type_combobox.setCurrentIndex(PLOT_TYPES.index(values["plot_type"]))
 
     def set_values(self, values: dict[str, Union[float, str]]) -> None:
         """Sets widget display based on the values dictionary
