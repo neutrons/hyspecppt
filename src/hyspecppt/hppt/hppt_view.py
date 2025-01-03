@@ -153,8 +153,9 @@ class SelectorWidget(QWidget):
         selector_layout.addWidget(self.sc_rb)
         self.setLayout(selector_layout)
 
-        self.powder_rb.toggled.connect(self.sc_toggle)
-        self.sc_rb.toggled.connect(self.sc_toggle)
+        if parent:
+            self.powder_rb.toggled.connect(self.sc_toggle)
+            self.sc_rb.toggled.connect(self.sc_toggle)
 
         # default mode is SC
         self.sc_rb.setChecked(True)
@@ -163,11 +164,10 @@ class SelectorWidget(QWidget):
         """Update fields based on selected mode
         Args:
         """
-        if self.parent():
-            if self.powder_rb.isChecked():
-                self.parent().switch_to_Powder()
-            else:
-                self.parent().switch_to_SC()
+        if self.powder_rb.isChecked():
+            self.parent().switch_to_Powder()
+        else:
+            self.parent().switch_to_SC()
 
 
 class SingleCrystalWidget(QWidget):
