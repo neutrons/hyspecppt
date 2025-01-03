@@ -16,7 +16,7 @@ class Model:
     def __init__(self):
         pass
 
-    def polarization_powder(self,Ei, EMin, S2, P, plot_options="alpha",left=True):
+    def polarization_powder(self,Ei, EMin, S2, alpha_p, plot_options="alpha",left=True):
         #def Ei, Emin = - Ei to create Qmin, Qmax to generate plot range
         # Ei=20.0
         if EMin == None:
@@ -38,8 +38,10 @@ class Model:
         Ef2d = Ei-E2d
         kf2d = np.sqrt(Ef2d) *SE2K
         
-        Px=P[0]
-        Pz=P[2]
+        # Px=P[0]
+        Px = np.cos(np.radians(alpha_p))
+        # Pz=P[2]
+        Pz = np.sin(np.radians(alpha_p))
         
         cos_theta = (ki**2 + kf2d**2 - Q2d**2)/ (2*ki*kf2d)
         cos_theta[cos_theta < np.cos(np.radians(S2+30))] = np.nan 
@@ -55,8 +57,8 @@ class Model:
         Qx= (-1 if left else 1) * kf2d*np.sqrt((1-cos_theta**2))
         
         cos_ang_PQ = (Qx*Px + Qz*Pz)/Q2d/np.sqrt(Px**2+Pz**2)
-        cos_ang_PQ[cos_ang_PQ**2 <0.4] = np.nan 
-        cos_ang_PQ[cos_ang_PQ**2 >0.6] = np.nan
+        # cos_ang_PQ[cos_ang_PQ**2 <0.4] = np.nan 
+        # cos_ang_PQ[cos_ang_PQ**2 >0.6] = np.nan
         ang_PQ = np.degrees(np.arccos(cos_ang_PQ))
         
         kf=np.sqrt(Ei-E)*SE2K
@@ -76,53 +78,53 @@ class Model:
         if plot_options == "(cos^2(a)+1)/2":
             return Q_low, Q_hi, E, Q2d, E2d, (np.cos(np.radians(ang_PQ))**2 +1)/2
         
-        # if plot_options == "alpha":
-        #     fig, ax = plt.subplots()
-        #     pcm = ax.pcolormesh(Q2d, E2d, ang_PQ)
-        #     ax.plot(Q_low, E)
-        #     ax.plot(Q_hi, E)
+        if plot_options == "alpha":
+            fig, ax = plt.subplots()
+            pcm = ax.pcolormesh(Q2d, E2d, ang_PQ)
+            ax.plot(Q_low, E)
+            ax.plot(Q_hi, E)
             
-        #     fig.colorbar(pcm, label= "Degrees")
-        #     ax.set_xlabel(r"|Q| ($\AA^{-1}$)")
-        #     ax.set_ylabel("E (meV)")
-        #     fig.show()
+            fig.colorbar(pcm, label= "Degrees")
+            ax.set_xlabel(r"|Q| ($\AA^{-1}$)")
+            ax.set_ylabel("E (meV)")
+            fig.show()
             
-        # if plot_options == "cos^2(a)":
-        #     fig, ax = plt.subplots()
-        #     pcm = ax.pcolormesh(Q2d, E2d, np.cos(np.radians(ang_PQ))**2)
-        #     ax.plot(Q_low, E)
-        #     ax.plot(Q_hi, E)
+        if plot_options == "cos^2(a)":
+            fig, ax = plt.subplots()
+            pcm = ax.pcolormesh(Q2d, E2d, np.cos(np.radians(ang_PQ))**2)
+            ax.plot(Q_low, E)
+            ax.plot(Q_hi, E)
             
-        #     fig.colorbar(pcm, label= r"$cos^2(\alpha)$")
-        #     ax.set_xlabel(r"|Q| ($\AA^{-1}$)")
-        #     ax.set_ylabel("E (meV)")
-        #     fig.show()
+            fig.colorbar(pcm, label= r"$cos^2(\alpha)$")
+            ax.set_xlabel(r"|Q| ($\AA^{-1}$)")
+            ax.set_ylabel("E (meV)")
+            fig.show()
             
-        # if plot_options == "cos^2(a)-sin^2(a)":
-        #     fig, ax = plt.subplots()
-        #     pcm = ax.pcolormesh(Q2d, E2d, np.cos(np.radians(ang_PQ))**2 - np.sin(np.radians(ang_PQ))**2)
-        #     ax.plot(Q_low, E)
-        #     ax.plot(Q_hi, E)
+        if plot_options == "cos^2(a)-sin^2(a)":
+            fig, ax = plt.subplots()
+            pcm = ax.pcolormesh(Q2d, E2d, np.cos(np.radians(ang_PQ))**2 - np.sin(np.radians(ang_PQ))**2)
+            ax.plot(Q_low, E)
+            ax.plot(Q_hi, E)
             
-        #     fig.colorbar(pcm, label= r"$cos^2(\alpha) - sin^2(\alpha)$")
-        #     ax.set_xlabel(r"|Q| ($\AA^{-1}$)")
-        #     ax.set_ylabel("E (meV)")
-        #     fig.show()
+            fig.colorbar(pcm, label= r"$cos^2(\alpha) - sin^2(\alpha)$")
+            ax.set_xlabel(r"|Q| ($\AA^{-1}$)")
+            ax.set_ylabel("E (meV)")
+            fig.show()
 
-        # if plot_options == "(cos^2(a)+1)/2":
-        #     fig, ax = plt.subplots()
-        #     pcm = ax.pcolormesh(Q2d, E2d, (np.cos(np.radians(ang_PQ))**2 +1)/2)
-        #     ax.plot(Q_low, E)
-        #     ax.plot(Q_hi, E)
+        if plot_options == "(cos^2(a)+1)/2":
+            fig, ax = plt.subplots()
+            pcm = ax.pcolormesh(Q2d, E2d, (np.cos(np.radians(ang_PQ))**2 +1)/2)
+            ax.plot(Q_low, E)
+            ax.plot(Q_hi, E)
             
-        #     fig.colorbar(pcm, label= r"$\dfrac{cos^2(\alpha) - 1}{2}$")
-        #     ax.set_xlabel(r"|Q| ($\AA^{-1}$)")
-        #     ax.set_ylabel("E (meV)")
-        #     fig.show()
+            fig.colorbar(pcm, label= r"$\dfrac{cos^2(\alpha) - 1}{2}$")
+            ax.set_xlabel(r"|Q| ($\AA^{-1}$)")
+            ax.set_ylabel("E (meV)")
+            fig.show()
 
 if __name__ == "__main__":
     obj = Model()
-    output = obj.polarization_powder(20, None, 60, [1,0,-1],plot_options="alpha",left=True)
+    output = obj.polarization_powder(20, None, 60, 30,plot_options="alpha",left=True)
     Q_low, Q_hi, E, Q2d, E2d, ang_PQ = output[0], output[1], output[2], output[3], output[4], output[5]
     
     fig, ax = plt.subplots()
@@ -133,6 +135,7 @@ if __name__ == "__main__":
     fig.colorbar(pcm, label= "Degrees")
     ax.set_xlabel(r"|Q| ($\AA^{-1}$)")
     ax.set_ylabel("E (meV)")
+    plt.title("Ei=20, Emin=None, S2=60, angle_p=30, plot_options = alpha, left=True")
     fig.show()
 
 # fig.show()
