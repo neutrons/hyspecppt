@@ -15,11 +15,16 @@ class HyspecPPTPresenter:
         """
         self._view = view
         self._model = model
+
+        # M-V-P connections through callbacks
+        self.view.connect_ei_update(self.handle_ei_update)
+
         self.view.SCW.set_values(DEFAULT_LATTICE)
         self.view.EW.initializeCombo(PLOT_TYPES)
         self.view.EW.set_values(DEFAULT_EXPERIMENT)
         self.view.CW.set_values(DEFAULT_CROSSHAIR)
 
+        # to be removed
         self.get_Experiment_values()
         self.get_SingleCrystal_values()
         self.get_Selector_values()
@@ -87,3 +92,7 @@ class HyspecPPTPresenter:
     def set_PlotWidget_values(self):
         """Pass through intensity matrix into plot in view"""
         pass
+
+    def handle_ei_update(self, ei_value):
+        """Save the Ei value"""
+        self.model.save_Ei(ei_value)

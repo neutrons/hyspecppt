@@ -82,6 +82,8 @@ class HyspecPPTView(QWidget):
 
         """
         super().__init__(parent)
+        # callback functions
+        self.ei_callback = None
 
         layout = QHBoxLayout()
         self.setLayout(layout)
@@ -99,6 +101,14 @@ class HyspecPPTView(QWidget):
         layoutLeft.addItem(spacer)
         self.PW = PlotWidget(self)
         layout.addWidget(self.PW)
+
+    def connect_ei_update(self, callback):
+        """Callback for the Ei field update"""
+        self.ei_callback = callback
+
+    def values_update(self, value):
+        """Ei field update"""
+        self.ei_callback(value)
 
     def switch_to_SC(self) -> None:
         """Set visibility for Single Crystal mode"""
@@ -423,7 +433,11 @@ class ExperimentWidget(QWidget):
             if edit.hasAcceptableInput():
                 out_signal[k] = float(edit.text())
         if len(out_signal) == 4:
+            # to be removed
             self.valid_signal.emit(out_signal)
+            # send the values
+            if self.parent():
+                self.parent().values_update(self.Ei_edit.text())
 
     def set_values(self, values: dict[str, Union[float, str]]) -> None:
         """Sets widget display based on the values dictionary
