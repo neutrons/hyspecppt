@@ -69,7 +69,7 @@ select = ["A", "ARG","ASYNC","BLE","C90", "D", "E", "F", "I", "N", "UP032", "W"]
 ignore = ["D203", # conflict with D211
           "D213", # conflict with D212
           "D205", # conflicts
-          "D400", "D401","D404", "N806", "N802", "D107", "D100","D101", "D102", "D415", # Unnecessary
-          ]
+          "D400", "D401","D404", "N806", "N802", "D107", "D100","D101", "D102","E741", "D415", # Unnecessary
+          "F841", "ARG002", "N815"]
 unfixable = ["F401"]
 # Add additional 3rd party tool configuration here as needed
