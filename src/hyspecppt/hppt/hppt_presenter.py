@@ -1,14 +1,12 @@
 """Presenter for the Main tab"""
 
-from qtpy.QtWidgets import QWidget
-
 from .experiment_settings import DEFAULT_CROSSHAIR, DEFAULT_EXPERIMENT, DEFAULT_LATTICE, PLOT_TYPES
 
 
 class HyspecPPTPresenter:
     """Main presenter"""
 
-    def __init__(self, view: "[QWidget]", model: "[QWidget]"):
+    def __init__(self, view: any, model: any):
         """Constructor
         :view: hppt_view class type
         :model:hppt_model class type
@@ -17,7 +15,8 @@ class HyspecPPTPresenter:
         self._model = model
 
         # M-V-P connections through callbacks
-        self.view.connect_ei_update(self.handle_ei_update)
+        self.view.connect_fields_update(self.handle_field_values_update)
+        self.view.connect_powder_mode_switch(self.handle_switch_to_powder)
 
         self.view.SCW.set_values(DEFAULT_LATTICE)
         self.view.EW.initializeCombo(PLOT_TYPES)
@@ -93,6 +92,26 @@ class HyspecPPTPresenter:
         """Pass through intensity matrix into plot in view"""
         pass
 
-    def handle_ei_update(self, ei_value):
-        """Save the Ei value"""
-        self.model.save_Ei(ei_value)
+    def handle_field_values_update(self, field_values):
+        """Save the values in the model"""
+        section = field_values["name"]
+        data = field_values["data"]
+        if section == "crosshair":
+            self.model.save_crosshair_data(data)
+        elif section == "experiment":
+            self.model.save_experiment_data(
+                float(data["Ei"]), float(data["S2"]), float(data["alpha_p"]), data["plot_type"]
+            )
+        else:
+            self.model.save_sc_data(data)
+
+    def handle_switch_to_powder(self):
+        """Switch to Powder mode"""
+        # update the fields' visibility
+        self.view.field_visibility_in_Powder()
+
+        # get the valid values for all saved fields
+        # if the view contains an invalid value it is overwritten
+        saved_values = self.model.get_experiment_data()
+        self.view.EW.set_values(saved_values)
+        print("view updated with: ", saved_values)

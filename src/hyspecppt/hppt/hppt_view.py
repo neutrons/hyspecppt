@@ -83,7 +83,8 @@ class HyspecPPTView(QWidget):
         """
         super().__init__(parent)
         # callback functions
-        self.ei_callback = None
+        self.fields_callback = None
+        self.powder_mode_switch_callback = None
 
         layout = QHBoxLayout()
         self.setLayout(layout)
@@ -102,20 +103,37 @@ class HyspecPPTView(QWidget):
         self.PW = PlotWidget(self)
         layout.addWidget(self.PW)
 
-    def connect_ei_update(self, callback):
-        """Callback for the Ei field update"""
-        self.ei_callback = callback
+        # signal handling for every valid field update
+        self.EW.valid_signal.connect(self.values_update)
+        self.SCW.valid_signal.connect(self.values_update)
+        self.CW.valid_signal.connect(self.values_update)
 
-    def values_update(self, value):
-        """Ei field update"""
-        self.ei_callback(value)
+    def connect_fields_update(self, callback):
+        """Callback for the fields update"""
+        self.fields_callback = callback
+
+    def connect_powder_mode_switch(self, callback):
+        """Callback for the switching to Powder mode from the radio button"""
+        self.powder_mode_switch_callback = callback
+
+    def values_update(self, values):
+        """Fields update"""
+        self.fields_callback(values)
 
     def switch_to_SC(self) -> None:
+        """Switch to Single Crystal mode"""
+        self.field_visibility_in_SC()
+
+    def switch_to_Powder(self) -> None:
+        """Switch to Powder mode"""
+        self.powder_mode_switch_callback()
+
+    def field_visibility_in_SC(self) -> None:
         """Set visibility for Single Crystal mode"""
         self.SCW.setVisible(True)
         self.CW.set_Qmod_enabled(False)
 
-    def switch_to_Powder(self) -> None:
+    def field_visibility_in_Powder(self) -> None:
         """Set visibility for Powder mode"""
         self.SCW.setVisible(False)
         self.CW.set_Qmod_enabled(True)
@@ -152,8 +170,10 @@ class SelectorWidget(QWidget):
         super().__init__(parent)
         selector_layout = QHBoxLayout()
 
-        self.powder_rb = QRadioButton("Po&wder")
-        self.sc_rb = QRadioButton("Single C&rystal")
+        self.powder_label = "Po&wder"
+        self.sc_label = "Single C&rystal"
+        self.powder_rb = QRadioButton(self.powder_label)
+        self.sc_rb = QRadioButton(self.sc_label)
 
         selector_group = QButtonGroup(self)
         selector_group.addButton(self.powder_rb)
@@ -174,9 +194,11 @@ class SelectorWidget(QWidget):
         """Update fields based on selected mode
         Args:
         """
-        if self.powder_rb.isChecked():
+        sender = self.sender().text()
+
+        if sender == self.powder_label and self.powder_rb.isChecked():
             self.parent().switch_to_Powder()
-        else:
+        if sender == self.sc_label and self.sc_rb.isChecked():
             self.parent().switch_to_SC()
 
 
@@ -334,13 +356,13 @@ class SingleCrystalWidget(QWidget):
             self.l_edit,
         ]
         keys = ["a", "b", "c", "alpha", "beta", "gamma", "h", "k", "l"]
-        out_signal = dict()
+        out_signal = dict(name="sc_lattice", data=dict())
 
         for k, edit in zip(keys, inputs):
             if edit.hasAcceptableInput():
-                out_signal[k] = float(edit.text())
+                out_signal["data"][k] = float(edit.text())
 
-        if len(out_signal) == 9:
+        if len(out_signal["data"]) == 9:
             self.valid_signal.emit(out_signal)
 
 
@@ -428,16 +450,13 @@ class ExperimentWidget(QWidget):
         inputs = [self.Ei_edit, self.S2_edit, self.Pangle_edit]
         keys = ["Ei", "S2", "alpha_p"]
 
-        out_signal = dict(plot_type=self.Type_combobox.currentText())
+        out_signal = dict(name="experiment", data=dict())
+        out_signal["data"] = dict(plot_type=self.Type_combobox.currentText())
         for k, edit in zip(keys, inputs):
             if edit.hasAcceptableInput():
-                out_signal[k] = float(edit.text())
-        if len(out_signal) == 4:
-            # to be removed
+                out_signal["data"][k] = float(edit.text())
+        if len(out_signal["data"]) == 4:
             self.valid_signal.emit(out_signal)
-            # send the values
-            if self.parent():
-                self.parent().values_update(self.Ei_edit.text())
 
     def set_values(self, values: dict[str, Union[float, str]]) -> None:
         """Sets widget display based on the values dictionary
@@ -533,9 +552,9 @@ class CrosshairWidget(QWidget):
         inputs = [self.DeltaE_edit, self.modQ_edit]
         keys = ["DeltaE", "modQ"]
 
-        out_signal = dict()
+        out_signal = dict(name="crosshair", data=dict())
         for k, edit in zip(keys, inputs):
             if edit.hasAcceptableInput():
-                out_signal[k] = float(edit.text())
-        if len(out_signal) == 2:
+                out_signal["data"][k] = float(edit.text())
+        if len(out_signal["data"]) == 2:
             self.valid_signal.emit(out_signal)
