@@ -88,6 +88,15 @@ def test_Selector_widget(qtbot):
     assert SELWidget.sc_rb.text() == "Single C&rystal"
 
 
+def test_Selector_widget_powder_mode():
+    """Test the Powder Mode in Selector widget when the radio button is pressed"""
+    view = hppt_view.HyspecPPTView()
+    view.SelW.powder_rb.setChecked(True)
+
+    assert not view.SCW.isVisibleTo(view)
+    assert view.CW.modQ_edit.isEnabled()
+
+
 def test_switch_to_SC():
     """Test switch_to_SC() set SingleCrystalWidget visible"""
     view = hppt_view.HyspecPPTView()
