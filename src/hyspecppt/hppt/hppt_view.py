@@ -102,6 +102,9 @@ class HyspecPPTView(QWidget):
 
         self.switch_to_SC()
 
+        self.SelW.sc_rb.toggled.connect(self.switch_to_SC)
+        self.SelW.powder_rb.toggled.connect(self.switch_to_Powder)
+
     def switch_to_SC(self) -> None:
         """Set visibility for Single Crystal mode"""
         self.SCW.setVisible(True)
@@ -325,6 +328,7 @@ class SingleCrystalWidget(QWidget):
                 out_signal[k] = float(edit.text())
 
         if len(out_signal) == 9:
+            print('sc view emmit')
             self.valid_signal.emit(out_signal)
 
 

@@ -15,16 +15,24 @@ class HyspecPPTPresenter:
         """
         self._view = view
         self._model = model
-        self.view.SCW.set_values(DEFAULT_LATTICE)
+        #initialize widgets
         self.view.EW.initializeCombo(PLOT_TYPES)
         self.view.EW.set_values(DEFAULT_EXPERIMENT)
         self.view.CW.set_values(DEFAULT_CROSSHAIR)
+        self.view.SCW.set_values(DEFAULT_LATTICE)
+        #select calculation mode
         self.view.SelW.set_SC_toggle(True)
+        #initialize model
+        self.model.store_experiment_data(**DEFAULT_EXPERIMENT)
+        self.model.store_crosshair_data(current_experiment_type="crystal", **DEFAULT_CROSSHAIR)
+        self.model.store_single_crystal_data(DEFAULT_LATTICE)
 
-        self.get_Experiment_values()
-        self.get_SingleCrystal_values()
-        self.get_Selector_values()
-        self.get_Crosshair_values()
+        #connections
+        self.view.EW.valid_signal.connect(self.update_experiment_values)
+        self.view.SelW.sc_rb.toggled.connect(self.q_mode_SC)
+        self.view.SelW.powder_rb.toggled.connect(self.q_mode_powder)
+        self.view.SCW.valid_signal.connect(self.update_SC_values)
+        self.view.CW.valid_signal.connect(self.update_cursor_values)
 
     @property
     def view(self):
@@ -36,55 +44,38 @@ class HyspecPPTPresenter:
         """Return the model for this presenter"""
         return self._model
 
-    def get_Experiment_values(self) -> dict:
-        """Get Ei, Pangle, S2, Type values from Experiment
+    def q_mode_powder(self) -> None:
+        """switch to powder mode"""
+        self.model.store_crosshair_data(current_experiment_type='powder')
+        crosshair = self.model.get_crosshair()
+        self.view.CW.set_values(crosshair)
+        self.set_PlotWidget_values(cursor_position=crosshair)
 
-        return: dict of Experiment key value pairs
-        """
-        EW_dict = {}
-        EW_dict["Ei"] = self.view.EW.Ei_edit.text()
-        EW_dict["Pangle"] = self.view.EW.Pangle_edit.text()
-        EW_dict["S2"] = self.view.EW.S2_edit.text()
-        EW_dict["Type"] = self.view.EW.Type_combobox.currentText()
-        return EW_dict
+    def q_mode_SC(self) -> None:
+        """switch to crystal"""
+        self.model.store_crosshair_data(current_experiment_type='crystal')
+        crosshair = self.model.get_crosshair()
+        self.view.CW.set_values(crosshair)
+        self.set_PlotWidget_values(cursor_position=crosshair)
 
-    def get_Selector_values(self):
-        """Check if Single Crystal radio button is checked
+    def update_experiment_values(self, new_values: dict[str, float]) -> None:
+        """Ei/S2/alpha_p/plot_type update"""
+        self.model.store_experiment_data(**new_values)
+        new_intensity = self.model.calculate_graph_data()
+        self.set_PlotWidget_values(intensity = new_intensity)
 
-        return: True - Single Crystal radio button is toggled
-                False - Single Crystal radio button is not toggled. Powder radio button is toggled
-        """
-        return self.view.SelW.sc_rb.isChecked()
+    def update_cursor_values(self, new_values: dict[str, float]) -> None:
+        """DeltaE/modQ update"""
+        #TODO: check on DeltaE<-Ei
+        self.model.store_crosshair_data(**new_values)
+        self.set_PlotWidget_values(cursor_position=new_values)
 
-    def get_SingleCrystal_values(self):
-        """Get Single Crystal mode specific values from SingleCrystalWidget
+    def update_SC_values(self, new_values: dict[str, float]) -> None:
+        self.model.store_single_crystal_data(new_values)
+        new_position = self.model.get_crosshair()
+        self.view.CW.set_values(new_position)
+        self.set_PlotWidget_values(cursor_position=new_position)
 
-        return: dict of Single Crystal key value pairs
-        """
-        SC_dict = {}
-        SC_dict["a"] = self.view.SCW.a_edit.text()
-        SC_dict["b"] = self.view.SCW.b_edit.text()
-        SC_dict["c"] = self.view.SCW.c_edit.text()
-
-        SC_dict["alpha"] = self.view.SCW.alpha_edit.text()
-        SC_dict["beta"] = self.view.SCW.beta_edit.text()
-        SC_dict["gamma"] = self.view.SCW.gamma_edit.text()
-
-        SC_dict["h"] = self.view.SCW.h_edit.text()
-        SC_dict["k"] = self.view.SCW.k_edit.text()
-        SC_dict["l"] = self.view.SCW.l_edit.text()
-        return SC_dict
-
-    def get_Crosshair_values(self):
-        """Get Crosshair mode specific values from CrosshairWidget
-
-        return: dict of Crosshair key value pairs
-        """
-        CH_dict = {}
-        CH_dict["DeltaE"] = self.view.CW.DeltaE_edit.text()
-        CH_dict["modQ"] = self.view.CW.modQ_edit.text()
-        return CH_dict
-
-    def set_PlotWidget_values(self):
+    def set_PlotWidget_values(self, intensity = "new_intensity", cursor_position = "new_position", label="new_label"):
         """Pass through intensity matrix into plot in view"""
-        pass
+        print('call plot:', intensity, cursor_position, label)
