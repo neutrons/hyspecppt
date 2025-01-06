@@ -1,15 +1,15 @@
 """Model for the polarization planning tool"""
 
 import logging
-from typing import Tuple
 
 import numpy as np
+from scipy.constants import e, hbar, m_n
 from scipy.constants import e, hbar, m_n
 
 logger = logging.getLogger("hyspecppt")
 
 
-class SingleCrystalModel:
+class SingleCrystalParameters:
     """Model for single crystal calculations"""
 
     a: float
@@ -34,7 +34,15 @@ class SingleCrystalModel:
                 a, b, c, alpha, beta, gamma, h, k, l
 
         """
-        self.a, self.b, self.c, self.alpha, self.beta, self.gamma, self.h, self.k, self.l = params.values()
+        self.a = params["a"]
+        self.b = params["b"]
+        self.c = params["c"]
+        self.alpha = params["alpha"]
+        self.beta = params["beta"]
+        self.gamma = params["gamma"]
+        self.h = params["h"]
+        self.k = params["k"]
+        self.l = params["l"]
 
     def get_paramters(self) -> dict[str, float]:
         """Returns all the parameters as a dictionary"""
@@ -53,7 +61,7 @@ class SingleCrystalModel:
         except AttributeError:
             logger.error("The parameters were not initialized")
 
-    def calculate_modq(self) -> float:
+    def calculate_modQ(self) -> float:
         """Returns |Q| from lattice parameters and h, k, l"""
         try:
             ca = np.cos(np.radians(self.alpha))
@@ -78,6 +86,7 @@ class SingleCrystalModel:
                     [0, 0, 1.0 / self.c],
                 ]
             )
+
             modQ = 2 * np.pi * np.linalg.norm(B.dot([self.h, self.k, self.l]))
             return modQ
         except AttributeError:
@@ -88,77 +97,97 @@ class CrosshairParameters:
     """Model for the crosshair parameters"""
 
     modQ: float
-    deltaE: float
+    DeltaE: float
     current_experiment_type: str
-    sc_parameters: SingleCrystalModel
+    sc_parameters: SingleCrystalParameters
 
     def __init__(self):
-        pass
+        self.sc_parameters = SingleCrystalParameters()
 
     def store_data(
         self,
         *,
         current_experiment_type: str = None,
-        delta_e: float = None,
-        mod_q: float = None,
+        DeltaE: float = None,
+        modQ: float = None,
         sc_parameters: dict[str, float] = None,
     ) -> None:
         """Store crosshair parameters including in SC mode"""
-        self.current_experiment_type = current_experiment_type
-        if delta_e is not None:
-            self.deltaE = delta_e
-        if mod_q is not None:
-            self.modQ = mod_q
+        if current_experiment_type is not None:
+            self.current_experiment_type = current_experiment_type
+        if DeltaE is not None:
+            self.DeltaE = DeltaE
+        if modQ is not None:
+            self.modQ = modQ
         if sc_parameters is not None:
             self.sc_parameters.set_parameters(sc_parameters)
-            self.modQ = self.sc_parameters.calculate_modq()
 
-    def get_crosshair(self) -> Tuple[float, float]:
+    def get_crosshair(self) -> dict[str, float]:
         """Get the crosshair"""
-        return self.deltaE, self.modQ
+        if self.current_experiment_type == "crystal":
+            self.modQ = self.sc_parameters.calculate_modQ()
+        return dict(DeltaE=self.DeltaE, modQ=self.modQ)
 
 
 class HyspecPPTModel:
     """Main model"""
 
-    Ei: float
-    S2: float
-    alpha_p: float
-    plot_type: str
+    Ei: float = 0
+    S2: float = 0
+    alpha_p: float = 0
+    plot_type: str = ""
+    cp: CrosshairParameters
 
     def __init__(self):
         """Constructor"""
-        return
+        self.cp = CrosshairParameters()
 
-    def store_data(
-        self,
-        incident_energy_e: float,
-        detector_tank_angle_s: float,
-        polarization_direction_angle_p: float,
-        plot_type: str,
+    def store_experiment_data(self, Ei: float, S2: float, alpha_p: float, plot_type: str) -> None:
+        self.Ei = Ei
+        self.S2 = S2
+        self.alpha_p = alpha_p
+        self.plot_type = plot_type
+
+    def store_crosshair_data(
+        self, *, current_experiment_type: str = None, DeltaE: float = None, modQ: float = None
     ) -> None:
-        Ei = incident_energy_e
-        S2 = detector_tank_angle_s
+        self.cp.store_data(current_experiment_type=current_experiment_type, DeltaE=DeltaE, modQ=modQ)
 
-    def polarization_powder(self, Ei, EMin, S2, alpha_p, plot_options="alpha", left=True):
+    def store_single_crystal_data(self, params: dict[str, float]) -> None:
+        self.cp.store_data(sc_parameters=params)
+
+    def get_crosshair(self) -> dict[str, float]:
+        return self.cp.get_crosshair()
+
+    def calculate_graph_data(self, Ei, EMin, S2, alpha_p, plot_options="alpha", left=True):
         SE2K = np.sqrt(2e-3 * e * m_n) * 1e-10 / hbar
         # def Ei, Emin = - Ei to create Qmin, Qmax to generate plot range
         # Ei=20.0
-        if EMin == None:
+        if EMin is None:
             EMin = -Ei
         E = np.linspace(EMin, Ei * 0.9, 200)
 
         kfmin = np.sqrt(Ei - EMin) * SE2K
         ki = np.sqrt(Ei) * SE2K
 
+
         # S2= 60
+        # Create Qmin and Qmax
+        Qmax = np.sqrt(ki**2 + kfmin**2 - 2 * ki * kfmin * np.cos(np.radians(S2 + 30)))  # Q=ki or Q=
+        Qmin = 0
         # Create Qmin and Qmax
         Qmax = np.sqrt(ki**2 + kfmin**2 - 2 * ki * kfmin * np.cos(np.radians(S2 + 30)))  # Q=ki or Q=
         Qmin = 0
         Q = np.linspace(Qmin, Qmax, 200)
 
         # Create 2D array
+
+        # Create 2D array
         E2d, Q2d = np.meshgrid(E, Q)
+
+        Ef2d = Ei - E2d
+        kf2d = np.sqrt(Ef2d) * SE2K
+
 
         Ef2d = Ei - E2d
         kf2d = np.sqrt(Ef2d) * SE2K
@@ -172,6 +201,16 @@ class HyspecPPTModel:
         cos_theta[cos_theta < np.cos(np.radians(S2 + 30))] = np.nan
         cos_theta[cos_theta > np.cos(np.radians(S2 - 30))] = np.nan  # cos(30)
 
+        cos_theta = (ki**2 + kf2d**2 - Q2d**2) / (2 * ki * kf2d)
+        cos_theta[cos_theta < np.cos(np.radians(S2 + 30))] = np.nan
+        cos_theta[cos_theta > np.cos(np.radians(S2 - 30))] = np.nan  # cos(30)
+
+        Qz = ki - kf2d * cos_theta
+        Qx = (-1 if left else 1) * kf2d * np.sqrt((1 - cos_theta**2))
+
+        cos_ang_PQ = (Qx * Px + Qz * Pz) / Q2d / np.sqrt(Px**2 + Pz**2)
+        cos_ang_PQ[cos_ang_PQ**2 < 0.4] = np.nan
+        cos_ang_PQ[cos_ang_PQ**2 > 0.6] = np.nan
         Qz = ki - kf2d * cos_theta
         Qx = (-1 if left else 1) * kf2d * np.sqrt((1 - cos_theta**2))
 
@@ -185,14 +224,26 @@ class HyspecPPTModel:
         Q_low = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(S2 - 30)))
         Q_hi = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(S2 + 30)))
 
+        kf = np.sqrt(Ei - E) * SE2K
+
+        Q_low = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(S2 - 30)))
+        Q_hi = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(S2 + 30)))
+
         if plot_options == "alpha":
             return Q_low, Q_hi, E, Q2d, E2d, ang_PQ
 
+            return Q_low, Q_hi, E, Q2d, E2d, ang_PQ
+
         if plot_options == "cos^2(a)":
+            return Q_low, Q_hi, E, Q2d, E2d, np.cos(np.radians(ang_PQ)) ** 2
             return Q_low, Q_hi, E, Q2d, E2d, np.cos(np.radians(ang_PQ)) ** 2
 
         if plot_options == "cos^2(a)-sin^2(a)":
             return Q_low, Q_hi, E, Q2d, E2d, np.cos(np.radians(ang_PQ)) ** 2 - np.sin(np.radians(ang_PQ)) ** 2
 
+            return Q_low, Q_hi, E, Q2d, E2d, np.cos(np.radians(ang_PQ)) ** 2 - np.sin(np.radians(ang_PQ)) ** 2
+
         if plot_options == "(cos^2(a)+1)/2":
+            return Q_low, Q_hi, E, Q2d, E2d, (np.cos(np.radians(ang_PQ)) ** 2 + 1) / 2
+
             return Q_low, Q_hi, E, Q2d, E2d, (np.cos(np.radians(ang_PQ)) ** 2 + 1) / 2
