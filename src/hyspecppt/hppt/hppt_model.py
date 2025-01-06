@@ -4,7 +4,6 @@ import logging
 
 import numpy as np
 from scipy.constants import e, hbar, m_n
-from scipy.constants import e, hbar, m_n
 
 logger = logging.getLogger("hyspecppt")
 
@@ -170,7 +169,6 @@ class HyspecPPTModel:
         kfmin = np.sqrt(Ei - EMin) * SE2K
         ki = np.sqrt(Ei) * SE2K
 
-
         # S2= 60
         # Create Qmin and Qmax
         Qmax = np.sqrt(ki**2 + kfmin**2 - 2 * ki * kfmin * np.cos(np.radians(S2 + 30)))  # Q=ki or Q=
@@ -187,7 +185,6 @@ class HyspecPPTModel:
 
         Ef2d = Ei - E2d
         kf2d = np.sqrt(Ef2d) * SE2K
-
 
         Ef2d = Ei - E2d
         kf2d = np.sqrt(Ef2d) * SE2K
