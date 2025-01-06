@@ -5,6 +5,8 @@ import logging
 import numpy as np
 from scipy.constants import e, hbar, m_n
 
+from .experiment_settings import PLOT_TYPES
+
 logger = logging.getLogger("hyspecppt")
 
 
@@ -158,89 +160,62 @@ class HyspecPPTModel:
     def get_crosshair(self) -> dict[str, float]:
         return self.cp.get_crosshair()
 
-    def calculate_graph_data(self, Ei, EMin, S2, alpha_p, plot_options="alpha", left=True):
-        SE2K = np.sqrt(2e-3 * e * m_n) * 1e-10 / hbar
-        # def Ei, Emin = - Ei to create Qmin, Qmax to generate plot range
-        # Ei=20.0
-        if EMin is None:
-            EMin = -Ei
-        E = np.linspace(EMin, Ei * 0.9, 200)
+    def get_graph_data(self) -> list:
+        return self.calculate_graph_data()
 
-        kfmin = np.sqrt(Ei - EMin) * SE2K
-        ki = np.sqrt(Ei) * SE2K
+    def calculate_graph_data(self) -> list[float]:
+        """Returns a list of [Q_low, Q_hi, E, Q2d, E2d, data of plot_types]"""
+        try:
+            SE2K = np.sqrt(2e-3 * e * m_n) * 1e-10 / hbar
+            # def Ei, Emin = - Ei to create Qmin, Qmax to generate plot range
+            if self.cp.DeltaE is not None and self.cp.DeltaE < -self.Ei:
+                EMin = -self.Ei
+            E = np.linspace(EMin, self.Ei * 0.9, 200)
 
-        # S2= 60
-        # Create Qmin and Qmax
-        Qmax = np.sqrt(ki**2 + kfmin**2 - 2 * ki * kfmin * np.cos(np.radians(S2 + 30)))  # Q=ki or Q=
-        Qmin = 0
-        # Create Qmin and Qmax
-        Qmax = np.sqrt(ki**2 + kfmin**2 - 2 * ki * kfmin * np.cos(np.radians(S2 + 30)))  # Q=ki or Q=
-        Qmin = 0
-        Q = np.linspace(Qmin, Qmax, 200)
+            kfmin = np.sqrt(self.Ei - EMin) * SE2K
+            ki = np.sqrt(self.Ei) * SE2K
 
-        # Create 2D array
+            # S2= 60
+            # Create Qmin and Qmax
+            Qmax = np.sqrt(ki**2 + kfmin**2 - 2 * ki * kfmin * np.cos(np.radians(self.S2 + 30)))  # Q=ki or Q=
+            Qmin = 0
+            Q = np.linspace(Qmin, Qmax, 200)
 
-        # Create 2D array
-        E2d, Q2d = np.meshgrid(E, Q)
+            # Create 2D array
+            E2d, Q2d = np.meshgrid(E, Q)
 
-        Ef2d = Ei - E2d
-        kf2d = np.sqrt(Ef2d) * SE2K
+            Ef2d = self.Ei - E2d
+            kf2d = np.sqrt(Ef2d) * SE2K
 
-        Ef2d = Ei - E2d
-        kf2d = np.sqrt(Ef2d) * SE2K
+            Px = np.cos(np.radians(self.alpha_p))
+            Pz = np.sin(np.radians(self.alpha_p))
 
-        # Px=P[0]
-        Px = np.cos(np.radians(alpha_p))
-        # Pz=P[2]
-        Pz = np.sin(np.radians(alpha_p))
+            cos_theta = (ki**2 + kf2d**2 - Q2d**2) / (2 * ki * kf2d)
+            cos_theta[cos_theta < np.cos(np.radians(self.S2 + 30))] = np.nan
+            cos_theta[cos_theta > np.cos(np.radians(self.S2 - 30))] = np.nan  # cos(30)
 
-        cos_theta = (ki**2 + kf2d**2 - Q2d**2) / (2 * ki * kf2d)
-        cos_theta[cos_theta < np.cos(np.radians(S2 + 30))] = np.nan
-        cos_theta[cos_theta > np.cos(np.radians(S2 - 30))] = np.nan  # cos(30)
+            Qz = ki - kf2d * cos_theta
 
-        cos_theta = (ki**2 + kf2d**2 - Q2d**2) / (2 * ki * kf2d)
-        cos_theta[cos_theta < np.cos(np.radians(S2 + 30))] = np.nan
-        cos_theta[cos_theta > np.cos(np.radians(S2 - 30))] = np.nan  # cos(30)
+            if self.S2 >= 30:
+                Qx = (-1) * kf2d * np.sqrt((1 - cos_theta**2))
+            elif self.S2 <= -30:
+                Qx = kf2d * np.sqrt((1 - cos_theta**2))
 
-        Qz = ki - kf2d * cos_theta
-        Qx = (-1 if left else 1) * kf2d * np.sqrt((1 - cos_theta**2))
+            cos_ang_PQ = (Qx * Px + Qz * Pz) / Q2d / np.sqrt(Px**2 + Pz**2)
+            ang_PQ = np.degrees(np.arccos(cos_ang_PQ))
 
-        cos_ang_PQ = (Qx * Px + Qz * Pz) / Q2d / np.sqrt(Px**2 + Pz**2)
-        cos_ang_PQ[cos_ang_PQ**2 < 0.4] = np.nan
-        cos_ang_PQ[cos_ang_PQ**2 > 0.6] = np.nan
-        Qz = ki - kf2d * cos_theta
-        Qx = (-1 if left else 1) * kf2d * np.sqrt((1 - cos_theta**2))
+            kf = np.sqrt(self.Ei - E) * SE2K
 
-        cos_ang_PQ = (Qx * Px + Qz * Pz) / Q2d / np.sqrt(Px**2 + Pz**2)
-        cos_ang_PQ[cos_ang_PQ**2 < 0.4] = np.nan
-        cos_ang_PQ[cos_ang_PQ**2 > 0.6] = np.nan
-        ang_PQ = np.degrees(np.arccos(cos_ang_PQ))
+            Q_low = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(self.S2 - 30)))
+            Q_hi = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(self.S2 + 30)))
 
-        kf = np.sqrt(Ei - E) * SE2K
+            if self.plot_type == PLOT_TYPES[0]:  # alpha
+                return [Q_low, Q_hi, E, Q2d, E2d, ang_PQ]
 
-        Q_low = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(S2 - 30)))
-        Q_hi = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(S2 + 30)))
+            if self.plot_type == PLOT_TYPES[1]:  # cos^2(alpha)
+                return [Q_low, Q_hi, E, Q2d, E2d, np.cos(np.radians(ang_PQ)) ** 2]
 
-        kf = np.sqrt(Ei - E) * SE2K
-
-        Q_low = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(S2 - 30)))
-        Q_hi = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(S2 + 30)))
-
-        if plot_options == "alpha":
-            return Q_low, Q_hi, E, Q2d, E2d, ang_PQ
-
-            return Q_low, Q_hi, E, Q2d, E2d, ang_PQ
-
-        if plot_options == "cos^2(a)":
-            return Q_low, Q_hi, E, Q2d, E2d, np.cos(np.radians(ang_PQ)) ** 2
-            return Q_low, Q_hi, E, Q2d, E2d, np.cos(np.radians(ang_PQ)) ** 2
-
-        if plot_options == "cos^2(a)-sin^2(a)":
-            return Q_low, Q_hi, E, Q2d, E2d, np.cos(np.radians(ang_PQ)) ** 2 - np.sin(np.radians(ang_PQ)) ** 2
-
-            return Q_low, Q_hi, E, Q2d, E2d, np.cos(np.radians(ang_PQ)) ** 2 - np.sin(np.radians(ang_PQ)) ** 2
-
-        if plot_options == "(cos^2(a)+1)/2":
-            return Q_low, Q_hi, E, Q2d, E2d, (np.cos(np.radians(ang_PQ)) ** 2 + 1) / 2
-
-            return Q_low, Q_hi, E, Q2d, E2d, (np.cos(np.radians(ang_PQ)) ** 2 + 1) / 2
+            if self.plot_type == PLOT_TYPES[2]:  # "(cos^2(a)+1)/2"
+                return [Q_low, Q_hi, E, Q2d, E2d, (np.cos(np.radians(ang_PQ)) ** 2 + 1) / 2]
+        except AttributeError:
+            logger.error("The parameters were not initialized")
