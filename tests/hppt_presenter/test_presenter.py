@@ -33,3 +33,23 @@ def test_Selector_widget_powder_mode(hyspec_app, qtbot):
 
     assert not hyspec_view.SCW.isVisibleTo(hyspec_app)
     assert hyspec_view.CW.modQ_edit.isEnabled()
+
+
+def test_switch_to_SC(hyspec_app, qtbot):
+    """Test switch_to_SC() set SingleCrystalWidget visible"""
+    hyspec_app.show()
+    qtbot.waitUntil(hyspec_app.show, timeout=5000)
+    hyspec_view = hyspec_app.main_window.HPPT_view
+    hyspec_view.switch_to_SC()
+    assert hyspec_view.SCW.isVisibleTo(hyspec_view)
+    assert not hyspec_view.CW.modQ_edit.isEnabled()
+
+
+def test_switch_to_Powder(hyspec_app, qtbot):
+    """Test switch_to_Powder() set SingleCrystalWidget visible"""
+    hyspec_app.show()
+    qtbot.waitUntil(hyspec_app.show, timeout=5000)
+    hyspec_view = hyspec_app.main_window.HPPT_view
+    hyspec_view.switch_to_Powder()
+    assert not hyspec_view.SCW.isVisibleTo(hyspec_view)
+    assert hyspec_view.CW.modQ_edit.isEnabled()
