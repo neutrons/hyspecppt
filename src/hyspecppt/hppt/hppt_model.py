@@ -105,7 +105,7 @@ class CrosshairParameters:
     def __init__(self):
         self.sc_parameters = SingleCrystalParameters()
 
-    def store_data(
+    def set_crosshair(
         self,
         *,
         current_experiment_type: str = None,
@@ -142,25 +142,29 @@ class HyspecPPTModel:
     def __init__(self):
         """Constructor"""
         self.cp = CrosshairParameters()
+        self.scp = SingleCrystalParameters()
 
-    def store_experiment_data(self, Ei: float, S2: float, alpha_p: float, plot_type: str) -> None:
+    def set_single_crystal_data(self, params: dict[str, float]) -> None:
+        self.cp.set_crosshair(sc_parameters=params)
+
+    def get_single_crystal_data(self) -> dict[str, float]:
+        return self.scp.get_paramters()
+
+    def set_crosshair_data(
+        self, *, current_experiment_type: str = None, DeltaE: float = None, modQ: float = None
+    ) -> None:
+        self.cp.set_crosshair(current_experiment_type=current_experiment_type, DeltaE=DeltaE, modQ=modQ)
+
+    def get_crosshair(self) -> dict[str, float]:
+        return self.cp.get_crosshair()
+
+    def set_experiment_data(self, Ei: float, S2: float, alpha_p: float, plot_type: str) -> None:
         self.Ei = Ei
         self.S2 = S2
         self.alpha_p = alpha_p
         self.plot_type = plot_type
 
-    def store_crosshair_data(
-        self, *, current_experiment_type: str = None, DeltaE: float = None, modQ: float = None
-    ) -> None:
-        self.cp.store_data(current_experiment_type=current_experiment_type, DeltaE=DeltaE, modQ=modQ)
-
-    def store_single_crystal_data(self, params: dict[str, float]) -> None:
-        self.cp.store_data(sc_parameters=params)
-
-    def get_crosshair(self) -> dict[str, float]:
-        return self.cp.get_crosshair()
-
-    def get_graph_data(self) -> list:
+    def get_graph_data(self) -> list[float, float, float, list, list, list]:
         return self.calculate_graph_data()
 
     def calculate_graph_data(self) -> list[float]:
