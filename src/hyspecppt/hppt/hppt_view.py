@@ -1,14 +1,12 @@
 """Widgets for the main window"""
 
-import copy
 from typing import Optional, Union
 
-import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 from qtpy.QtCore import QObject, Signal
-from qtpy.QtGui import QDoubleValidator, QValidator
+from qtpy.QtGui import QDoubleValidator
 from qtpy.QtWidgets import (
     QButtonGroup,
     QComboBox,
@@ -25,50 +23,7 @@ from qtpy.QtWidgets import (
 )
 
 from .experiment_settings import INVALID_QLINEEDIT, PLOT_TYPES, alpha, beta, gamma
-
-
-class AbsValidator(QDoubleValidator):
-    """Absolute value validator"""
-
-    def __init__(
-        self, parent: Optional["QObject"] = None, bottom: float = 0, top: float = np.inf, decimals: int = -1
-    ) -> None:
-        """Constructor for the absolute value validator. All the parameters
-           are the same as for QDoubleValidator, but the valid value is between a
-           positive bottom and top, or between -top and -bottom
-
-        Args:
-            parent (QObject): Optional parent
-            bottom (float): the minimum positive value (set to 0 if not positive)
-            top (float): the highest top value (set to infinity if not greater than bottom)
-            decimals (int): the number of digits after the decimal point.
-
-        """
-        if bottom < 0:
-            bottom = 0
-        if top <= bottom:
-            top = np.inf
-        super().__init__(parent=parent, bottom=bottom, top=top, decimals=decimals)
-
-    def validate(self, inp: str, pos: int) -> tuple[QValidator.State, str, int]:
-        """Override for validate method
-
-        Args:
-            inp (str): the input string
-            pos (int): cursor position
-
-        """
-        original_str = copy.copy(inp)
-        original_pos = pos
-        if inp == "-":
-            return QValidator.Intermediate
-        try:
-            inp = str(abs(float(inp)))
-        except ValueError:
-            pass
-        x = super().validate(inp, pos)
-        # do not "fix" the input
-        return x[0], original_str, original_pos
+from .hppt_view_validators import AbsValidator
 
 
 class HyspecPPTView(QWidget):
@@ -82,9 +37,11 @@ class HyspecPPTView(QWidget):
 
         """
         super().__init__(parent)
-        # callback functions
+
+        # callback functions defined by the presenter
         self.fields_callback = None
         self.powder_mode_switch_callback = None
+        self.sc_mode_switch_callback = None
 
         layout = QHBoxLayout()
         self.setLayout(layout)
@@ -109,12 +66,20 @@ class HyspecPPTView(QWidget):
         self.CW.valid_signal.connect(self.values_update)
 
     def connect_fields_update(self, callback):
-        """Callback for the fields update"""
+        """Callback for the fields update - set by the presenter"""
         self.fields_callback = callback
 
     def connect_powder_mode_switch(self, callback):
-        """Callback for the switching to Powder mode from the radio button"""
+        """Callback function setup for the switching to Powder mode from the radio button
+        - function defined and set by the presenter
+        """
         self.powder_mode_switch_callback = callback
+
+    def connect_sc_mode_switch(self, callback):
+        """Callback function setup for the switching to Single Crystal mode from the radio button
+        - function defined and set by the presenter
+        """
+        self.sc_mode_switch_callback = callback
 
     def values_update(self, values):
         """Fields update"""
@@ -122,11 +87,13 @@ class HyspecPPTView(QWidget):
 
     def switch_to_SC(self) -> None:
         """Switch to Single Crystal mode"""
-        self.field_visibility_in_SC()
+        if self.sc_mode_switch_callback:
+            self.sc_mode_switch_callback()
 
-    def switch_to_Powder(self) -> None:
+    def switch_to_powder(self) -> None:
         """Switch to Powder mode"""
-        self.powder_mode_switch_callback()
+        if self.powder_mode_switch_callback:
+            self.powder_mode_switch_callback()
 
     def field_visibility_in_SC(self) -> None:
         """Set visibility for Single Crystal mode"""
@@ -194,12 +161,22 @@ class SelectorWidget(QWidget):
         """Update fields based on selected mode
         Args:
         """
-        sender = self.sender().text()
+        if self.parent():
+            sender = self.sender().text()
 
-        if sender == self.powder_label and self.powder_rb.isChecked():
-            self.parent().switch_to_Powder()
-        if sender == self.sc_label and self.sc_rb.isChecked():
-            self.parent().switch_to_SC()
+            if sender == self.powder_label and self.powder_rb.isChecked():
+                self.parent().switch_to_powder()
+            if sender == self.sc_label and self.sc_rb.isChecked():
+                self.parent().switch_to_SC()
+
+    def get_selected_mode_label(self) -> str:
+        """Return the label of the selected mode
+        Args:
+        """
+        if self.powder_rb.isChecked():
+            return self.powder_label
+        else:
+            return self.sc_label
 
 
 class SingleCrystalWidget(QWidget):
@@ -299,23 +276,23 @@ class SingleCrystalWidget(QWidget):
 
         # connections
         self.a_edit.editingFinished.connect(self.validate_all_inputs)
-        self.a_edit.textEdited.connect(self.validate_inputs)
+        self.a_edit.textChanged.connect(self.validate_inputs)
         self.b_edit.editingFinished.connect(self.validate_all_inputs)
-        self.b_edit.textEdited.connect(self.validate_inputs)
+        self.b_edit.textChanged.connect(self.validate_inputs)
         self.c_edit.editingFinished.connect(self.validate_all_inputs)
-        self.c_edit.textEdited.connect(self.validate_inputs)
+        self.c_edit.textChanged.connect(self.validate_inputs)
         self.alpha_edit.editingFinished.connect(self.validate_all_inputs)
-        self.alpha_edit.textEdited.connect(self.validate_inputs)
+        self.alpha_edit.textChanged.connect(self.validate_inputs)
         self.beta_edit.editingFinished.connect(self.validate_all_inputs)
-        self.beta_edit.textEdited.connect(self.validate_inputs)
+        self.beta_edit.textChanged.connect(self.validate_inputs)
         self.gamma_edit.editingFinished.connect(self.validate_all_inputs)
-        self.gamma_edit.textEdited.connect(self.validate_inputs)
+        self.gamma_edit.textChanged.connect(self.validate_inputs)
         self.h_edit.editingFinished.connect(self.validate_all_inputs)
-        self.h_edit.textEdited.connect(self.validate_inputs)
+        self.h_edit.textChanged.connect(self.validate_inputs)
         self.k_edit.editingFinished.connect(self.validate_all_inputs)
-        self.k_edit.textEdited.connect(self.validate_inputs)
+        self.k_edit.textChanged.connect(self.validate_inputs)
         self.l_edit.editingFinished.connect(self.validate_all_inputs)
-        self.l_edit.textEdited.connect(self.validate_inputs)
+        self.l_edit.textChanged.connect(self.validate_inputs)
 
     def set_values(self, values: dict[str, float]) -> None:
         """Sets widget display based on the values dictionary
@@ -421,11 +398,11 @@ class ExperimentWidget(QWidget):
 
         # connections
         self.Ei_edit.editingFinished.connect(self.validate_all_inputs)
-        self.Ei_edit.textEdited.connect(self.validate_inputs)
+        self.Ei_edit.textChanged.connect(self.validate_inputs)
         self.S2_edit.editingFinished.connect(self.validate_all_inputs)
-        self.S2_edit.textEdited.connect(self.validate_inputs)
+        self.S2_edit.textChanged.connect(self.validate_inputs)
         self.Pangle_edit.editingFinished.connect(self.validate_all_inputs)
-        self.Pangle_edit.textEdited.connect(self.validate_inputs)
+        self.Pangle_edit.textChanged.connect(self.validate_inputs)
         self.Type_combobox.currentIndexChanged.connect(self.validate_all_inputs)
 
     def initializeCombo(self, options: list[str]) -> None:
@@ -511,9 +488,9 @@ class CrosshairWidget(QWidget):
 
         # connections
         self.DeltaE_edit.editingFinished.connect(self.validate_all_inputs)
-        self.DeltaE_edit.textEdited.connect(self.validate_inputs)
+        self.DeltaE_edit.textChanged.connect(self.validate_inputs)
         self.modQ_edit.editingFinished.connect(self.validate_all_inputs)
-        self.modQ_edit.textEdited.connect(self.validate_inputs)
+        self.modQ_edit.textChanged.connect(self.validate_inputs)
 
         groupBox = QGroupBox("Crosshair position")
         groupBox.setLayout(box_layout)
