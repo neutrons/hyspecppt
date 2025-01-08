@@ -19,6 +19,7 @@ class HyspecPPTPresenter:
         self.view.connect_powder_mode_switch(self.handle_switch_to_powder)
         self.view.connect_sc_mode_switch(self.handle_switch_to_sc)
 
+        # populate fields
         self.view.SCW.set_values(DEFAULT_LATTICE)
         self.view.EW.initializeCombo(PLOT_TYPES)
         self.view.EW.set_values(DEFAULT_EXPERIMENT)
@@ -27,11 +28,14 @@ class HyspecPPTPresenter:
         # model init
         # to be removed needs to happen in the model
         self.model.set_experiment_data(**DEFAULT_EXPERIMENT)
-        print("DEFAULT_CROSSHAIR", DEFAULT_CROSSHAIR, DEFAULT_MODE)
         self.model.set_crosshair_data(**DEFAULT_CROSSHAIR, **DEFAULT_MODE)
         self.model.set_single_crystal_data(params=DEFAULT_LATTICE)
 
-        self.view.SelW.selector_init()  # pass the default mode from experiment type
+        # set default selection mode
+        experiment_type = self.view.SelW.powder_label
+        if DEFAULT_MODE["current_experiment_type"].startswith("single"):
+            experiment_type = self.view.SelW.sc_label
+        self.view.SelW.selector_init(experiment_type)  # pass the default mode from experiment type
 
     @property
     def view(self):
@@ -53,7 +57,6 @@ class HyspecPPTPresenter:
             experiment_type = "powder"
             if experiment_type_label.startswith("Single"):
                 experiment_type = "single_crystal"
-            print("data", data, experiment_type)
             self.model.set_crosshair_data(
                 current_experiment_type=experiment_type, DeltaE=float(data["DeltaE"]), modQ=float(data["modQ"])
             )
@@ -62,7 +65,6 @@ class HyspecPPTPresenter:
                 float(data["Ei"]), float(data["S2"]), float(data["alpha_p"]), data["plot_type"]
             )
         else:
-            print("dsad", data)
             self.model.set_single_crystal_data(data)
 
     def handle_switch_to_powder(self):
@@ -76,9 +78,7 @@ class HyspecPPTPresenter:
         # get the valid values for crosshair saved fields
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_crosshair_data()
-        print("saved", saved_values)
         self.view.CW.set_values(saved_values)
-        print("view updated with: ", saved_values)
 
     def handle_switch_to_sc(self):
         """Switch to Single Crystal mode"""
@@ -91,9 +91,7 @@ class HyspecPPTPresenter:
         # get the valid values for crosshair saved fields
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_crosshair_data()
-        print("sc saved", saved_values)
         self.view.CW.set_values(saved_values)
-        print("view updated with: ", saved_values)
 
         # get the valid values for lattice saved fields
         # saved_values = self.model.get_single_crystal_data()
