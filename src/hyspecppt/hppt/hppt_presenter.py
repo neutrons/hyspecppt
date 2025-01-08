@@ -27,8 +27,11 @@ class HyspecPPTPresenter:
         # model init
         # to be removed needs to happen in the model
         self.model.set_experiment_data(**DEFAULT_EXPERIMENT)
+        print("DEFAULT_CROSSHAIR", DEFAULT_CROSSHAIR, DEFAULT_MODE)
         self.model.set_crosshair_data(**DEFAULT_CROSSHAIR, **DEFAULT_MODE)
         self.model.set_single_crystal_data(params=DEFAULT_LATTICE)
+
+        self.view.SelW.selector_init()  # pass the default mode from experiment type
 
     @property
     def view(self):
@@ -51,7 +54,9 @@ class HyspecPPTPresenter:
             if experiment_type_label.startswith("Single"):
                 experiment_type = "single_crystal"
             print("data", data, experiment_type)
-            self.model.set_crosshair_data(experiment_type, float(data["DeltaE"]), float(data["modQ"]))
+            self.model.set_crosshair_data(
+                current_experiment_type=experiment_type, DeltaE=float(data["DeltaE"]), modQ=float(data["modQ"])
+            )
         elif section == "experiment":
             self.model.set_experiment_data(
                 float(data["Ei"]), float(data["S2"]), float(data["alpha_p"]), data["plot_type"]
@@ -64,6 +69,9 @@ class HyspecPPTPresenter:
         """Switch to Powder mode"""
         # update the fields' visibility
         self.view.field_visibility_in_Powder()
+        # update the experiment type in the model
+        experiment_type = "powder"
+        self.model.set_crosshair_data(current_experiment_type=experiment_type)
 
         # get the valid values for crosshair saved fields
         # if the view contains an invalid value it is overwritten
@@ -76,12 +84,15 @@ class HyspecPPTPresenter:
         """Switch to Single Crystal mode"""
         # update the fields' visibility
         self.view.field_visibility_in_SC()
+        # update the experiment type in the model
+        experiment_type = "single_crystal"
+        self.model.set_crosshair_data(current_experiment_type=experiment_type)
 
         # get the valid values for crosshair saved fields
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_crosshair_data()
+        print("sc saved", saved_values)
         self.view.CW.set_values(saved_values)
-        print("saved", saved_values)
         print("view updated with: ", saved_values)
 
         # get the valid values for lattice saved fields

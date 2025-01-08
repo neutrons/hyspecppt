@@ -171,7 +171,7 @@ def test_switch_to_powder_qmod_default_value(hyspec_app, qtbot):
     hyspec_view.switch_to_powder()
 
     # Qmod value should be back to its default value
-    assert crosshair_widget.modQ_edit.text() == "0"
+    assert crosshair_widget.modQ_edit.text() == "0.0"
     assert crosshair_widget.modQ_edit.styleSheet() != INVALID_QLINEEDIT
 
 
@@ -218,8 +218,14 @@ def test_switch_to_powder_qmod_updated_values(hyspec_app, qtbot):
     hyspec_view = hyspec_app.main_window.HPPT_view
     crosshair_widget = hyspec_view.CW
 
+    assert crosshair_widget.modQ_edit.text() == "0.0"
+
+    # switch to powder
+    hyspec_view.switch_to_powder()
+
     # set a valid Qmod value
     crosshair_widget.modQ_edit.clear()
+    assert crosshair_widget.modQ_edit.text() == ""
 
     qtbot.keyClicks(crosshair_widget.modQ_edit, "2.35")
     assert crosshair_widget.modQ_edit.text() == "2.35"
@@ -228,14 +234,14 @@ def test_switch_to_powder_qmod_updated_values(hyspec_app, qtbot):
     crosshair_widget.modQ_edit.setFocus()
     qtbot.keyPress(crosshair_widget.modQ_edit, Qt.Key_Return)
 
-    # empty DeltaE value
+    # empty Qmod value
     crosshair_widget.modQ_edit.clear()
     assert crosshair_widget.modQ_edit.text() == ""
     assert crosshair_widget.modQ_edit.styleSheet() == INVALID_QLINEEDIT
 
     # switch to powder
-    hyspec_view.switch_to_powder()
+    hyspec_view.switch_to_SC()
 
     # Qmod value should be back to its default value
-    assert crosshair_widget.modQ_edit.text() == "2.35"
+    assert crosshair_widget.modQ_edit.text() == "0.0"
     assert crosshair_widget.modQ_edit.styleSheet() != INVALID_QLINEEDIT

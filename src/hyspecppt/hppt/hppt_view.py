@@ -99,6 +99,7 @@ class HyspecPPTView(QWidget):
         """Set visibility for Single Crystal mode"""
         self.SCW.setVisible(True)
         self.CW.set_Qmod_enabled(False)
+        print("Visibility trace")
 
     def field_visibility_in_Powder(self) -> None:
         """Set visibility for Powder mode"""
@@ -154,6 +155,10 @@ class SelectorWidget(QWidget):
             self.powder_rb.toggled.connect(self.sc_toggle)
             self.sc_rb.toggled.connect(self.sc_toggle)
 
+    def selector_init(self):
+        """Initialize the default selected mode
+        Args:
+        """
         # default mode is SC
         self.sc_rb.setChecked(True)
 
