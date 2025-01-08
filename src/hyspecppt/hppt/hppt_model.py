@@ -106,7 +106,7 @@ class CrosshairParameters:
     def __init__(self):
         self.sc_parameters = SingleCrystalParameters()
 
-    def set_crosshair(self, current_experiment_type: str, DeltaE: float, modQ: float = None) -> None:
+    def set_crosshair(self, current_experiment_type: str, DeltaE: float = None, modQ: float = None) -> None:
         """Store crosshair parameters including in SC mode"""
         if current_experiment_type is not None:
             self.current_experiment_type = current_experiment_type
@@ -141,7 +141,7 @@ class HyspecPPTModel:
     def get_single_crystal_data(self) -> dict[str, float]:
         return self.cp.sc_parameters.get_parameters()
 
-    def set_crosshair_data(self, current_experiment_type: str, DeltaE: float, modQ: float = None) -> None:
+    def set_crosshair_data(self, current_experiment_type: str, DeltaE: float = None, modQ: float = None) -> None:
         self.cp.set_crosshair(current_experiment_type=current_experiment_type, DeltaE=DeltaE, modQ=modQ)
 
     def get_crosshair_data(self) -> dict[str, float]:
