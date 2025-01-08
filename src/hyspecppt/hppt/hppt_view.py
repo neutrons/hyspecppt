@@ -104,7 +104,6 @@ class HyspecPPTView(QWidget):
         """Set visibility for Single Crystal mode"""
         self.SCW.setVisible(True)
         self.CW.set_Qmod_enabled(False)
-        print("Visibility trace")
 
     def field_visibility_in_Powder(self) -> None:
         """Set visibility for Powder mode"""
