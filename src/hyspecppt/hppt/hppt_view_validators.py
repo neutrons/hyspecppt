@@ -1,7 +1,5 @@
 import copy
-from typing import Optional
 
-import numpy as np
 from qtpy.QtCore import QObject
 from qtpy.QtGui import QDoubleValidator, QValidator
 
@@ -9,9 +7,7 @@ from qtpy.QtGui import QDoubleValidator, QValidator
 class AbsValidator(QDoubleValidator):
     """Absolute value validator"""
 
-    def __init__(
-        self, parent: Optional["QObject"] = None, bottom: float = 0, top: float = np.inf, decimals: int = -1
-    ) -> None:
+    def __init__(self, parent: QObject, bottom: float, top: float, decimals: int = -1) -> None:
         """Constructor for the absolute value validator. All the parameters
            are the same as for QDoubleValidator, but the valid value is between a
            positive bottom and top, or between -top and -bottom
@@ -23,10 +19,6 @@ class AbsValidator(QDoubleValidator):
             decimals (int): the number of digits after the decimal point.
 
         """
-        if bottom < 0:
-            bottom = 0
-        if top <= bottom:
-            top = np.inf
         super().__init__(parent=parent, bottom=bottom, top=top, decimals=decimals)
 
     def validate(self, inp: str, pos: int) -> tuple[QValidator.State, str, int]:
