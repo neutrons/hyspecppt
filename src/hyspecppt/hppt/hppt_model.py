@@ -60,7 +60,7 @@ class SingleCrystalParameters:
                 l=self.l,
             )
         except AttributeError:
-            logger.error("The parameters were not initialized")
+            logger.error("The parameters were not initialized-get_parameters-SingleCrystalParameters")
 
     def calculate_modQ(self) -> float:
         """Returns |Q| from lattice parameters and h, k, l"""
@@ -91,7 +91,7 @@ class SingleCrystalParameters:
             modQ = 2 * np.pi * np.linalg.norm(B.dot([self.h, self.k, self.l]))
             return modQ
         except AttributeError:
-            logger.error("The parameters were not initialized")
+            logger.error("The parameters were not initialized-calculate_modQ")
 
 
 class CrosshairParameters:
@@ -134,13 +134,12 @@ class HyspecPPTModel:
     def __init__(self):
         """Constructor"""
         self.cp = CrosshairParameters()
-        self.scp = SingleCrystalParameters()
 
     def set_single_crystal_data(self, params: dict[str, float]) -> None:
-        self.scp.set_parameters(params)
+        self.cp.sc_parameters.set_parameters(params)
 
     def get_single_crystal_data(self) -> dict[str, float]:
-        return self.scp.get_parameters()
+        return self.cp.sc_parameters.get_parameters()
 
     def set_crosshair_data(self, current_experiment_type: str, DeltaE: float, modQ: float = None) -> None:
         self.cp.set_crosshair(current_experiment_type=current_experiment_type, DeltaE=DeltaE, modQ=modQ)
