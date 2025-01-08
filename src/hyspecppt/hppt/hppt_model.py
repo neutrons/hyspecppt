@@ -45,7 +45,7 @@ class SingleCrystalParameters:
         self.k = params["k"]
         self.l = params["l"]
 
-    def get_paramters(self) -> dict[str, float]:
+    def get_parameters(self) -> dict[str, float]:
         """Returns all the parameters as a dictionary"""
         try:
             return dict(
@@ -75,7 +75,7 @@ class SingleCrystalParameters:
             astar = sa / (self.a * vabg)
             bstar = sb / (self.b * vabg)
             cstar = sg / (self.c * vabg)
-            cas = (cb * cg - ca) / (sb * sg)
+            cas = (cb * cg - ca) / (sb * sg)  # noqa: F841
             cbs = (cg * ca - cb) / (sg * sa)
             cgs = (ca * cb - cg) / (sa * sb)
 
@@ -101,18 +101,12 @@ class CrosshairParameters:
     DeltaE: float
     current_experiment_type: str
     sc_parameters: SingleCrystalParameters
+    experiment_types = ["single_crystal", "powder"]
 
     def __init__(self):
         self.sc_parameters = SingleCrystalParameters()
 
-    def set_crosshair(
-        self,
-        *,
-        current_experiment_type: str = None,
-        DeltaE: float = None,
-        modQ: float = None,
-        sc_parameters: dict[str, float] = None,
-    ) -> None:
+    def set_crosshair(self, current_experiment_type: str, DeltaE: float, modQ: float = None) -> None:
         """Store crosshair parameters including in SC mode"""
         if current_experiment_type is not None:
             self.current_experiment_type = current_experiment_type
@@ -120,12 +114,10 @@ class CrosshairParameters:
             self.DeltaE = DeltaE
         if modQ is not None:
             self.modQ = modQ
-        if sc_parameters is not None:
-            self.sc_parameters.set_parameters(sc_parameters)
 
     def get_crosshair(self) -> dict[str, float]:
         """Get the crosshair"""
-        if self.current_experiment_type == "crystal":
+        if self.current_experiment_type == "single_crystal":
             self.modQ = self.sc_parameters.calculate_modQ()
         return dict(DeltaE=self.DeltaE, modQ=self.modQ)
 
@@ -145,17 +137,15 @@ class HyspecPPTModel:
         self.scp = SingleCrystalParameters()
 
     def set_single_crystal_data(self, params: dict[str, float]) -> None:
-        self.cp.set_crosshair(sc_parameters=params)
+        self.scp.set_parameters(params)
 
     def get_single_crystal_data(self) -> dict[str, float]:
-        return self.scp.get_paramters()
+        return self.scp.get_parameters()
 
-    def set_crosshair_data(
-        self, *, current_experiment_type: str = None, DeltaE: float = None, modQ: float = None
-    ) -> None:
+    def set_crosshair_data(self, current_experiment_type: str, DeltaE: float, modQ: float = None) -> None:
         self.cp.set_crosshair(current_experiment_type=current_experiment_type, DeltaE=DeltaE, modQ=modQ)
 
-    def get_crosshair(self) -> dict[str, float]:
+    def get_crosshair_data(self) -> dict[str, float]:
         return self.cp.get_crosshair()
 
     def set_experiment_data(self, Ei: float, S2: float, alpha_p: float, plot_type: str) -> None:
