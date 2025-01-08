@@ -28,6 +28,7 @@ class HyspecPPTPresenter:
         # model init
         # to be removed needs to happen in the model
         self.model.set_experiment_data(**DEFAULT_EXPERIMENT)
+        print("DEFAULT_CROSSHAIR", DEFAULT_CROSSHAIR, DEFAULT_MODE)
         self.model.set_crosshair_data(**DEFAULT_CROSSHAIR, **DEFAULT_MODE)
         self.model.set_single_crystal_data(params=DEFAULT_LATTICE)
 
@@ -94,6 +95,7 @@ class HyspecPPTPresenter:
         # get the valid values for crosshair saved fields
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_crosshair_data()
+        print("sc saved", saved_values)
         self.view.CW.set_values(saved_values)
 
         # get the valid values for lattice saved fields
