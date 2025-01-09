@@ -1,11 +1,11 @@
 import numpy as np
 
-import hyspecppt.hppt.hppt_model as hppt_model
+from hyspecppt.hppt.hppt_model import CrosshairParameters, SingleCrystalParameters
 
 
 def test_single_crystal_parameter_set_parameters():
     """Test SingleCrystalParameters set_parameters function"""
-    scp = hppt_model.SingleCrystalParameters()
+    scp = SingleCrystalParameters()
     sc_data = {"a": 1.0, "b": 1.0, "c": 1.0, "alpha": 90.0, "beta": 90, "gamma": 90, "h": 0, "k": 0, "l": 0}
     scp.set_parameters(sc_data)
 
@@ -22,7 +22,7 @@ def test_single_crystal_parameter_set_parameters():
 
 def test_single_crystal_parameter_get_parameters():
     """Test SingleCrystalParameters get_parameters function"""
-    scp = hppt_model.SingleCrystalParameters()
+    scp = SingleCrystalParameters()
     sc_data = {"a": 1.0, "b": 1.0, "c": 1.0, "alpha": 90.0, "beta": 90, "gamma": 90, "h": 0, "k": 0, "l": 0}
     scp.set_parameters(sc_data)
 
@@ -39,7 +39,7 @@ def test_single_crystal_parameter_get_parameters():
 
 def test_single_crystal_parameter_calculate_modQ():
     """Test SingleCrystalParameters calculate_modQ function"""
-    scp = hppt_model.SingleCrystalParameters()
+    scp = SingleCrystalParameters()
     sc_data = {"a": 1.0, "b": 1.0, "c": 1.0, "alpha": 90.0, "beta": 90, "gamma": 90, "h": 0, "k": 0, "l": 0}
     scp.set_parameters(sc_data)
     assert scp.calculate_modQ() == 0.0
@@ -65,7 +65,7 @@ def test_single_crystal_parameter_calculate_modQ():
 
 def test_cross_hair_parameters_set_crosshair():
     """Test Crosshair set_crosshair function"""
-    cp = hppt_model.CrosshairParameters()
+    cp = CrosshairParameters()
     current_experiment_type = "single_crystal"
     DeltaE = 10.0
     modQ = 1.23
@@ -82,7 +82,7 @@ def test_cross_hair_parameters_set_crosshair():
 
 def test_get_cross_hair_parameters_set_crosshair():
     """Test Crosshair get_crosshair function"""
-    cp = hppt_model.CrosshairParameters()
+    cp = CrosshairParameters()
     current_experiment_type = "single_crystal"
     DeltaE = 10.0
     modQ = 1.23
