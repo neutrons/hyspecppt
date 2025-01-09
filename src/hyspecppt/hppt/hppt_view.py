@@ -22,7 +22,7 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from .experiment_settings import INVALID_QLINEEDIT, PLOT_TYPES, alpha, beta, gamma
+from .experiment_settings import INVALID_QLINEEDIT, MAX_MODQ, PLOT_TYPES, alpha, beta, gamma
 from .hppt_view_validators import AbsValidator
 
 
@@ -508,7 +508,7 @@ class CrosshairWidget(QWidget):
         self.DeltaE_validator = QDoubleValidator(parent=self)
         self.DeltaE_validator.setNotation(QDoubleValidator.StandardNotation)
         self.DeltaE_edit.setValidator(self.DeltaE_validator)
-        self.modQ_validator = QDoubleValidator(bottom=0, top=10, parent=self)
+        self.modQ_validator = QDoubleValidator(bottom=0, top=MAX_MODQ, parent=self)
         self.modQ_validator.setNotation(QDoubleValidator.StandardNotation)
         self.modQ_edit.setValidator(self.modQ_validator)
 

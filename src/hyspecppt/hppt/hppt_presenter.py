@@ -66,6 +66,11 @@ class HyspecPPTPresenter:
             )
         else:
             self.model.set_single_crystal_data(data)
+            # update newly calculated qmod
+            # get the valid values for crosshair saved fields
+            # if the view contains an invalid value it is overwritten
+            saved_values = self.model.get_crosshair_data()
+            self.view.CW.set_values(saved_values)
 
     def handle_switch_to_powder(self):
         """Switch to Powder mode"""
@@ -96,6 +101,12 @@ class HyspecPPTPresenter:
         saved_values = self.model.get_crosshair_data()
         self.view.CW.set_values(saved_values)
 
-        # get the valid values for lattice saved fields
-        # saved_values = self.model.get_single_crystal_data()
-        # self.view.CW.set_values(saved_values)
+        # get the valid values for experiment saved fields
+        # if the view contains an invalid value it is overwritten
+        saved_values = self.model.get_experiment_data()
+        self.view.EW.set_values(saved_values)
+
+        # get the valid values for single crystal saved fields
+        # if the view contains an invalid value it is overwritten
+        saved_values = self.model.get_single_crystal_data()
+        self.view.SCW.set_values(saved_values)
