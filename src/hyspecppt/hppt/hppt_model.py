@@ -5,7 +5,7 @@ import logging
 import numpy as np
 from scipy.constants import e, hbar, m_n
 
-from .experiment_settings import PLOT_TYPES
+from .experiment_settings import DEFAULT_EXPERIMENT, PLOT_TYPES, MaxQ
 
 logger = logging.getLogger("hyspecppt")
 
@@ -118,17 +118,21 @@ class CrosshairParameters:
     def get_crosshair(self) -> dict[str, float]:
         """Get the crosshair"""
         if self.current_experiment_type == "single_crystal":
-            self.modQ = self.sc_parameters.calculate_modQ()
-        return dict(DeltaE=self.DeltaE, modQ=self.modQ)
+            modQ = self.sc_parameters.calculate_modQ()
+            if modQ < MaxQ:
+                self.modQ = modQ
+            return dict(DeltaE=self.DeltaE, modQ=modQ)
+        else:
+            return dict(DeltaE=self.DeltaE, modQ=self.modQ)
 
 
 class HyspecPPTModel:
     """Main model"""
 
-    Ei: float = 0
-    S2: float = 0
-    alpha_p: float = 0
-    plot_type: str = ""
+    Ei: float = DEFAULT_EXPERIMENT["Ei"]
+    S2: float = DEFAULT_EXPERIMENT["S2"]
+    alpha_p: float = DEFAULT_EXPERIMENT["alpha_p"]
+    plot_type: str = DEFAULT_EXPERIMENT["plot_type"]
     cp: CrosshairParameters
 
     def __init__(self):
