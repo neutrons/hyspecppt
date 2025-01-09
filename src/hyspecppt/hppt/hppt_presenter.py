@@ -80,6 +80,9 @@ class HyspecPPTPresenter:
         saved_values = self.model.get_crosshair_data()
         self.view.CW.set_values(saved_values)
 
+        saved_values = self.model.get_experiment_data()
+        self.view.EW.set_values(saved_values)
+
     def handle_switch_to_sc(self):
         """Switch to Single Crystal mode"""
         # update the fields' visibility

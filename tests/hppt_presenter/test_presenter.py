@@ -78,9 +78,9 @@ def test_switch_to_powder_ei(hyspec_app, qtbot):
     # switch to powder
     hyspec_view.switch_to_powder()
 
-    # Ei value should be the same
-    assert experiment_widget.Ei_edit.text() == "204"
-    assert experiment_widget.Ei_edit.styleSheet() == INVALID_QLINEEDIT
+    # Ei value should have the default valid value
+    assert experiment_widget.Ei_edit.text() == "20"
+    assert experiment_widget.Ei_edit.styleSheet() != INVALID_QLINEEDIT
 
 
 def test_switch_to_powder_pangle(hyspec_app, qtbot):
@@ -101,9 +101,9 @@ def test_switch_to_powder_pangle(hyspec_app, qtbot):
     # switch to powder
     hyspec_view.switch_to_powder()
 
-    # P angle value should be the same
-    assert experiment_widget.Pangle_edit.text() == ""
-    assert experiment_widget.Pangle_edit.styleSheet() == INVALID_QLINEEDIT
+    # P angle value should have the default valid value
+    assert experiment_widget.Pangle_edit.text() == "0"
+    assert experiment_widget.Pangle_edit.styleSheet() != INVALID_QLINEEDIT
 
 
 def test_switch_to_powder_s2(hyspec_app, qtbot):
@@ -124,9 +124,9 @@ def test_switch_to_powder_s2(hyspec_app, qtbot):
     # switch to powder
     hyspec_view.switch_to_powder()
 
-    # Ei value should be the same
-    assert experiment_widget.S2_edit.text() == "306"
-    assert experiment_widget.S2_edit.styleSheet() == INVALID_QLINEEDIT
+    # Ei value should have the default valid value
+    assert experiment_widget.S2_edit.text() == "30"
+    assert experiment_widget.S2_edit.styleSheet() != INVALID_QLINEEDIT
 
 
 def test_switch_to_powder_deltae_default_value(hyspec_app, qtbot):
