@@ -1,30 +1,41 @@
 """Presenter for the Main tab"""
 
-from qtpy.QtWidgets import QWidget
-
-from .experiment_settings import DEFAULT_CROSSHAIR, DEFAULT_EXPERIMENT, DEFAULT_LATTICE, PLOT_TYPES
+from .experiment_settings import DEFAULT_CROSSHAIR, DEFAULT_EXPERIMENT, DEFAULT_LATTICE, DEFAULT_MODE, PLOT_TYPES
 
 
 class HyspecPPTPresenter:
     """Main presenter"""
 
-    def __init__(self, view: "[QWidget]", model: "[QWidget]"):
+    def __init__(self, view: any, model: any):
         """Constructor
         :view: hppt_view class type
         :model:hppt_model class type
         """
         self._view = view
         self._model = model
+
+        # M-V-P connections through callbacks
+        self.view.connect_fields_update(self.handle_field_values_update)
+        self.view.connect_powder_mode_switch(self.handle_switch_to_powder)
+        self.view.connect_sc_mode_switch(self.handle_switch_to_sc)
+
+        # populate fields
         self.view.SCW.set_values(DEFAULT_LATTICE)
         self.view.EW.initializeCombo(PLOT_TYPES)
         self.view.EW.set_values(DEFAULT_EXPERIMENT)
         self.view.CW.set_values(DEFAULT_CROSSHAIR)
-        self.view.SelW.set_SC_toggle(True)
 
-        self.get_Experiment_values()
-        self.get_SingleCrystal_values()
-        self.get_Selector_values()
-        self.get_Crosshair_values()
+        # model init
+        # to be removed needs to happen in the model
+        self.model.set_experiment_data(**DEFAULT_EXPERIMENT)
+        self.model.set_crosshair_data(**DEFAULT_CROSSHAIR, **DEFAULT_MODE)
+        self.model.set_single_crystal_data(params=DEFAULT_LATTICE)
+
+        # set default selection mode
+        experiment_type = self.view.SelW.powder_label
+        if DEFAULT_MODE["current_experiment_type"].startswith("single"):
+            experiment_type = self.view.SelW.sc_label
+        self.view.SelW.selector_init(experiment_type)  # pass the default mode from experiment type
 
     @property
     def view(self):
@@ -36,55 +47,55 @@ class HyspecPPTPresenter:
         """Return the model for this presenter"""
         return self._model
 
-    def get_Experiment_values(self) -> dict:
-        """Get Ei, Pangle, S2, Type values from Experiment
+    def handle_field_values_update(self, field_values):
+        """Save the values in the model"""
+        section = field_values["name"]
+        data = field_values["data"]
+        if section == "crosshair":
+            # get the current experiment type
+            experiment_type_label = self.view.SelW.get_selected_mode_label()
+            experiment_type = "powder"
+            if experiment_type_label.startswith("Single"):
+                experiment_type = "single_crystal"
+            self.model.set_crosshair_data(
+                current_experiment_type=experiment_type, DeltaE=float(data["DeltaE"]), modQ=float(data["modQ"])
+            )
+        elif section == "experiment":
+            self.model.set_experiment_data(
+                float(data["Ei"]), float(data["S2"]), float(data["alpha_p"]), data["plot_type"]
+            )
+        else:
+            self.model.set_single_crystal_data(data)
 
-        return: dict of Experiment key value pairs
-        """
-        EW_dict = {}
-        EW_dict["Ei"] = self.view.EW.Ei_edit.text()
-        EW_dict["Pangle"] = self.view.EW.Pangle_edit.text()
-        EW_dict["S2"] = self.view.EW.S2_edit.text()
-        EW_dict["Type"] = self.view.EW.Type_combobox.currentText()
-        return EW_dict
+    def handle_switch_to_powder(self):
+        """Switch to Powder mode"""
+        # update the fields' visibility
+        self.view.field_visibility_in_Powder()
+        # update the experiment type in the model
+        experiment_type = "powder"
+        self.model.set_crosshair_data(current_experiment_type=experiment_type)
 
-    def get_Selector_values(self):
-        """Check if Single Crystal radio button is checked
+        # get the valid values for crosshair saved fields
+        # if the view contains an invalid value it is overwritten
+        saved_values = self.model.get_crosshair_data()
+        self.view.CW.set_values(saved_values)
 
-        return: True - Single Crystal radio button is toggled
-                False - Single Crystal radio button is not toggled. Powder radio button is toggled
-        """
-        return self.view.SelW.sc_rb.isChecked()
+        saved_values = self.model.get_experiment_data()
+        self.view.EW.set_values(saved_values)
 
-    def get_SingleCrystal_values(self):
-        """Get Single Crystal mode specific values from SingleCrystalWidget
+    def handle_switch_to_sc(self):
+        """Switch to Single Crystal mode"""
+        # update the fields' visibility
+        self.view.field_visibility_in_SC()
+        # update the experiment type in the model
+        experiment_type = "single_crystal"
+        self.model.set_crosshair_data(current_experiment_type=experiment_type)
 
-        return: dict of Single Crystal key value pairs
-        """
-        SC_dict = {}
-        SC_dict["a"] = self.view.SCW.a_edit.text()
-        SC_dict["b"] = self.view.SCW.b_edit.text()
-        SC_dict["c"] = self.view.SCW.c_edit.text()
+        # get the valid values for crosshair saved fields
+        # if the view contains an invalid value it is overwritten
+        saved_values = self.model.get_crosshair_data()
+        self.view.CW.set_values(saved_values)
 
-        SC_dict["alpha"] = self.view.SCW.alpha_edit.text()
-        SC_dict["beta"] = self.view.SCW.beta_edit.text()
-        SC_dict["gamma"] = self.view.SCW.gamma_edit.text()
-
-        SC_dict["h"] = self.view.SCW.h_edit.text()
-        SC_dict["k"] = self.view.SCW.k_edit.text()
-        SC_dict["l"] = self.view.SCW.l_edit.text()
-        return SC_dict
-
-    def get_Crosshair_values(self):
-        """Get Crosshair mode specific values from CrosshairWidget
-
-        return: dict of Crosshair key value pairs
-        """
-        CH_dict = {}
-        CH_dict["DeltaE"] = self.view.CW.DeltaE_edit.text()
-        CH_dict["modQ"] = self.view.CW.modQ_edit.text()
-        return CH_dict
-
-    def set_PlotWidget_values(self):
-        """Pass through intensity matrix into plot in view"""
-        pass
+        # get the valid values for lattice saved fields
+        # saved_values = self.model.get_single_crystal_data()
+        # self.view.CW.set_values(saved_values)

@@ -44,7 +44,9 @@ def test_Experiment_validators(qtbot):
     # all valid
     qtbot.keyClicks(ExpWidget.S2_edit, "0")
     ExpWidget.S2_edit.editingFinished.emit()
-    mock_slot.assert_called_once_with({"Ei": 30.0, "S2": -40.0, "alpha_p": -45.0, "plot_type": PLOT_TYPES[0]})
+    mock_slot.assert_called_once_with(
+        {"data": {"Ei": 30.0, "S2": -40.0, "alpha_p": -45.0, "plot_type": PLOT_TYPES[0]}, "name": "experiment"}
+    )
 
 
 def test_Single_Crystal_validators(qtbot):
@@ -91,15 +93,18 @@ def test_Single_Crystal_validators(qtbot):
     SCWidget.a_edit.editingFinished.emit()
     mock_slot.assert_called_once_with(
         {
-            "a": 45.0,
-            "alpha": 45.0,
-            "b": 45.0,
-            "beta": 45.0,
-            "c": 45.0,
-            "gamma": 45.0,
-            "h": -45.0,
-            "k": -45.0,
-            "l": -45.0,
+            "data": {
+                "a": 45.0,
+                "alpha": 45.0,
+                "b": 45.0,
+                "beta": 45.0,
+                "c": 45.0,
+                "gamma": 45.0,
+                "h": -45.0,
+                "k": -45.0,
+                "l": -45.0,
+            },
+            "name": "sc_lattice",
         }
     )
 
@@ -129,4 +134,4 @@ def test_Crosshairs_validators(qtbot):
     # all valid
     qtbot.keyClicks(CHWidget.modQ_edit, "\b")
     CHWidget.DeltaE_edit.editingFinished.emit()
-    mock_slot.assert_called_once_with({"DeltaE": -1.0, "modQ": 2.0})
+    mock_slot.assert_called_once_with({"data": {"DeltaE": -1.0, "modQ": 2.0}, "name": "crosshair"})
