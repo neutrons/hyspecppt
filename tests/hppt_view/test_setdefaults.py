@@ -49,8 +49,9 @@ def test_set_Crosshair_widget_Default_Values(qtbot):
 def test_set_Selector_widget_Default_Values(qtbot):
     """Test the default SC mode is toggled"""
     SelWidget = hppt_view.SelectorWidget()
-    SelWidget.set_SC_toggle(True)
     qtbot.addWidget(SelWidget)
+    label = "Single C&rystal"
+    SelWidget.selector_init(label)
 
     assert SelWidget.sc_rb.isChecked()
     assert not SelWidget.powder_rb.isChecked()

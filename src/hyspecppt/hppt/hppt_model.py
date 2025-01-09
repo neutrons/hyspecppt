@@ -153,6 +153,15 @@ class HyspecPPTModel:
         self.alpha_p = alpha_p
         self.plot_type = plot_type
 
+    def get_experiment_data(self) -> dict[str, float]:
+        data = dict()
+
+        data["Ei"] = self.Ei
+        data["S2"] = self.S2
+        data["alpha_p"] = self.alpha_p
+        data["plot_type"] = self.plot_type
+        return data
+
     def get_graph_data(self) -> list[float, float, float, list, list, list]:
         return self.calculate_graph_data()
 
