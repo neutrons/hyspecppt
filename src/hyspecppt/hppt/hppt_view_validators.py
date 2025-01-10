@@ -82,10 +82,26 @@ class AngleValidator(QValidator):
 
         # in case this is valid
         if field_validation_status == QValidator.Acceptable:
-            # check all three angles' values are less than 360 degrees
-            if self.alpha.text() and self.beta.text() and self.gamma.text():
-                angle_sum = float(self.alpha.text()) + float(self.beta.text()) + float(self.gamma.text())
-                if angle_sum > 360:
+            alpha_value = self.alpha.text()
+            beta_value = self.beta.text()
+            gamma_value = self.gamma.text()
+
+            if alpha_value and beta_value and gamma_value:
+                alpha_value = float(alpha_value)
+                beta_value = float(beta_value)
+                gamma_value = float(gamma_value)
+
+                # 1. check all three angles' values are less than 360 degrees
+                angle_sum = alpha_value + beta_value + gamma_value
+                # 2. check if they can form a triangle.
+                alpha_beta_sum = alpha_value + beta_value
+                alpha_gamma_sum = alpha_value + gamma_value
+                beta_gamma_sum = beta_value + gamma_value
+
+                # check the conditions
+                if angle_sum > 360 or (
+                    alpha_beta_sum < gamma_value or alpha_gamma_sum < beta_value or beta_gamma_sum < alpha_value
+                ):
                     return QValidator.Intermediate, field_input, field_pos
                 else:
                     return QValidator.Acceptable, field_input, field_pos
