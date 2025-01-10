@@ -1,4 +1,5 @@
 import copy
+
 from qtpy.QtCore import QObject
 from qtpy.QtGui import QDoubleValidator, QValidator
 
