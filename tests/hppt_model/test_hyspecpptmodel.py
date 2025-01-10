@@ -1,4 +1,4 @@
-import numpy as np  # noqa: F401
+# import numpy as np  # noqa: F401
 
 from hyspecppt.hppt.hppt_model import HyspecPPTModel  # noqa: F401
 
