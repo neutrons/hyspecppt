@@ -5,7 +5,7 @@ import logging
 import numpy as np
 from scipy.constants import e, hbar, m_n
 
-from .experiment_settings import PLOT_TYPES
+from .experiment_settings import DEFAULT_CROSSHAIR, DEFAULT_EXPERIMENT, DEFAULT_LATTICE, DEFAULT_MODE, PLOT_TYPES, MaxQ
 
 logger = logging.getLogger("hyspecppt")
 
@@ -13,15 +13,15 @@ logger = logging.getLogger("hyspecppt")
 class SingleCrystalParameters:
     """Model for single crystal calculations"""
 
-    a: float
-    b: float
-    c: float
-    alpha: float
-    beta: float
-    gamma: float
-    h: float
-    k: float
-    l: float
+    a: float = DEFAULT_LATTICE["a"]
+    b: float = DEFAULT_LATTICE["b"]
+    c: float = DEFAULT_LATTICE["c"]
+    alpha: float = DEFAULT_LATTICE["alpha"]
+    beta: float = DEFAULT_LATTICE["beta"]
+    gamma: float = DEFAULT_LATTICE["gamma"]
+    h: float = DEFAULT_LATTICE["h"]
+    k: float = DEFAULT_LATTICE["k"]
+    l: float = DEFAULT_LATTICE["l"]
 
     def __init__(self) -> None:
         """Constructor"""
@@ -97,9 +97,9 @@ class SingleCrystalParameters:
 class CrosshairParameters:
     """Model for the crosshair parameters"""
 
-    modQ: float
-    DeltaE: float
-    current_experiment_type: str
+    modQ: float = DEFAULT_CROSSHAIR["modQ"]
+    DeltaE: float = DEFAULT_CROSSHAIR["DeltaE"]
+    current_experiment_type: str = DEFAULT_MODE["current_experiment_type"]
     sc_parameters: SingleCrystalParameters
     experiment_types = ["single_crystal", "powder"]
 
@@ -118,17 +118,21 @@ class CrosshairParameters:
     def get_crosshair(self) -> dict[str, float]:
         """Get the crosshair"""
         if self.current_experiment_type == "single_crystal":
-            self.modQ = self.sc_parameters.calculate_modQ()
-        return dict(DeltaE=self.DeltaE, modQ=self.modQ)
+            modQ = self.sc_parameters.calculate_modQ()
+            if modQ < MaxQ:
+                self.modQ = modQ
+            return dict(DeltaE=self.DeltaE, modQ=modQ)
+        else:
+            return dict(DeltaE=self.DeltaE, modQ=self.modQ)
 
 
 class HyspecPPTModel:
     """Main model"""
 
-    Ei: float = 0
-    S2: float = 0
-    alpha_p: float = 0
-    plot_type: str = ""
+    Ei: float = DEFAULT_EXPERIMENT["Ei"]
+    S2: float = DEFAULT_EXPERIMENT["S2"]
+    alpha_p: float = DEFAULT_EXPERIMENT["alpha_p"]
+    plot_type: str = DEFAULT_EXPERIMENT["plot_type"]
     cp: CrosshairParameters
 
     def __init__(self):

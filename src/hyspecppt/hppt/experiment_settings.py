@@ -20,6 +20,9 @@ DEFAULT_EXPERIMENT = dict(Ei=20, S2=30, alpha_p=0, plot_type=PLOT_TYPES[1])
 DEFAULT_CROSSHAIR = dict(DeltaE=0, modQ=0)
 DEFAULT_MODE = dict(current_experiment_type="single_crystal")
 
+# maximum momentum transfer
+MaxQ = 15
+
 # invalid style
 INVALID_QLINEEDIT = """
 QLineEdit {
