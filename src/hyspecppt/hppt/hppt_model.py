@@ -5,11 +5,14 @@ import logging
 import numpy as np
 from scipy.constants import e, hbar, m_n
 
-<<<<<<< HEAD
-from .experiment_settings import DEFAULT_CROSSHAIR, DEFAULT_EXPERIMENT, DEFAULT_LATTICE, DEFAULT_MODE, PLOT_TYPES, MaxQ
-=======
-from .experiment_settings import MAX_MODQ, PLOT_TYPES
->>>>>>> 14bb4ef (qmod boundaries view, model)
+from .experiment_settings import (
+    DEFAULT_CROSSHAIR,
+    DEFAULT_EXPERIMENT,
+    DEFAULT_LATTICE,
+    DEFAULT_MODE,
+    MAX_MODQ,
+    PLOT_TYPES,
+)
 
 logger = logging.getLogger("hyspecppt")
 
