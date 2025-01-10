@@ -237,19 +237,16 @@ class SingleCrystalWidget(QWidget):
         self.alpha_edit = QLineEdit(self)
         self.alpha_label = QLabel(alpha + ":", self)
         self.alpha_label.setBuddy(self.alpha_edit)
-        # self.alpha_edit.setValidator(self.lattice_angle_validator)
         self.alpha_edit.setObjectName("alpha")
 
         self.beta_edit = QLineEdit(self)
         self.beta_label = QLabel(beta + ":", self)
         self.beta_label.setBuddy(self.beta_edit)
-        # self.beta_edit.setValidator(self.lattice_angle_validator)
         self.beta_edit.setObjectName("beta")
 
         self.gamma_edit = QLineEdit(self)
         self.gamma_label = QLabel(gamma + ":", self)
         self.gamma_label.setBuddy(self.gamma_edit)
-        # self.gamma_edit.setValidator(self.lattice_angle_validator)
         self.gamma_edit.setObjectName("gamma")
 
         self.h_edit = QLineEdit(self)
@@ -480,19 +477,6 @@ class ExperimentWidget(QWidget):
                 out_signal["data"][k] = float(edit.text())
         if len(out_signal["data"]) == 4:
             self.valid_signal.emit(out_signal)
-
-    def set_values(self, values: dict[str, Union[float, str]]) -> None:
-        """Sets widget display based on the values dictionary
-
-        Args:
-            values (dict): a dictionary that contains
-            Ei, S2, alpha_p, plot_types values
-
-        """
-        self.Ei_edit.setText(str(values["Ei"]))
-        self.S2_edit.setText(str(values["S2"]))
-        self.Pangle_edit.setText(str(values["alpha_p"]))
-        self.Type_combobox.setCurrentIndex(PLOT_TYPES.index(values["plot_type"]))
 
     def set_values(self, values: dict[str, Union[float, str]]) -> None:
         """Sets widget display based on the values dictionary
