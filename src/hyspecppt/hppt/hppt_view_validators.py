@@ -100,7 +100,7 @@ class AngleValidator(QValidator):
 
                 # check the conditions
                 if angle_sum > 360 or (
-                    alpha_beta_sum < gamma_value or alpha_gamma_sum < beta_value or beta_gamma_sum < alpha_value
+                    alpha_beta_sum <= gamma_value or alpha_gamma_sum <= beta_value or beta_gamma_sum <= alpha_value
                 ):
                     return QValidator.Intermediate, field_input, field_pos
                 else:
