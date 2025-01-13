@@ -43,7 +43,7 @@ def test_set_Crosshair_widget_Default_Values(qtbot):
 
     assert CHWidget.DeltaE_edit.text() == "0"
 
-    assert CHWidget.modQ_edit.text() == "0"
+    assert CHWidget.modQ_edit.text() == "0.000"
 
 
 def test_set_Selector_widget_Default_Values(qtbot):
