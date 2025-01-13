@@ -1,6 +1,6 @@
-# import numpy as np  # noqa: F401
+import numpy as np
 
-from hyspecppt.hppt.experiment_settings import DEFAULT_EXPERIMENT, DEFAULT_LATTICE
+from hyspecppt.hppt.experiment_settings import DEFAULT_EXPERIMENT, DEFAULT_LATTICE, PLOT_TYPES
 from hyspecppt.hppt.hppt_model import HyspecPPTModel  # noqa: F401
 
 
@@ -44,3 +44,23 @@ def test_set_and_get_crosshairdata():
     model.set_crosshair_data(current_experiment_type=current_experiment_type, DeltaE=30.0, modQ=1.0)
     assert model.get_crosshair_data()["DeltaE"] == 30.0
     assert model.get_crosshair_data()["modQ"] == 0.0
+    model.cp.sc_parameters.h = 10
+    model.cp.sc_parameters.l = 10
+    model.cp.sc_parameters.k = 10
+    assert np.isclose(model.get_crosshair_data()["modQ"], 108.827)  # modQ greater than maxQ
+    assert model.cp.modQ == 0.0  # stored modQ is still 0.0
+
+
+def test_set_and_get_experimentdata():
+    """Test setting and getting experiment data function"""
+    model = HyspecPPTModel()
+    model.set_experiment_data(Ei=10.0, S2=35.0, alpha_p=45.0, plot_type=PLOT_TYPES[0])
+    assert model.get_experiment_data()["Ei"] == 10.0
+    assert model.get_experiment_data()["S2"] == 35.0
+    assert model.get_experiment_data()["alpha_p"] == 45.0
+    assert model.get_experiment_data()["plot_type"] == PLOT_TYPES[0]
+
+
+def test_calculate_graph_data():
+    """Test calculating different graph data"""
+    pass
