@@ -90,7 +90,7 @@ class HyspecPPTView(QWidget):
         """Fields update"""
         self.fields_callback(values)
 
-    def switch_to_SC(self) -> None:
+    def switch_to_sc(self) -> None:
         """Switch to Single Crystal mode"""
         if self.sc_mode_switch_callback:
             self.sc_mode_switch_callback()
@@ -180,7 +180,7 @@ class SelectorWidget(QWidget):
             if sender == self.powder_label and self.powder_rb.isChecked():
                 self.parent().switch_to_powder()
             if sender == self.sc_label and self.sc_rb.isChecked():
-                self.parent().switch_to_SC()
+                self.parent().switch_to_sc()
 
     def get_selected_mode_label(self) -> str:
         """Return the label of the selected mode

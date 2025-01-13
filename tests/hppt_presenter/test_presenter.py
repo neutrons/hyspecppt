@@ -34,14 +34,14 @@ def test_selector_widget_powder_mode(hyspec_app, qtbot):
 
 
 def test_switch_to_sc(hyspec_app, qtbot):
-    """Test switch_to_SC() set SingleCrystalWidget visible"""
+    """Test switch_to_sc() set SingleCrystalWidget visible"""
     # show the app
     hyspec_app.show()
     qtbot.waitUntil(hyspec_app.show, timeout=5000)
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    hyspec_view.switch_to_SC()
+    hyspec_view.switch_to_sc()
     assert hyspec_view.SCW.isVisibleTo(hyspec_view)
     assert not hyspec_view.CW.modQ_edit.isEnabled()
 
@@ -240,7 +240,7 @@ def test_switch_to_powder_qmod_updated_values(hyspec_app, qtbot):
     assert crosshair_widget.modQ_edit.styleSheet() == INVALID_QLINEEDIT
 
     # switch to powder
-    hyspec_view.switch_to_SC()
+    hyspec_view.switch_to_sc()
 
     # Qmod value should be back to its default value
     assert crosshair_widget.modQ_edit.text() == "0.000"
@@ -259,7 +259,7 @@ def test_handle_field_values_update(hyspec_app, qtbot):
     crosshair_widget = hyspec_view.CW
 
     # switch to single crystal
-    hyspec_view.switch_to_SC()
+    hyspec_view.switch_to_sc()
 
     # set a valid a h value
     experiment_widget.h_edit.clear()
@@ -292,7 +292,7 @@ def test_switch_to_sc_invalid_updated_default(hyspec_app, qtbot):
     crosshair_widget = hyspec_view.CW
 
     # switch to single crystal
-    hyspec_view.switch_to_SC()
+    hyspec_view.switch_to_sc()
 
     # set an invalid alpha value
     qtbot.keyClicks(experiment_widget.alpha_edit, "00")
@@ -311,7 +311,7 @@ def test_switch_to_sc_invalid_updated_default(hyspec_app, qtbot):
     assert crosshair_widget.modQ_edit.text() == "0.000"
 
     # switch to single crystal
-    hyspec_view.switch_to_SC()
+    hyspec_view.switch_to_sc()
 
     # single crystals fields back to default values
     assert experiment_widget.alpha_edit.text() == "90"
@@ -336,7 +336,7 @@ def test_switch_to_sc_invalid_updated_new(hyspec_app, qtbot):
     crosshair_widget = hyspec_view.CW
 
     # switch to single crystal
-    hyspec_view.switch_to_SC()
+    hyspec_view.switch_to_sc()
 
     # set a valid a k value
     experiment_widget.h_edit.clear()
@@ -376,7 +376,7 @@ def test_switch_to_sc_invalid_updated_new(hyspec_app, qtbot):
     assert crosshair_widget.modQ_edit.text() == "5"
 
     # switch to single crystal
-    hyspec_view.switch_to_SC()
+    hyspec_view.switch_to_sc()
 
     # single crystals fields back to default values
     assert experiment_widget.alpha_edit.text() == "90.0"
