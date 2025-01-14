@@ -181,8 +181,10 @@ class HyspecPPTModel:
         try:
             SE2K = np.sqrt(2e-3 * e * m_n) * 1e-10 / hbar
             # def Ei, Emin = - Ei to create Qmin, Qmax to generate plot range
-            if self.cp.DeltaE is not None and self.cp.DeltaE < -self.Ei:
+            if self.cp.DeltaE is not None or self.cp.DeltaE < -self.Ei:
                 EMin = -self.Ei
+            else:
+                EMin = -1.2 * self.Ei
             E = np.linspace(EMin, self.Ei * 0.9, 200)
 
             kfmin = np.sqrt(self.Ei - EMin) * SE2K

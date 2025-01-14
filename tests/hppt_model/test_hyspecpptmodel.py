@@ -61,6 +61,89 @@ def test_set_and_get_experimentdata():
     assert model.get_experiment_data()["plot_type"] == PLOT_TYPES[0]
 
 
-def test_calculate_graph_data():
+def test_calculate_graph_data_alpha():
     """Test calculating different graph data"""
-    pass
+    model = HyspecPPTModel()
+    model.set_experiment_data(Ei=20.0, S2=60.0, alpha_p=30.0, plot_type=PLOT_TYPES[0])
+    assert np.isclose(min(model.calculate_graph_data()["Q_low"]), 1.55338)
+    assert np.isclose(max(model.calculate_graph_data()["Q_low"]), 2.30880)
+
+    assert np.isclose(min(model.calculate_graph_data()["Q_hi"]), 3.25839)
+    assert np.isclose(max(model.calculate_graph_data()["Q_hi"]), 5.3811)
+    assert model.calculate_graph_data()["E"].all() == np.linspace(-20, 18, 200).all()
+
+    assert model.calculate_graph_data()["Q2d"][0][0] == 0.0
+    assert model.calculate_graph_data()["Q2d"][0][1] == 0.0
+
+    assert np.isclose(model.calculate_graph_data()["Q2d"][199][0], 5.38106)
+    assert np.isclose(model.calculate_graph_data()["Q2d"][199][1], 5.38106)
+
+    assert np.isclose(model.calculate_graph_data()["E2d"][0][0], -20)
+    assert np.isclose(model.calculate_graph_data()["E2d"][0][199], 18.0)
+
+    assert np.isnan(model.calculate_graph_data()["ang_PQ"][0][0])  # not allowed (Q, E) positions
+    assert np.isnan(model.calculate_graph_data()["ang_PQ"][84][4])  # not allowed (Q, E) positions
+
+    assert np.isclose(model.calculate_graph_data()["ang_PQ"][84][5], 166.59943)
+    assert np.isclose(model.calculate_graph_data()["ang_PQ"][199][0], 114.73561)
+    assert np.isnan(model.calculate_graph_data()["ang_PQ"][199][1])  # not allowed (Q, E) positions
+
+
+def test_calculate_graph_data_cos2_alpha():
+    """Test calculating different graph data"""
+    model = HyspecPPTModel()
+    model.set_experiment_data(Ei=20.0, S2=60.0, alpha_p=30.0, plot_type=PLOT_TYPES[1])
+    assert np.isclose(min(model.calculate_graph_data()["Q_low"]), 1.55338)
+    assert np.isclose(max(model.calculate_graph_data()["Q_low"]), 2.30880)
+
+    assert np.isclose(min(model.calculate_graph_data()["Q_hi"]), 3.25839)
+    assert np.isclose(max(model.calculate_graph_data()["Q_hi"]), 5.3811)
+    assert model.calculate_graph_data()["E"].all() == np.linspace(-20, 18, 200).all()
+
+    assert model.calculate_graph_data()["Q2d"][0][0] == 0.0
+    assert model.calculate_graph_data()["Q2d"][0][1] == 0.0
+
+    assert np.isclose(model.calculate_graph_data()["Q2d"][199][0], 5.38106)
+    assert np.isclose(model.calculate_graph_data()["Q2d"][199][1], 5.38106)
+
+    assert np.isclose(model.calculate_graph_data()["E2d"][0][0], -20)
+    assert np.isclose(model.calculate_graph_data()["E2d"][0][199], 18.0)
+
+    assert np.isnan(model.calculate_graph_data()["cos2_ang_PQ"][0][0])  # not allowed (Q, E) positions
+    assert np.isnan(model.calculate_graph_data()["cos2_ang_PQ"][84][4])  # not allowed (Q, E) positions
+
+    assert np.isclose(model.calculate_graph_data()["cos2_ang_PQ"][84][5], np.cos(np.radians(166.59943)) ** 2)
+    assert np.isclose(model.calculate_graph_data()["cos2_ang_PQ"][199][0], np.cos(np.radians(114.73561)) ** 2)
+    assert np.isnan(model.calculate_graph_data()["cos2_ang_PQ"][199][1])  # not allowed (Q, E) positions
+
+
+def test_calculate_graph_data_cos2_ang_PQ_plus_1_div_2():
+    """Test calculating different graph data"""
+    model = HyspecPPTModel()
+    model.set_experiment_data(Ei=20.0, S2=60.0, alpha_p=30.0, plot_type=PLOT_TYPES[2])
+    assert np.isclose(min(model.calculate_graph_data()["Q_low"]), 1.55338)
+    assert np.isclose(max(model.calculate_graph_data()["Q_low"]), 2.30880)
+
+    assert np.isclose(min(model.calculate_graph_data()["Q_hi"]), 3.25839)
+    assert np.isclose(max(model.calculate_graph_data()["Q_hi"]), 5.3811)
+    assert model.calculate_graph_data()["E"].all() == np.linspace(-20, 18, 200).all()
+
+    assert model.calculate_graph_data()["Q2d"][0][0] == 0.0
+    assert model.calculate_graph_data()["Q2d"][0][1] == 0.0
+
+    assert np.isclose(model.calculate_graph_data()["Q2d"][199][0], 5.38106)
+    assert np.isclose(model.calculate_graph_data()["Q2d"][199][1], 5.38106)
+
+    assert np.isclose(model.calculate_graph_data()["E2d"][0][0], -20)
+    assert np.isclose(model.calculate_graph_data()["E2d"][0][199], 18.0)
+
+    assert np.isnan(model.calculate_graph_data()["cos2_ang_PQ_plus_1_div_2"][0][0])  # not allowed (Q, E) positions
+    assert np.isnan(model.calculate_graph_data()["cos2_ang_PQ_plus_1_div_2"][84][4])  # not allowed (Q, E) positions
+
+    assert np.isclose(
+        model.calculate_graph_data()["cos2_ang_PQ_plus_1_div_2"][84][5], (np.cos(np.radians(166.59943)) ** 2 + 1) / 2
+    )
+    assert np.isclose(
+        model.calculate_graph_data()["cos2_ang_PQ_plus_1_div_2"][199][0], (np.cos(np.radians(114.73561)) ** 2 + 1) / 2
+    )
+    assert np.isnan(model.calculate_graph_data()["cos2_ang_PQ_plus_1_div_2"][199][1])  # not allowed (Q, E) positions

@@ -57,8 +57,8 @@ class Model:
         Qx= (-1 if left else 1) * kf2d*np.sqrt((1-cos_theta**2))
         
         cos_ang_PQ = (Qx*Px + Qz*Pz)/Q2d/np.sqrt(Px**2+Pz**2)
-        cos_ang_PQ[cos_ang_PQ**2 <0.4] = np.nan 
-        cos_ang_PQ[cos_ang_PQ**2 >0.6] = np.nan
+        # cos_ang_PQ[cos_ang_PQ**2 <0.4] = np.nan 
+        # cos_ang_PQ[cos_ang_PQ**2 >0.6] = np.nan
         ang_PQ = np.degrees(np.arccos(cos_ang_PQ))
         
         kf=np.sqrt(Ei-E)*SE2K
