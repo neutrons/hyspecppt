@@ -133,8 +133,10 @@ class PlotWidget(QWidget):
 
         # crosshair initialization
         self.fig, self.ax = plt.subplots()
-        self.qline = self.ax.axvline(x=0)
-        self.eline = self.ax.axhline(y=0)
+        self.eline_data = 0
+        self.qline_data = 0
+        self.qline = self.ax.axvline(x=self.eline_data)
+        self.eline = self.ax.axhline(y=self.qline_data)
         self.fig.canvas.draw()
         self.fig.show()
 
@@ -154,11 +156,11 @@ class PlotWidget(QWidget):
             qline (float): y
 
         """
-        print("eline", eline)
-        print("qline", qline)
+        self.eline_data = eline
+        self.qline_data = qline
         # when plot is created this part needs to be updated accordingly to be part of the heatmap
-        self.eline.set_data([0, 1], [eline, eline])
-        self.qline.set_data([qline, qline], [0, 1])
+        self.eline.set_data([0, 1], [self.eline_data, self.eline_data])
+        self.qline.set_data([self.qline_data, self.qline_data], [0, 1])
         self.ax.relim()
         self.ax.autoscale()
         self.fig.canvas.draw()
