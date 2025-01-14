@@ -135,3 +135,76 @@ def test_Crosshairs_validators(qtbot):
     qtbot.keyClicks(CHWidget.modQ_edit, "\b")
     CHWidget.DeltaE_edit.editingFinished.emit()
     mock_slot.assert_called_once_with({"data": {"DeltaE": -1.0, "modQ": 2.0}, "name": "crosshair"})
+
+
+def test_sc_validator_sum_angles_condition(qtbot):
+    """Test validators for the single crystal widget: total sum > 260"""
+    sc_widget = hppt_view.SingleCrystalWidget()
+    qtbot.addWidget(sc_widget)
+
+    # alpha
+    sc_widget.alpha_edit.clear()
+    qtbot.keyClicks(sc_widget.alpha_edit, "120")
+    assert sc_widget.alpha_edit.text() == "120"
+    assert sc_widget.alpha_edit.styleSheet() == ""
+
+    # beta
+    sc_widget.beta_edit.clear()
+    qtbot.keyClicks(sc_widget.beta_edit, "120")
+    assert sc_widget.beta_edit.text() == "120"
+    assert sc_widget.beta_edit.styleSheet() == ""
+
+    # gamma
+    sc_widget.gamma_edit.clear()
+    qtbot.keyClicks(sc_widget.gamma_edit, "122")
+    assert sc_widget.gamma_edit.text() == "122"
+
+    # sum = 362
+    assert sc_widget.alpha_edit.styleSheet() == INVALID_QLINEEDIT
+    assert sc_widget.beta_edit.styleSheet() == INVALID_QLINEEDIT
+    assert sc_widget.gamma_edit.styleSheet() == INVALID_QLINEEDIT
+
+
+def test_sc_validator_triangle_condition(qtbot):
+    """Test validators for the single crystal widget: pairs of < third field"""
+    sc_widget = hppt_view.SingleCrystalWidget()
+    qtbot.addWidget(sc_widget)
+
+    # alpha + beta > gamma
+    sc_widget.alpha_edit.clear()
+    sc_widget.beta_edit.clear()
+    sc_widget.gamma_edit.clear()
+
+    qtbot.keyClicks(sc_widget.alpha_edit, "40")
+    qtbot.keyClicks(sc_widget.beta_edit, "40")
+    qtbot.keyClicks(sc_widget.gamma_edit, "100")
+
+    assert sc_widget.alpha_edit.styleSheet() == INVALID_QLINEEDIT
+    assert sc_widget.beta_edit.styleSheet() == INVALID_QLINEEDIT
+    assert sc_widget.gamma_edit.styleSheet() == INVALID_QLINEEDIT
+
+    # alpha + gamma > beta
+    sc_widget.alpha_edit.clear()
+    sc_widget.beta_edit.clear()
+    sc_widget.gamma_edit.clear()
+
+    qtbot.keyClicks(sc_widget.alpha_edit, "40")
+    qtbot.keyClicks(sc_widget.beta_edit, "110")
+    qtbot.keyClicks(sc_widget.gamma_edit, "50")
+
+    assert sc_widget.alpha_edit.styleSheet() == INVALID_QLINEEDIT
+    assert sc_widget.beta_edit.styleSheet() == INVALID_QLINEEDIT
+    assert sc_widget.gamma_edit.styleSheet() == INVALID_QLINEEDIT
+
+    # beta + gamma > alpha
+    sc_widget.alpha_edit.clear()
+    sc_widget.beta_edit.clear()
+    sc_widget.gamma_edit.clear()
+
+    qtbot.keyClicks(sc_widget.alpha_edit, "92")
+    qtbot.keyClicks(sc_widget.beta_edit, "40")
+    qtbot.keyClicks(sc_widget.gamma_edit, "45")
+
+    assert sc_widget.alpha_edit.styleSheet() == INVALID_QLINEEDIT
+    assert sc_widget.beta_edit.styleSheet() == INVALID_QLINEEDIT
+    assert sc_widget.gamma_edit.styleSheet() == INVALID_QLINEEDIT

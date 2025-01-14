@@ -6,7 +6,7 @@ from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 from qtpy.QtCore import QObject, Signal
-from qtpy.QtGui import QDoubleValidator
+from qtpy.QtGui import QDoubleValidator, QValidator
 from qtpy.QtWidgets import (
     QButtonGroup,
     QComboBox,
@@ -22,8 +22,8 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from .experiment_settings import INVALID_QLINEEDIT, PLOT_TYPES, alpha, beta, gamma
-from .hppt_view_validators import AbsValidator
+from .experiment_settings import INVALID_QLINEEDIT, MAX_MODQ, PLOT_TYPES, alpha, beta, gamma
+from .hppt_view_validators import AbsValidator, AngleValidator
 
 
 class HyspecPPTView(QWidget):
@@ -37,6 +37,11 @@ class HyspecPPTView(QWidget):
 
         """
         super().__init__(parent)
+
+        # callback functions defined by the presenter
+        self.fields_callback = None
+        self.powder_mode_switch_callback = None
+        self.sc_mode_switch_callback = None
 
         # callback functions defined by the presenter
         self.fields_callback = None
@@ -85,7 +90,7 @@ class HyspecPPTView(QWidget):
         """Fields update"""
         self.fields_callback(values)
 
-    def switch_to_SC(self) -> None:
+    def switch_to_sc(self) -> None:
         """Switch to Single Crystal mode"""
         if self.sc_mode_switch_callback:
             self.sc_mode_switch_callback()
@@ -175,7 +180,7 @@ class SelectorWidget(QWidget):
             if sender == self.powder_label and self.powder_rb.isChecked():
                 self.parent().switch_to_powder()
             if sender == self.sc_label and self.sc_rb.isChecked():
-                self.parent().switch_to_SC()
+                self.parent().switch_to_sc()
 
     def get_selected_mode_label(self) -> str:
         """Return the label of the selected mode
@@ -232,17 +237,17 @@ class SingleCrystalWidget(QWidget):
         self.alpha_edit = QLineEdit(self)
         self.alpha_label = QLabel(alpha + ":", self)
         self.alpha_label.setBuddy(self.alpha_edit)
-        self.alpha_edit.setValidator(self.lattice_angle_validator)
+        self.alpha_edit.setObjectName("alpha")
 
         self.beta_edit = QLineEdit(self)
         self.beta_label = QLabel(beta + ":", self)
         self.beta_label.setBuddy(self.beta_edit)
-        self.beta_edit.setValidator(self.lattice_angle_validator)
+        self.beta_edit.setObjectName("beta")
 
         self.gamma_edit = QLineEdit(self)
         self.gamma_label = QLabel(gamma + ":", self)
         self.gamma_label.setBuddy(self.gamma_edit)
-        self.gamma_edit.setValidator(self.lattice_angle_validator)
+        self.gamma_edit.setObjectName("gamma")
 
         self.h_edit = QLineEdit(self)
         self.h_label = QLabel("H:", self)
@@ -258,6 +263,19 @@ class SingleCrystalWidget(QWidget):
         self.l_label = QLabel("L:", self)
         self.l_label.setBuddy(self.l_edit)
         self.l_edit.setValidator(self.rlu_validator)
+
+        # cumulative angle validator
+        # including the validation of each individual field
+        self.angle_validator = AngleValidator(
+            parent=self,
+            alpha=self.alpha_edit,
+            beta=self.beta_edit,
+            gamma=self.gamma_edit,
+            individual=self.lattice_angle_validator,
+        )
+        self.alpha_edit.setValidator(self.angle_validator)
+        self.beta_edit.setValidator(self.angle_validator)
+        self.gamma_edit.setValidator(self.angle_validator)
 
         lattice_layout.addWidget(self.a_label, 0, 0)
         lattice_layout.addWidget(self.a_edit, 0, 1)
@@ -327,6 +345,23 @@ class SingleCrystalWidget(QWidget):
             self.sender().setStyleSheet(INVALID_QLINEEDIT)
         else:
             self.sender().setStyleSheet("")
+        # cumulative validation style for angles
+        if self.sender().objectName() in ["alpha", "beta", "gamma"]:
+            self.validate_angles()
+
+    def validate_angles(self) -> None:
+        """Check validity of the angles and set the stylesheet"""
+        fields = [
+            self.alpha_edit,
+            self.beta_edit,
+            self.gamma_edit,
+        ]
+        for field in fields:
+            state = field.validator().validate(field.text(), 0)[0]
+            if state != QValidator.Acceptable:
+                field.setStyleSheet(INVALID_QLINEEDIT)
+            else:
+                field.setStyleSheet("")
 
     def validate_all_inputs(self):
         inputs = [
@@ -490,7 +525,7 @@ class CrosshairWidget(QWidget):
         self.DeltaE_validator = QDoubleValidator(parent=self)
         self.DeltaE_validator.setNotation(QDoubleValidator.StandardNotation)
         self.DeltaE_edit.setValidator(self.DeltaE_validator)
-        self.modQ_validator = QDoubleValidator(bottom=0, top=10, parent=self)
+        self.modQ_validator = QDoubleValidator(bottom=0, top=MAX_MODQ, parent=self)
         self.modQ_validator.setNotation(QDoubleValidator.StandardNotation)
         self.modQ_edit.setValidator(self.modQ_validator)
 
@@ -523,7 +558,7 @@ class CrosshairWidget(QWidget):
 
         """
         self.DeltaE_edit.setText(str(values["DeltaE"]))
-        self.modQ_edit.setText(str(values["modQ"]))
+        self.modQ_edit.setText("{:.3f}".format(values["modQ"]))
 
     def validate_inputs(self, *_, **__) -> None:
         """Check validity of the fields and set the stylesheet"""
