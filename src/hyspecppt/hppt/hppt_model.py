@@ -223,12 +223,19 @@ class HyspecPPTModel:
             Q_hi = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(self.S2 + 30)))
 
             if self.plot_type == PLOT_TYPES[0]:  # alpha
-                return [Q_low, Q_hi, E, Q2d, E2d, ang_PQ]
+                return dict(Q_low=Q_low, Q_hi=Q_hi, E=E, Q2d=Q2d, E2d=E2d, ang_PQ=ang_PQ)
 
             if self.plot_type == PLOT_TYPES[1]:  # cos^2(alpha)
-                return [Q_low, Q_hi, E, Q2d, E2d, np.cos(np.radians(ang_PQ)) ** 2]
+                return dict(Q_low=Q_low, Q_hi=Q_hi, E=E, Q2d=Q2d, E2d=E2d, cos2_ang_PQ=np.cos(np.radians(ang_PQ)) ** 2)
 
             if self.plot_type == PLOT_TYPES[2]:  # "(cos^2(a)+1)/2"
-                return [Q_low, Q_hi, E, Q2d, E2d, (np.cos(np.radians(ang_PQ)) ** 2 + 1) / 2]
+                return dict(
+                    Q_low=Q_low,
+                    Q_hi=Q_hi,
+                    E=E,
+                    Q2d=Q2d,
+                    E2d=E2d,
+                    cos2_ang_PQ_plus_1_div_2=(np.cos(np.radians(ang_PQ)) ** 2 + 1) / 2,
+                )
         except AttributeError:
             logger.error("The parameters were not initialized")
