@@ -135,6 +135,8 @@ class PlotWidget(QWidget):
         self.fig, self.ax = plt.subplots()
         self.qline = self.ax.axvline(x=0)
         self.eline = self.ax.axhline(y=0)
+        self.fig.canvas.draw()
+        self.fig.show()
 
     def update_plot_crosshair(self, crosshair_data: dict) -> None:
         """Update the plot with valid crosshair_data
@@ -154,9 +156,13 @@ class PlotWidget(QWidget):
         """
         print("eline", eline)
         print("qline", qline)
-        # when plot is created this part needs to be updated accordingly
+        # when plot is created this part needs to be updated accordingly to be part of the heatmap
         self.eline.set_data([0, 1], [eline, eline])
         self.qline.set_data([qline, qline], [0, 1])
+        self.ax.relim()
+        self.ax.autoscale()
+        self.fig.canvas.draw()
+        self.fig.show()
 
 
 class SelectorWidget(QWidget):
