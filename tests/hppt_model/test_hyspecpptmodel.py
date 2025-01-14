@@ -148,6 +148,7 @@ def test_calculate_graph_data_cos2_ang_PQ_plus_1_div_2():
     )
     assert np.isnan(model.calculate_graph_data()["cos2_ang_PQ_plus_1_div_2"][199][1])  # not allowed (Q, E) positions
 
+
 def test_DeltaE_less_than_negative_Ei():
     """When DeltaE is < -Ei, Emin should be updated to 1.2Emin"""
     pass
