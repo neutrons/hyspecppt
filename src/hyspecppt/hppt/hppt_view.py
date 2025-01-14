@@ -2,6 +2,7 @@
 
 from typing import Optional, Union
 
+import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
@@ -69,6 +70,8 @@ class HyspecPPTView(QWidget):
         self.experiment_widget.valid_signal.connect(self.values_update)
         self.sc_widget.valid_signal.connect(self.values_update)
         self.crosshair_widget.valid_signal.connect(self.values_update)
+        # plot update
+        self.crosshair_widget.valid_signal.connect(self.plot_widget.update_plot_crosshair)
 
     def connect_fields_update(self, callback):
         """Callback for the fields update - set by the presenter"""
@@ -127,6 +130,33 @@ class PlotWidget(QWidget):
         layoutRight.addWidget(self.static_canvas)
         layoutRight.addWidget(NavigationToolbar(self.static_canvas, self))
         self.setLayout(layoutRight)
+
+        # crosshair initialization
+        self.fig, self.ax = plt.subplots()
+        self.qline = self.ax.axvline(x=0)
+        self.eline = self.ax.axhline(y=0)
+
+    def update_plot_crosshair(self, crosshair_data: dict) -> None:
+        """Update the plot with valid crosshair_data
+        Args:
+            eline (float): x
+            qline (float): y
+
+        """
+        self.update_crosshair(crosshair_data["data"]["DeltaE"], crosshair_data["data"]["modQ"])
+
+    def update_crosshair(self, eline: float, qline: float) -> None:
+        """Update the plot with crosshair lines
+        Args:
+            eline (float): x
+            qline (float): y
+
+        """
+        print("eline", eline)
+        print("qline", qline)
+        # when plot is created this part needs to be updated accordingly
+        self.eline.set_data([0, 1], [eline, eline])
+        self.qline.set_data([qline, qline], [0, 1])
 
 
 class SelectorWidget(QWidget):
@@ -566,6 +596,14 @@ class CrosshairWidget(QWidget):
             self.sender().setStyleSheet(INVALID_QLINEEDIT)
         else:
             self.sender().setStyleSheet("")
+
+    def validation_status_all_inputs(self) -> bool:
+        """Return validation status of all inpus, if all are valid returns True, else False"""
+        inputs = [self.DeltaE_edit, self.modQ_edit]
+        for edit in inputs:
+            if not edit.hasAcceptableInput():
+                return False
+        return True
 
     def validate_all_inputs(self):
         """If all inputs are valid emit a valid_signal"""

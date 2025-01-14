@@ -71,6 +71,9 @@ class HyspecPPTPresenter:
             # if the view contains an invalid value it is overwritten
             saved_values = self.model.get_crosshair_data()
             self.view.crosshair_widget.set_values(saved_values)
+            # update the plot crosshair, if valid values are passed
+            if self.view.crosshair_widget.validation_status_all_inputs():
+                self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
 
     def handle_switch_to_powder(self):
         """Switch to Powder mode"""
@@ -84,6 +87,9 @@ class HyspecPPTPresenter:
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_crosshair_data()
         self.view.crosshair_widget.set_values(saved_values)
+        # update the plot crosshair, if valid values are passed
+        if self.view.crosshair_widget.validation_status_all_inputs():
+            self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
 
         saved_values = self.model.get_experiment_data()
         self.view.experiment_widget.set_values(saved_values)
@@ -100,6 +106,9 @@ class HyspecPPTPresenter:
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_crosshair_data()
         self.view.crosshair_widget.set_values(saved_values)
+        # update the plot crosshair, if valid values are passed
+        if self.view.crosshair_widget.validation_status_all_inputs():
+            self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
 
         # get the valid values for experiment saved fields
         # if the view contains an invalid value it is overwritten
