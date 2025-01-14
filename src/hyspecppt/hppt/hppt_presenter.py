@@ -21,8 +21,8 @@ class HyspecPPTPresenter:
 
         # populate fields
         self.view.SCW.set_values(DEFAULT_LATTICE)
-        self.view.EW.initializeCombo(PLOT_TYPES)
-        self.view.EW.set_values(DEFAULT_EXPERIMENT)
+        self.view.experiment_widget.initializeCombo(PLOT_TYPES)
+        self.view.experiment_widget.set_values(DEFAULT_EXPERIMENT)
         self.view.CW.set_values(DEFAULT_CROSSHAIR)
 
         # model init
@@ -86,7 +86,7 @@ class HyspecPPTPresenter:
         self.view.CW.set_values(saved_values)
 
         saved_values = self.model.get_experiment_data()
-        self.view.EW.set_values(saved_values)
+        self.view.experiment_widget.set_values(saved_values)
 
     def handle_switch_to_sc(self):
         """Switch to Single Crystal mode"""
@@ -104,7 +104,7 @@ class HyspecPPTPresenter:
         # get the valid values for experiment saved fields
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_experiment_data()
-        self.view.EW.set_values(saved_values)
+        self.view.experiment_widget.set_values(saved_values)
 
         # get the valid values for single crystal saved fields
         # if the view contains an invalid value it is overwritten

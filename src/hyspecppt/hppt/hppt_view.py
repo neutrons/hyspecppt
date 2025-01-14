@@ -52,8 +52,8 @@ class HyspecPPTView(QWidget):
         self.setLayout(layout)
         layoutLeft = QVBoxLayout()
         layout.addLayout(layoutLeft)
-        self.EW = ExperimentWidget(self)
-        layoutLeft.addWidget(self.EW)
+        self.experiment_widget = ExperimentWidget(self)
+        layoutLeft.addWidget(self.experiment_widget)
         self.SCW = SingleCrystalWidget(self)
         self.CW = CrosshairWidget(self)
         self.SelW = SelectorWidget(self)
@@ -66,7 +66,7 @@ class HyspecPPTView(QWidget):
         layout.addWidget(self.PW)
 
         # signal handling for every valid field update
-        self.EW.valid_signal.connect(self.values_update)
+        self.experiment_widget.valid_signal.connect(self.values_update)
         self.SCW.valid_signal.connect(self.values_update)
         self.CW.valid_signal.connect(self.values_update)
 
