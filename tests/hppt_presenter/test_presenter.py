@@ -388,3 +388,44 @@ def test_switch_to_sc_invalid_updated_new(hyspec_app, qtbot):
 
     # qmod has the calculated value
     assert crosshair_widget.modQ_edit.text() == "13.823"
+
+
+def test_return_invalid_qmod(hyspec_app, qtbot):
+    """Test to calculate and return invalid Qmod value"""
+    # show the app
+    hyspec_app.show()
+    qtbot.waitUntil(hyspec_app.show, timeout=5000)
+    assert hyspec_app.isVisible()
+
+    hyspec_view = hyspec_app.main_window.HPPT_view
+    crosshair_widget = hyspec_view.CW
+    experiment_widget = hyspec_view.SCW
+
+    # switch to single crystal
+    hyspec_view.switch_to_sc()
+
+    # lattice parameter H update
+    experiment_widget.h_edit.clear()
+    qtbot.keyClicks(experiment_widget.h_edit, "1")
+    assert experiment_widget.h_edit.text() == "1"
+    assert experiment_widget.h_edit.styleSheet() != INVALID_QLINEEDIT
+
+    # lattice parameter K update
+    experiment_widget.k_edit.clear()
+    qtbot.keyClicks(experiment_widget.k_edit, "2")
+    assert experiment_widget.k_edit.text() == "2"
+    assert experiment_widget.k_edit.styleSheet() != INVALID_QLINEEDIT
+
+    # lattice parameter L update
+    experiment_widget.l_edit.clear()
+    qtbot.keyClicks(experiment_widget.l_edit, "1")
+    assert experiment_widget.l_edit.text() == "1"
+    assert experiment_widget.l_edit.styleSheet() != INVALID_QLINEEDIT
+
+    # Simulate gaining/losing focus
+    experiment_widget.h_edit.setFocus()
+    qtbot.keyPress(experiment_widget.h_edit, Qt.Key_Return)
+
+    # Qmod has the calculated invalid value
+    assert crosshair_widget.modQ_edit.text() == "15.391"
+    assert crosshair_widget.modQ_edit.styleSheet() == INVALID_QLINEEDIT
