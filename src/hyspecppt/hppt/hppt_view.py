@@ -50,25 +50,25 @@ class HyspecPPTView(QWidget):
 
         layout = QHBoxLayout()
         self.setLayout(layout)
-        layoutLeft = QVBoxLayout()
-        layout.addLayout(layoutLeft)
+        left_side_layout = QVBoxLayout()
+        layout.addLayout(left_side_layout)
         self.experiment_widget = ExperimentWidget(self)
-        layoutLeft.addWidget(self.experiment_widget)
-        self.SCW = SingleCrystalWidget(self)
-        self.CW = CrosshairWidget(self)
-        self.SelW = SelectorWidget(self)
-        layoutLeft.addWidget(self.SelW)
-        layoutLeft.addWidget(self.SCW)
-        layoutLeft.addWidget(self.CW)
+        left_side_layout.addWidget(self.experiment_widget)
+        self.sc_widget = SingleCrystalWidget(self)
+        self.crosshair_widget = CrosshairWidget(self)
+        self.selection_widget = SelectorWidget(self)
+        left_side_layout.addWidget(self.selection_widget)
+        left_side_layout.addWidget(self.sc_widget)
+        left_side_layout.addWidget(self.crosshair_widget)
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        layoutLeft.addItem(spacer)
-        self.PW = PlotWidget(self)
-        layout.addWidget(self.PW)
+        left_side_layout.addItem(spacer)
+        self.plot_widget = PlotWidget(self)
+        layout.addWidget(self.plot_widget)
 
         # signal handling for every valid field update
         self.experiment_widget.valid_signal.connect(self.values_update)
-        self.SCW.valid_signal.connect(self.values_update)
-        self.CW.valid_signal.connect(self.values_update)
+        self.sc_widget.valid_signal.connect(self.values_update)
+        self.crosshair_widget.valid_signal.connect(self.values_update)
 
     def connect_fields_update(self, callback):
         """Callback for the fields update - set by the presenter"""
@@ -102,13 +102,13 @@ class HyspecPPTView(QWidget):
 
     def field_visibility_in_SC(self) -> None:
         """Set visibility for Single Crystal mode"""
-        self.SCW.setVisible(True)
-        self.CW.set_Qmod_enabled(False)
+        self.sc_widget.setVisible(True)
+        self.crosshair_widget.set_Qmod_enabled(False)
 
     def field_visibility_in_Powder(self) -> None:
         """Set visibility for Powder mode"""
-        self.SCW.setVisible(False)
-        self.CW.set_Qmod_enabled(True)
+        self.sc_widget.setVisible(False)
+        self.crosshair_widget.set_Qmod_enabled(True)
 
 
 class PlotWidget(QWidget):

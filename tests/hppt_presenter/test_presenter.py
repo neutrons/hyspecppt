@@ -27,10 +27,10 @@ def test_selector_widget_powder_mode(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    hyspec_view.SelW.powder_rb.setChecked(True)
+    hyspec_view.selection_widget.powder_rb.setChecked(True)
 
-    assert not hyspec_view.SCW.isVisibleTo(hyspec_app)
-    assert hyspec_view.CW.modQ_edit.isEnabled()
+    assert not hyspec_view.sc_widget.isVisibleTo(hyspec_app)
+    assert hyspec_view.crosshair_widget.modQ_edit.isEnabled()
 
 
 def test_switch_to_sc(hyspec_app, qtbot):
@@ -42,8 +42,8 @@ def test_switch_to_sc(hyspec_app, qtbot):
 
     hyspec_view = hyspec_app.main_window.HPPT_view
     hyspec_view.switch_to_sc()
-    assert hyspec_view.SCW.isVisibleTo(hyspec_view)
-    assert not hyspec_view.CW.modQ_edit.isEnabled()
+    assert hyspec_view.sc_widget.isVisibleTo(hyspec_view)
+    assert not hyspec_view.crosshair_widget.modQ_edit.isEnabled()
 
 
 def test_switch_to_powder(hyspec_app, qtbot):
@@ -56,8 +56,8 @@ def test_switch_to_powder(hyspec_app, qtbot):
     qtbot.waitUntil(hyspec_app.show, timeout=5000)
     hyspec_view = hyspec_app.main_window.HPPT_view
     hyspec_view.switch_to_powder()
-    assert not hyspec_view.SCW.isVisibleTo(hyspec_view)
-    assert hyspec_view.CW.modQ_edit.isEnabled()
+    assert not hyspec_view.sc_widget.isVisibleTo(hyspec_view)
+    assert hyspec_view.crosshair_widget.modQ_edit.isEnabled()
 
 
 def test_switch_to_powder_ei(hyspec_app, qtbot):
@@ -137,7 +137,7 @@ def test_switch_to_powder_deltae_default_value(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    crosshair_widget = hyspec_view.CW
+    crosshair_widget = hyspec_view.crosshair_widget
 
     # empty DeltaE value
     crosshair_widget.DeltaE_edit.clear()
@@ -160,7 +160,7 @@ def test_switch_to_powder_qmod_default_value(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    crosshair_widget = hyspec_view.CW
+    crosshair_widget = hyspec_view.crosshair_widget
 
     # empty Qmod value
     crosshair_widget.modQ_edit.clear()
@@ -183,7 +183,7 @@ def test_switch_to_powder_deltae_updated_values(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    crosshair_widget = hyspec_view.CW
+    crosshair_widget = hyspec_view.crosshair_widget
 
     # set a valid DeltaE value
     crosshair_widget.DeltaE_edit.clear()
@@ -216,7 +216,7 @@ def test_switch_to_powder_qmod_updated_values(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    crosshair_widget = hyspec_view.CW
+    crosshair_widget = hyspec_view.crosshair_widget
 
     assert crosshair_widget.modQ_edit.text() == "0.000"
 
@@ -255,8 +255,8 @@ def test_handle_field_values_update(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    experiment_widget = hyspec_view.SCW
-    crosshair_widget = hyspec_view.CW
+    experiment_widget = hyspec_view.sc_widget
+    crosshair_widget = hyspec_view.crosshair_widget
 
     # switch to single crystal
     hyspec_view.switch_to_sc()
@@ -288,8 +288,8 @@ def test_switch_to_sc_invalid_updated_default(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    experiment_widget = hyspec_view.SCW
-    crosshair_widget = hyspec_view.CW
+    experiment_widget = hyspec_view.sc_widget
+    crosshair_widget = hyspec_view.crosshair_widget
 
     # switch to single crystal
     hyspec_view.switch_to_sc()
@@ -332,8 +332,8 @@ def test_switch_to_sc_invalid_updated_new(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    experiment_widget = hyspec_view.SCW
-    crosshair_widget = hyspec_view.CW
+    experiment_widget = hyspec_view.sc_widget
+    crosshair_widget = hyspec_view.crosshair_widget
 
     # switch to single crystal
     hyspec_view.switch_to_sc()
@@ -398,8 +398,8 @@ def test_return_invalid_qmod(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    crosshair_widget = hyspec_view.CW
-    experiment_widget = hyspec_view.SCW
+    crosshair_widget = hyspec_view.crosshair_widget
+    experiment_widget = hyspec_view.sc_widget
 
     # switch to single crystal
     hyspec_view.switch_to_sc()
