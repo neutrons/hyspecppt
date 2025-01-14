@@ -391,7 +391,7 @@ def test_switch_to_sc_invalid_updated_new(hyspec_app, qtbot):
 
 
 def test_return_invalid_qmod(hyspec_app, qtbot):
-    """Test to calculate and return invalid Qmod value"""
+    """Test to calculate and return invalid Qmod value greater than 15"""
     # show the app
     hyspec_app.show()
     qtbot.waitUntil(hyspec_app.show, timeout=5000)
