@@ -151,4 +151,21 @@ def test_calculate_graph_data_cos2_ang_PQ_plus_1_div_2():
 
 def test_DeltaE_less_than_negative_Ei():
     """When DeltaE is < -Ei, Emin should be updated to 1.2Emin"""
-    pass
+    model = HyspecPPTModel()
+    model.set_experiment_data(Ei=20.0, S2=60.0, alpha_p=30.0, plot_type=PLOT_TYPES[2])
+    model.cp.DeltaE = -30.0
+
+    # if DeltaE is < -Ei, set Emin to 1.2 * DeltaE
+    assert min(model.calculate_graph_data()["E"]) == -36.0
+    assert np.isclose(model.calculate_graph_data()["E2d"][0][0], -36.0)
+
+    # now chang DeltaE > -Ei, Emin should go back to -Ei
+    model.cp.DeltaE = -19.0
+    assert min(model.calculate_graph_data()["E"]) == -20.0
+    assert np.isclose(model.calculate_graph_data()["E2d"][0][0], -20.0)
+
+    # if we don't initialize DeltaE, Emin by default is -Ei
+    model = HyspecPPTModel()
+    model.set_experiment_data(Ei=20.0, S2=60.0, alpha_p=30.0, plot_type=PLOT_TYPES[2])
+    assert min(model.calculate_graph_data()["E"]) == -20.0
+    assert np.isclose(model.calculate_graph_data()["E2d"][0][0], -20.0)
