@@ -1,4 +1,5 @@
 from PySide6.QtCore import Qt
+from pytest import approx
 
 from hyspecppt.hppt.experiment_settings import INVALID_QLINEEDIT
 
@@ -13,10 +14,10 @@ def test_presenter_init(qtbot, hyspec_app):
     view = hyspec_app.main_window.HPPT_view
 
     # check the default values are populated
-    assert view.EW.Ei_edit.text() == "20"
-    assert view.EW.Pangle_edit.text() == "0"
-    assert view.EW.S2_edit.text() == "30"
-    assert view.EW.Type_combobox.currentText() == "cos" + "\u03b1" + "\u209b" + "\u00b2"
+    assert view.experiment_widget.Ei_edit.text() == "20"
+    assert view.experiment_widget.Pangle_edit.text() == "0"
+    assert view.experiment_widget.S2_edit.text() == "30"
+    assert view.experiment_widget.Type_combobox.currentText() == "cos" + "\u03b1" + "\u209b" + "\u00b2"
 
 
 def test_selector_widget_powder_mode(hyspec_app, qtbot):
@@ -27,10 +28,10 @@ def test_selector_widget_powder_mode(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    hyspec_view.SelW.powder_rb.setChecked(True)
+    hyspec_view.selection_widget.powder_rb.setChecked(True)
 
-    assert not hyspec_view.SCW.isVisibleTo(hyspec_app)
-    assert hyspec_view.CW.modQ_edit.isEnabled()
+    assert not hyspec_view.sc_widget.isVisibleTo(hyspec_app)
+    assert hyspec_view.crosshair_widget.modQ_edit.isEnabled()
 
 
 def test_switch_to_sc(hyspec_app, qtbot):
@@ -42,8 +43,8 @@ def test_switch_to_sc(hyspec_app, qtbot):
 
     hyspec_view = hyspec_app.main_window.HPPT_view
     hyspec_view.switch_to_sc()
-    assert hyspec_view.SCW.isVisibleTo(hyspec_view)
-    assert not hyspec_view.CW.modQ_edit.isEnabled()
+    assert hyspec_view.sc_widget.isVisibleTo(hyspec_view)
+    assert not hyspec_view.crosshair_widget.modQ_edit.isEnabled()
 
 
 def test_switch_to_powder(hyspec_app, qtbot):
@@ -56,8 +57,8 @@ def test_switch_to_powder(hyspec_app, qtbot):
     qtbot.waitUntil(hyspec_app.show, timeout=5000)
     hyspec_view = hyspec_app.main_window.HPPT_view
     hyspec_view.switch_to_powder()
-    assert not hyspec_view.SCW.isVisibleTo(hyspec_view)
-    assert hyspec_view.CW.modQ_edit.isEnabled()
+    assert not hyspec_view.sc_widget.isVisibleTo(hyspec_view)
+    assert hyspec_view.crosshair_widget.modQ_edit.isEnabled()
 
 
 def test_switch_to_powder_ei(hyspec_app, qtbot):
@@ -68,7 +69,7 @@ def test_switch_to_powder_ei(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    experiment_widget = hyspec_view.EW
+    experiment_widget = hyspec_view.experiment_widget
 
     # set Ei invalid value
     qtbot.keyClicks(experiment_widget.Ei_edit, "4")
@@ -91,7 +92,7 @@ def test_switch_to_powder_pangle(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    experiment_widget = hyspec_view.EW
+    experiment_widget = hyspec_view.experiment_widget
 
     # empty p angle value
     experiment_widget.Pangle_edit.clear()
@@ -114,7 +115,7 @@ def test_switch_to_powder_s2(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    experiment_widget = hyspec_view.EW
+    experiment_widget = hyspec_view.experiment_widget
 
     # set Ei invalid value
     qtbot.keyClicks(experiment_widget.S2_edit, "6")
@@ -137,7 +138,7 @@ def test_switch_to_powder_deltae_default_value(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    crosshair_widget = hyspec_view.CW
+    crosshair_widget = hyspec_view.crosshair_widget
 
     # empty DeltaE value
     crosshair_widget.DeltaE_edit.clear()
@@ -160,7 +161,7 @@ def test_switch_to_powder_qmod_default_value(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    crosshair_widget = hyspec_view.CW
+    crosshair_widget = hyspec_view.crosshair_widget
 
     # empty Qmod value
     crosshair_widget.modQ_edit.clear()
@@ -183,7 +184,8 @@ def test_switch_to_powder_deltae_updated_values(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    crosshair_widget = hyspec_view.CW
+    crosshair_widget = hyspec_view.crosshair_widget
+    plot_widget = hyspec_view.plot_widget
 
     # set a valid DeltaE value
     crosshair_widget.DeltaE_edit.clear()
@@ -194,6 +196,9 @@ def test_switch_to_powder_deltae_updated_values(hyspec_app, qtbot):
     # Simulate gaining/losing focus
     crosshair_widget.DeltaE_edit.setFocus()
     qtbot.keyPress(crosshair_widget.DeltaE_edit, Qt.Key_Return)
+
+    # plot crosshair lines are updated
+    assert plot_widget.eline_data == 4.1
 
     # empty DeltaE value
     crosshair_widget.DeltaE_edit.clear()
@@ -207,6 +212,10 @@ def test_switch_to_powder_deltae_updated_values(hyspec_app, qtbot):
     assert crosshair_widget.DeltaE_edit.text() == "4.1"
     assert crosshair_widget.DeltaE_edit.styleSheet() != INVALID_QLINEEDIT
 
+    # plot crosshair lines are updated
+    assert plot_widget.eline_data == 4.1
+    assert plot_widget.qline_data == 0
+
 
 def test_switch_to_powder_qmod_updated_values(hyspec_app, qtbot):
     """Test switch to Powder check Qmod value with a new value"""
@@ -216,9 +225,14 @@ def test_switch_to_powder_qmod_updated_values(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    crosshair_widget = hyspec_view.CW
+    crosshair_widget = hyspec_view.crosshair_widget
+    plot_widget = hyspec_view.plot_widget
 
     assert crosshair_widget.modQ_edit.text() == "0.000"
+
+    # plot crosshair lines default values
+    assert plot_widget.eline_data == 0
+    assert plot_widget.qline_data == 0
 
     # switch to powder
     hyspec_view.switch_to_powder()
@@ -234,6 +248,9 @@ def test_switch_to_powder_qmod_updated_values(hyspec_app, qtbot):
     crosshair_widget.modQ_edit.setFocus()
     qtbot.keyPress(crosshair_widget.modQ_edit, Qt.Key_Return)
 
+    # plot crosshair lines are updated
+    assert plot_widget.qline_data == 2.35
+
     # empty Qmod value
     crosshair_widget.modQ_edit.clear()
     assert crosshair_widget.modQ_edit.text() == ""
@@ -246,6 +263,10 @@ def test_switch_to_powder_qmod_updated_values(hyspec_app, qtbot):
     assert crosshair_widget.modQ_edit.text() == "0.000"
     assert crosshair_widget.modQ_edit.styleSheet() != INVALID_QLINEEDIT
 
+    # plot crosshair lines are updated
+    assert plot_widget.eline_data == 0
+    assert plot_widget.qline_data == 0
+
 
 def test_handle_field_values_update(hyspec_app, qtbot):
     """Test switch to Single Crystal check sc parameters"""
@@ -255,8 +276,8 @@ def test_handle_field_values_update(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    experiment_widget = hyspec_view.SCW
-    crosshair_widget = hyspec_view.CW
+    experiment_widget = hyspec_view.sc_widget
+    crosshair_widget = hyspec_view.crosshair_widget
 
     # switch to single crystal
     hyspec_view.switch_to_sc()
@@ -288,8 +309,9 @@ def test_switch_to_sc_invalid_updated_default(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    experiment_widget = hyspec_view.SCW
-    crosshair_widget = hyspec_view.CW
+    experiment_widget = hyspec_view.sc_widget
+    crosshair_widget = hyspec_view.crosshair_widget
+    plot_widget = hyspec_view.plot_widget
 
     # switch to single crystal
     hyspec_view.switch_to_sc()
@@ -323,6 +345,10 @@ def test_switch_to_sc_invalid_updated_default(hyspec_app, qtbot):
     # qmod has default value
     assert crosshair_widget.modQ_edit.text() == "0.000"
 
+    # plot crosshair lines are default
+    assert plot_widget.eline_data == 0
+    assert plot_widget.qline_data == 0
+
 
 def test_switch_to_sc_invalid_updated_new(hyspec_app, qtbot):
     """Test switch to Single Crystal - check sc parameters and qmod new values when switching to powder and back"""
@@ -332,8 +358,9 @@ def test_switch_to_sc_invalid_updated_new(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    experiment_widget = hyspec_view.SCW
-    crosshair_widget = hyspec_view.CW
+    experiment_widget = hyspec_view.sc_widget
+    crosshair_widget = hyspec_view.crosshair_widget
+    plot_widget = hyspec_view.plot_widget
 
     # switch to single crystal
     hyspec_view.switch_to_sc()
@@ -388,3 +415,53 @@ def test_switch_to_sc_invalid_updated_new(hyspec_app, qtbot):
 
     # qmod has the calculated value
     assert crosshair_widget.modQ_edit.text() == "13.823"
+
+    # plot crosshair lines are updated
+    assert plot_widget.eline_data == 0
+    assert plot_widget.qline_data == approx(13.823, rel=1e-6)
+
+
+def test_return_invalid_qmod(hyspec_app, qtbot):
+    """Test to calculate and return invalid Qmod value greater than 15"""
+    # show the app
+    hyspec_app.show()
+    qtbot.waitUntil(hyspec_app.show, timeout=5000)
+    assert hyspec_app.isVisible()
+
+    hyspec_view = hyspec_app.main_window.HPPT_view
+    crosshair_widget = hyspec_view.crosshair_widget
+    experiment_widget = hyspec_view.sc_widget
+    plot_widget = hyspec_view.plot_widget
+
+    # switch to single crystal
+    hyspec_view.switch_to_sc()
+
+    # lattice parameter H update
+    experiment_widget.h_edit.clear()
+    qtbot.keyClicks(experiment_widget.h_edit, "1")
+    assert experiment_widget.h_edit.text() == "1"
+    assert experiment_widget.h_edit.styleSheet() != INVALID_QLINEEDIT
+
+    # lattice parameter K update
+    experiment_widget.k_edit.clear()
+    qtbot.keyClicks(experiment_widget.k_edit, "2")
+    assert experiment_widget.k_edit.text() == "2"
+    assert experiment_widget.k_edit.styleSheet() != INVALID_QLINEEDIT
+
+    # lattice parameter L update
+    experiment_widget.l_edit.clear()
+    qtbot.keyClicks(experiment_widget.l_edit, "1")
+    assert experiment_widget.l_edit.text() == "1"
+    assert experiment_widget.l_edit.styleSheet() != INVALID_QLINEEDIT
+
+    # Simulate gaining/losing focus
+    experiment_widget.h_edit.setFocus()
+    qtbot.keyPress(experiment_widget.h_edit, Qt.Key_Return)
+
+    # Qmod has the calculated invalid value
+    assert crosshair_widget.modQ_edit.text() == "15.391"
+    assert crosshair_widget.modQ_edit.styleSheet() == INVALID_QLINEEDIT
+
+    # plot crosshair lines are not updated / stay default
+    assert plot_widget.eline_data == 0
+    assert plot_widget.qline_data == 0

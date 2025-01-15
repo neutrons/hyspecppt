@@ -20,10 +20,10 @@ class HyspecPPTPresenter:
         self.view.connect_sc_mode_switch(self.handle_switch_to_sc)
 
         # populate fields
-        self.view.SCW.set_values(DEFAULT_LATTICE)
-        self.view.EW.initializeCombo(PLOT_TYPES)
-        self.view.EW.set_values(DEFAULT_EXPERIMENT)
-        self.view.CW.set_values(DEFAULT_CROSSHAIR)
+        self.view.sc_widget.set_values(DEFAULT_LATTICE)
+        self.view.experiment_widget.initializeCombo(PLOT_TYPES)
+        self.view.experiment_widget.set_values(DEFAULT_EXPERIMENT)
+        self.view.crosshair_widget.set_values(DEFAULT_CROSSHAIR)
 
         # model init
         # to be removed needs to happen in the model
@@ -32,10 +32,10 @@ class HyspecPPTPresenter:
         self.model.set_single_crystal_data(params=DEFAULT_LATTICE)
 
         # set default selection mode
-        experiment_type = self.view.SelW.powder_label
+        experiment_type = self.view.selection_widget.powder_label
         if DEFAULT_MODE["current_experiment_type"].startswith("single"):
-            experiment_type = self.view.SelW.sc_label
-        self.view.SelW.selector_init(experiment_type)  # pass the default mode from experiment type
+            experiment_type = self.view.selection_widget.sc_label
+        self.view.selection_widget.selector_init(experiment_type)  # pass the default mode from experiment type
 
     @property
     def view(self):
@@ -53,7 +53,7 @@ class HyspecPPTPresenter:
         data = field_values["data"]
         if section == "crosshair":
             # get the current experiment type
-            experiment_type_label = self.view.SelW.get_selected_mode_label()
+            experiment_type_label = self.view.selection_widget.get_selected_mode_label()
             experiment_type = "powder"
             if experiment_type_label.startswith("Single"):
                 experiment_type = "single_crystal"
@@ -70,7 +70,10 @@ class HyspecPPTPresenter:
             # get the valid values for crosshair saved fields
             # if the view contains an invalid value it is overwritten
             saved_values = self.model.get_crosshair_data()
-            self.view.CW.set_values(saved_values)
+            self.view.crosshair_widget.set_values(saved_values)
+            # update the plot crosshair, if valid values are passed
+            if self.view.crosshair_widget.validation_status_all_inputs():
+                self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
 
     def handle_switch_to_powder(self):
         """Switch to Powder mode"""
@@ -83,10 +86,13 @@ class HyspecPPTPresenter:
         # get the valid values for crosshair saved fields
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_crosshair_data()
-        self.view.CW.set_values(saved_values)
+        self.view.crosshair_widget.set_values(saved_values)
+        # update the plot crosshair, if valid values are passed
+        if self.view.crosshair_widget.validation_status_all_inputs():
+            self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
 
         saved_values = self.model.get_experiment_data()
-        self.view.EW.set_values(saved_values)
+        self.view.experiment_widget.set_values(saved_values)
 
     def handle_switch_to_sc(self):
         """Switch to Single Crystal mode"""
@@ -99,14 +105,17 @@ class HyspecPPTPresenter:
         # get the valid values for crosshair saved fields
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_crosshair_data()
-        self.view.CW.set_values(saved_values)
+        self.view.crosshair_widget.set_values(saved_values)
+        # update the plot crosshair, if valid values are passed
+        if self.view.crosshair_widget.validation_status_all_inputs():
+            self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
 
         # get the valid values for experiment saved fields
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_experiment_data()
-        self.view.EW.set_values(saved_values)
+        self.view.experiment_widget.set_values(saved_values)
 
         # get the valid values for single crystal saved fields
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_single_crystal_data()
-        self.view.SCW.set_values(saved_values)
+        self.view.sc_widget.set_values(saved_values)

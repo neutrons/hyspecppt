@@ -53,5 +53,20 @@ def test_set_Selector_widget_Default_Values(qtbot):
     label = "Single C&rystal"
     SelWidget.selector_init(label)
 
+    experiment_type_label = SelWidget.get_selected_mode_label()
+    assert experiment_type_label == label
     assert SelWidget.sc_rb.isChecked()
     assert not SelWidget.powder_rb.isChecked()
+
+
+def test_set_selector_widget_powder_set(qtbot):
+    """Test the powder mode is toggled"""
+    sel_widget = hppt_view.SelectorWidget()
+    qtbot.addWidget(sel_widget)
+    label = "Po&wder"
+    sel_widget.selector_init(label)
+
+    experiment_type_label = sel_widget.get_selected_mode_label()
+    assert experiment_type_label == label
+    assert not sel_widget.sc_rb.isChecked()
+    assert sel_widget.powder_rb.isChecked()
