@@ -140,12 +140,8 @@ def test_calculate_graph_data_intensity():
     assert np.isnan(model.calculate_graph_data()["intensity"][0][0])  # not allowed (Q, E) positions
     assert np.isnan(model.calculate_graph_data()["intensity"][84][4])  # not allowed (Q, E) positions
 
-    assert np.isclose(
-        model.calculate_graph_data()["intensity"][84][5], (np.cos(np.radians(166.59943)) ** 2 + 1) / 2
-    )
-    assert np.isclose(
-        model.calculate_graph_data()["intensity"][199][0], (np.cos(np.radians(114.73561)) ** 2 + 1) / 2
-    )
+    assert np.isclose(model.calculate_graph_data()["intensity"][84][5], (np.cos(np.radians(166.59943)) ** 2 + 1) / 2)
+    assert np.isclose(model.calculate_graph_data()["intensity"][199][0], (np.cos(np.radians(114.73561)) ** 2 + 1) / 2)
     assert np.isnan(model.calculate_graph_data()["intensity"][199][1])  # not allowed (Q, E) positions
 
 
