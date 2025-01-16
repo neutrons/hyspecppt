@@ -180,7 +180,6 @@ class HyspecPPTModel:
         """Returns a list of [Q_low, Q_hi, E, Q2d, E2d, data of plot_types]"""
         try:
             SE2K = np.sqrt(2e-3 * e * m_n) * 1e-10 / hbar
-            # def Ei, Emin = - Ei to create Qmin, Qmax to generate plot range
             if self.cp.DeltaE is not None and self.cp.DeltaE > -self.Ei:
                 EMin = -self.Ei
             elif self.cp.DeltaE is not None and self.cp.DeltaE <= -self.Ei:
@@ -192,7 +191,6 @@ class HyspecPPTModel:
             kfmin = np.sqrt(self.Ei - EMin) * SE2K
             ki = np.sqrt(self.Ei) * SE2K
 
-            # S2= 60
             # Create Qmin and Qmax
             Qmax = np.sqrt(ki**2 + kfmin**2 - 2 * ki * kfmin * np.cos(np.radians(np.abs(self.S2) + 30)))
             Qmin = 0
