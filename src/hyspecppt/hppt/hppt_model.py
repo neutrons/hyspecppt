@@ -194,7 +194,7 @@ class HyspecPPTModel:
 
             # S2= 60
             # Create Qmin and Qmax
-            Qmax = np.sqrt(ki**2 + kfmin**2 - 2 * ki * kfmin * np.cos(np.radians(self.S2 + 30)))  # Q=ki or Q=
+            Qmax = np.sqrt(ki**2 + kfmin**2 - 2 * ki * kfmin * np.cos(np.radians(np.abs(self.S2) + 30)))
             Qmin = 0
             Q = np.linspace(Qmin, Qmax, 200)
 
@@ -208,8 +208,8 @@ class HyspecPPTModel:
             Pz = np.sin(np.radians(self.alpha_p))
 
             cos_theta = (ki**2 + kf2d**2 - Q2d**2) / (2 * ki * kf2d)
-            cos_theta[cos_theta < np.cos(np.radians(self.S2 + 30))] = np.nan
-            cos_theta[cos_theta > np.cos(np.radians(self.S2 - 30))] = np.nan  # cos(30)
+            cos_theta[cos_theta < np.cos(np.radians(np.abs(self.S2) + 30))] = np.nan
+            cos_theta[cos_theta > np.cos(np.radians(np.abs(self.S2) - 30))] = np.nan
 
             Qz = ki - kf2d * cos_theta
 
@@ -223,8 +223,8 @@ class HyspecPPTModel:
 
             kf = np.sqrt(self.Ei - E) * SE2K
 
-            Q_low = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(self.S2 - 30)))
-            Q_hi = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(self.S2 + 30)))
+            Q_low = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(np.abs(self.S2) - 30)))
+            Q_hi = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(np.abs(self.S2) + 30)))
 
             if self.plot_type == PLOT_TYPES[0]:  # alpha
                 return dict(Q_low=Q_low, Q_hi=Q_hi, E=E, Q2d=Q2d, E2d=E2d, ang_PQ=ang_PQ)

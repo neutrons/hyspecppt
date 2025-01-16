@@ -124,7 +124,7 @@ class Model:
 
 if __name__ == "__main__":
     obj = Model()
-    output = obj.polarization_powder(20, None, 60, 30,plot_options="alpha",left=True)
+    output = obj.polarization_powder(20, None, 40, 0,plot_options="cos^2(a)",left=True)
     Q_low, Q_hi, E, Q2d, E2d, ang_PQ = output[0], output[1], output[2], output[3], output[4], output[5]
     
     fig, ax = plt.subplots()
