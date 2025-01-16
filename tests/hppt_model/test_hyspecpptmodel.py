@@ -165,3 +165,31 @@ def test_DeltaE_less_than_negative_Ei():
     model.set_experiment_data(Ei=20.0, S2=60.0, alpha_p=30.0, plot_type=PLOT_TYPES[2])
     assert min(model.calculate_graph_data()["E"]) == -20.0
     assert np.isclose(model.calculate_graph_data()["E2d"][0][0], -20.0)
+
+
+def test_calculate_graph_data_intensity_negative_S2():
+    """Test calculating different graph data"""
+    model = HyspecPPTModel()
+    model.set_experiment_data(Ei=20.0, S2=-60.0, alpha_p=30.0, plot_type=PLOT_TYPES[2])
+    assert np.isclose(min(model.calculate_graph_data()["Q_low"]), 1.55338)
+    assert np.isclose(max(model.calculate_graph_data()["Q_low"]), 2.30880)
+
+    assert np.isclose(min(model.calculate_graph_data()["Q_hi"]), 3.25839)
+    assert np.isclose(max(model.calculate_graph_data()["Q_hi"]), 5.3811)
+    assert model.calculate_graph_data()["E"].all() == np.linspace(-20, 18, 200).all()
+
+    assert model.calculate_graph_data()["Q2d"][0][0] == 0.0
+    assert model.calculate_graph_data()["Q2d"][0][1] == 0.0
+
+    assert np.isclose(model.calculate_graph_data()["Q2d"][199][0], 5.38106)
+    assert np.isclose(model.calculate_graph_data()["Q2d"][199][1], 5.38106)
+
+    assert np.isclose(model.calculate_graph_data()["E2d"][0][0], -20)
+    assert np.isclose(model.calculate_graph_data()["E2d"][0][199], 18.0)
+
+    assert np.isnan(model.calculate_graph_data()["intensity"][0][0])  # not allowed (Q, E) positions
+    assert np.isnan(model.calculate_graph_data()["intensity"][84][4])  # not allowed (Q, E) positions
+
+    assert np.isclose(model.calculate_graph_data()["intensity"][84][5], 0.736049)
+    assert np.isclose(model.calculate_graph_data()["intensity"][199][0], 0.995790)
+    assert np.isnan(model.calculate_graph_data()["intensity"][199][1])  # not allowed (Q, E) positions
