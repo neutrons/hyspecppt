@@ -81,12 +81,12 @@ def test_calculate_graph_data_alpha():
     assert np.isclose(model.calculate_graph_data()["E2d"][0][0], -20)
     assert np.isclose(model.calculate_graph_data()["E2d"][0][199], 18.0)
 
-    assert np.isnan(model.calculate_graph_data()["ang_PQ"][0][0])  # not allowed (Q, E) positions
-    assert np.isnan(model.calculate_graph_data()["ang_PQ"][84][4])  # not allowed (Q, E) positions
+    assert np.isnan(model.calculate_graph_data()["intensity"][0][0])  # not allowed (Q, E) positions
+    assert np.isnan(model.calculate_graph_data()["intensity"][84][4])  # not allowed (Q, E) positions
 
-    assert np.isclose(model.calculate_graph_data()["ang_PQ"][84][5], 166.59943)
-    assert np.isclose(model.calculate_graph_data()["ang_PQ"][199][0], 114.73561)
-    assert np.isnan(model.calculate_graph_data()["ang_PQ"][199][1])  # not allowed (Q, E) positions
+    assert np.isclose(model.calculate_graph_data()["intensity"][84][5], 166.59943)
+    assert np.isclose(model.calculate_graph_data()["intensity"][199][0], 114.73561)
+    assert np.isnan(model.calculate_graph_data()["intensity"][199][1])  # not allowed (Q, E) positions
 
 
 def test_calculate_graph_data_cos2_alpha():
@@ -109,15 +109,15 @@ def test_calculate_graph_data_cos2_alpha():
     assert np.isclose(model.calculate_graph_data()["E2d"][0][0], -20)
     assert np.isclose(model.calculate_graph_data()["E2d"][0][199], 18.0)
 
-    assert np.isnan(model.calculate_graph_data()["cos2_ang_PQ"][0][0])  # not allowed (Q, E) positions
-    assert np.isnan(model.calculate_graph_data()["cos2_ang_PQ"][84][4])  # not allowed (Q, E) positions
+    assert np.isnan(model.calculate_graph_data()["intensity"][0][0])  # not allowed (Q, E) positions
+    assert np.isnan(model.calculate_graph_data()["intensity"][84][4])  # not allowed (Q, E) positions
 
-    assert np.isclose(model.calculate_graph_data()["cos2_ang_PQ"][84][5], np.cos(np.radians(166.59943)) ** 2)
-    assert np.isclose(model.calculate_graph_data()["cos2_ang_PQ"][199][0], np.cos(np.radians(114.73561)) ** 2)
-    assert np.isnan(model.calculate_graph_data()["cos2_ang_PQ"][199][1])  # not allowed (Q, E) positions
+    assert np.isclose(model.calculate_graph_data()["intensity"][84][5], np.cos(np.radians(166.59943)) ** 2)
+    assert np.isclose(model.calculate_graph_data()["intensity"][199][0], np.cos(np.radians(114.73561)) ** 2)
+    assert np.isnan(model.calculate_graph_data()["intensity"][199][1])  # not allowed (Q, E) positions
 
 
-def test_calculate_graph_data_cos2_ang_PQ_plus_1_div_2():
+def test_calculate_graph_data_intensity():
     """Test calculating different graph data"""
     model = HyspecPPTModel()
     model.set_experiment_data(Ei=20.0, S2=60.0, alpha_p=30.0, plot_type=PLOT_TYPES[2])
@@ -137,16 +137,16 @@ def test_calculate_graph_data_cos2_ang_PQ_plus_1_div_2():
     assert np.isclose(model.calculate_graph_data()["E2d"][0][0], -20)
     assert np.isclose(model.calculate_graph_data()["E2d"][0][199], 18.0)
 
-    assert np.isnan(model.calculate_graph_data()["cos2_ang_PQ_plus_1_div_2"][0][0])  # not allowed (Q, E) positions
-    assert np.isnan(model.calculate_graph_data()["cos2_ang_PQ_plus_1_div_2"][84][4])  # not allowed (Q, E) positions
+    assert np.isnan(model.calculate_graph_data()["intensity"][0][0])  # not allowed (Q, E) positions
+    assert np.isnan(model.calculate_graph_data()["intensity"][84][4])  # not allowed (Q, E) positions
 
     assert np.isclose(
-        model.calculate_graph_data()["cos2_ang_PQ_plus_1_div_2"][84][5], (np.cos(np.radians(166.59943)) ** 2 + 1) / 2
+        model.calculate_graph_data()["intensity"][84][5], (np.cos(np.radians(166.59943)) ** 2 + 1) / 2
     )
     assert np.isclose(
-        model.calculate_graph_data()["cos2_ang_PQ_plus_1_div_2"][199][0], (np.cos(np.radians(114.73561)) ** 2 + 1) / 2
+        model.calculate_graph_data()["intensity"][199][0], (np.cos(np.radians(114.73561)) ** 2 + 1) / 2
     )
-    assert np.isnan(model.calculate_graph_data()["cos2_ang_PQ_plus_1_div_2"][199][1])  # not allowed (Q, E) positions
+    assert np.isnan(model.calculate_graph_data()["intensity"][199][1])  # not allowed (Q, E) positions
 
 
 def test_DeltaE_less_than_negative_Ei():
