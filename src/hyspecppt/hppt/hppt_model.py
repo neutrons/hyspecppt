@@ -20,19 +20,19 @@ logger = logging.getLogger("hyspecppt")
 class SingleCrystalParameters:
     """Model for single crystal calculations"""
 
-    a: float = DEFAULT_LATTICE["a"]
-    b: float = DEFAULT_LATTICE["b"]
-    c: float = DEFAULT_LATTICE["c"]
-    alpha: float = DEFAULT_LATTICE["alpha"]
-    beta: float = DEFAULT_LATTICE["beta"]
-    gamma: float = DEFAULT_LATTICE["gamma"]
-    h: float = DEFAULT_LATTICE["h"]
-    k: float = DEFAULT_LATTICE["k"]
-    l: float = DEFAULT_LATTICE["l"]
+    a: float
+    b: float
+    c: float
+    alpha: float
+    beta: float
+    gamma: float
+    h: float
+    k: float
+    l: float
 
     def __init__(self) -> None:
         """Constructor"""
-        return
+        self.set_parameters(DEFAULT_LATTICE)
 
     def set_parameters(self, params: dict[str, float]) -> None:
         """Store single crystal parameters
@@ -54,8 +54,7 @@ class SingleCrystalParameters:
 
     def get_parameters(self) -> dict[str, float]:
         """Returns all the parameters as a dictionary"""
-        try:
-            return dict(
+        return dict(
                 a=self.a,
                 b=self.b,
                 c=self.c,
@@ -66,28 +65,25 @@ class SingleCrystalParameters:
                 k=self.k,
                 l=self.l,
             )
-        except AttributeError:
-            logger.error("The parameters were not initialized-get_parameters-SingleCrystalParameters")
 
     def calculate_modQ(self) -> float:
         """Returns |Q| from lattice parameters and h, k, l"""
-        try:
-            ca = np.cos(np.radians(self.alpha))
-            sa = np.sin(np.radians(self.alpha))
-            cb = np.cos(np.radians(self.beta))
-            sb = np.sin(np.radians(self.beta))
-            cg = np.cos(np.radians(self.gamma))
-            sg = np.sin(np.radians(self.gamma))
-            vabg = np.sqrt(1 - ca**2 - cb**2 - cg**2 + 2 * ca * cb * cg)
-            astar = sa / (self.a * vabg)
-            bstar = sb / (self.b * vabg)
-            cstar = sg / (self.c * vabg)
-            cas = (cb * cg - ca) / (sb * sg)  # noqa: F841
-            cbs = (cg * ca - cb) / (sg * sa)
-            cgs = (ca * cb - cg) / (sa * sb)
+        ca = np.cos(np.radians(self.alpha))
+        sa = np.sin(np.radians(self.alpha))
+        cb = np.cos(np.radians(self.beta))
+        sb = np.sin(np.radians(self.beta))
+        cg = np.cos(np.radians(self.gamma))
+        sg = np.sin(np.radians(self.gamma))
+        vabg = np.sqrt(1 - ca**2 - cb**2 - cg**2 + 2 * ca * cb * cg)
+        astar = sa / (self.a * vabg)
+        bstar = sb / (self.b * vabg)
+        cstar = sg / (self.c * vabg)
+        cas = (cb * cg - ca) / (sb * sg)  # noqa: F841
+        cbs = (cg * ca - cb) / (sg * sa)
+        cgs = (ca * cb - cg) / (sa * sb)
 
-            # B matrix
-            B = np.array(
+        # B matrix
+        B = np.array(
                 [
                     [astar, bstar * cgs, cstar * cbs],
                     [0, bstar * np.sqrt(1 - cgs**2), -cstar * np.sqrt(1 - cbs**2) * ca],
@@ -95,22 +91,20 @@ class SingleCrystalParameters:
                 ]
             )
 
-            modQ = 2 * np.pi * np.linalg.norm(B.dot([self.h, self.k, self.l]))
-            return modQ
-        except AttributeError:
-            logger.error("The parameters were not initialized-calculate_modQ")
+        modQ = 2 * np.pi * np.linalg.norm(B.dot([self.h, self.k, self.l]))
+        return modQ
 
 
 class CrosshairParameters:
     """Model for the crosshair parameters"""
 
-    modQ: float = DEFAULT_CROSSHAIR["modQ"]
-    DeltaE: float = DEFAULT_CROSSHAIR["DeltaE"]
-    current_experiment_type: str = DEFAULT_MODE["current_experiment_type"]
+    modQ: float
+    DeltaE: float
+    current_experiment_type: str
     sc_parameters: SingleCrystalParameters
-    experiment_types = ["single_crystal", "powder"]
 
     def __init__(self):
+        self.set_crosshair(**DEFAULT_MODE, **DEFAULT_CROSSHAIR)
         self.sc_parameters = SingleCrystalParameters()
 
     def set_crosshair(self, current_experiment_type: str, DeltaE: float = None, modQ: float = None) -> None:
@@ -132,18 +126,23 @@ class CrosshairParameters:
             return dict(DeltaE=self.DeltaE, modQ=modQ)
         return dict(DeltaE=self.DeltaE, modQ=self.modQ)
 
+    def get_experiment_type(self) -> str:
+        """Return experiment type"""
+        return self.current_experiment_type
+
 
 class HyspecPPTModel:
     """Main model"""
 
-    Ei: float = DEFAULT_EXPERIMENT["Ei"]
-    S2: float = DEFAULT_EXPERIMENT["S2"]
-    alpha_p: float = DEFAULT_EXPERIMENT["alpha_p"]
-    plot_type: str = DEFAULT_EXPERIMENT["plot_type"]
+    Ei: float
+    S2: float
+    alpha_p: float
+    plot_type: str
     cp: CrosshairParameters
 
     def __init__(self):
         """Constructor"""
+        self.set_experiment_data(**DEFAULT_EXPERIMENT)
         self.cp = CrosshairParameters()
 
     def set_single_crystal_data(self, params: dict[str, float]) -> None:
@@ -176,68 +175,65 @@ class HyspecPPTModel:
     def get_graph_data(self) -> list[float, float, float, list, list, list]:
         return self.calculate_graph_data()
 
-    def calculate_graph_data(self) -> list[float]:
-        """Returns a list of [Q_low, Q_hi, E, Q2d, E2d, data of plot_types]"""
-        try:
-            SE2K = np.sqrt(2e-3 * e * m_n) * 1e-10 / hbar
-            if self.cp.DeltaE is not None and self.cp.DeltaE > -self.Ei:
-                EMin = -self.Ei
-            elif self.cp.DeltaE is not None and self.cp.DeltaE <= -self.Ei:
-                EMin = 1.2 * self.cp.DeltaE
-            else:
-                EMin = -self.Ei
-            E = np.linspace(EMin, self.Ei * 0.9, 200)
+    def calculate_graph_data(self) -> dict[str, np.array]:
+        """Returns a dictionary of arrays [Q_low, Q_hi, E, Q2d, E2d, data of plot_types]"""
+        SE2K = np.sqrt(2e-3 * e * m_n) * 1e-10 / hbar
+        if self.cp.DeltaE is not None and self.cp.DeltaE > -self.Ei:
+            EMin = -self.Ei
+        elif self.cp.DeltaE is not None and self.cp.DeltaE <= -self.Ei:
+            EMin = 1.2 * self.cp.DeltaE
+        else:
+            EMin = -self.Ei
+        E = np.linspace(EMin, self.Ei * 0.9, 200)
 
-            kfmin = np.sqrt(self.Ei - EMin) * SE2K
-            ki = np.sqrt(self.Ei) * SE2K
+        kfmin = np.sqrt(self.Ei - EMin) * SE2K
+        ki = np.sqrt(self.Ei) * SE2K
 
-            # Create Qmin and Qmax
-            Qmax = np.sqrt(ki**2 + kfmin**2 - 2 * ki * kfmin * np.cos(np.radians(np.abs(self.S2) + 30)))
-            Qmin = 0
-            Q = np.linspace(Qmin, Qmax, 200)
+        # Create Qmin and Qmax
+        Qmax = np.sqrt(ki**2 + kfmin**2 - 2 * ki * kfmin * np.cos(np.radians(np.abs(self.S2) + 30)))
+        Qmin = 0
+        Q = np.linspace(Qmin, Qmax, 200)
 
-            # Create 2D array
-            E2d, Q2d = np.meshgrid(E, Q)
+        # Create 2D array
+        E2d, Q2d = np.meshgrid(E, Q)
 
-            Ef2d = self.Ei - E2d
-            kf2d = np.sqrt(Ef2d) * SE2K
+        Ef2d = self.Ei - E2d
+        kf2d = np.sqrt(Ef2d) * SE2K
 
-            Px = np.cos(np.radians(self.alpha_p))
-            Pz = np.sin(np.radians(self.alpha_p))
+        Px = np.cos(np.radians(self.alpha_p))
+        Pz = np.sin(np.radians(self.alpha_p))
 
-            cos_theta = (ki**2 + kf2d**2 - Q2d**2) / (2 * ki * kf2d)
-            cos_theta[cos_theta < np.cos(np.radians(np.abs(self.S2) + 30))] = np.nan
-            cos_theta[cos_theta > np.cos(np.radians(np.abs(self.S2) - 30))] = np.nan
+        cos_theta = (ki**2 + kf2d**2 - Q2d**2) / (2 * ki * kf2d)
+        cos_theta[cos_theta < np.cos(np.radians(np.abs(self.S2) + 30))] = np.nan
+        cos_theta[cos_theta > np.cos(np.radians(np.abs(self.S2) - 30))] = np.nan
 
-            Qz = ki - kf2d * cos_theta
+        Qz = ki - kf2d * cos_theta
 
-            if self.S2 >= 30:
-                Qx = (-1) * kf2d * np.sqrt((1 - cos_theta**2))
-            elif self.S2 <= -30:
-                Qx = kf2d * np.sqrt((1 - cos_theta**2))
+        if self.S2 >= 30:
+            Qx = (-1) * kf2d * np.sqrt((1 - cos_theta**2))
+        elif self.S2 <= -30:
+            Qx = kf2d * np.sqrt((1 - cos_theta**2))
 
-            cos_ang_PQ = (Qx * Px + Qz * Pz) / Q2d / np.sqrt(Px**2 + Pz**2)
-            ang_PQ = np.degrees(np.arccos(cos_ang_PQ))
+        cos_ang_PQ = (Qx * Px + Qz * Pz) / Q2d / np.sqrt(Px**2 + Pz**2)
+        ang_PQ = np.degrees(np.arccos(cos_ang_PQ))
 
-            kf = np.sqrt(self.Ei - E) * SE2K
+        kf = np.sqrt(self.Ei - E) * SE2K
 
-            Q_low = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(np.abs(self.S2) - 30)))
-            Q_hi = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(np.abs(self.S2) + 30)))
+        Q_low = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(np.abs(self.S2) - 30)))
+        Q_hi = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(np.abs(self.S2) + 30)))
 
-            if self.plot_type == PLOT_TYPES[0]:  # alpha
-                return dict(Q_low=Q_low, Q_hi=Q_hi, E=E, Q2d=Q2d, E2d=E2d, intensity=ang_PQ)
+        if self.plot_type == PLOT_TYPES[0]:  # alpha
+            intensity = ang_PQ
+        elif self.plot_type == PLOT_TYPES[1]:  # cos^2(alpha)
+            intensity = np.cos(np.radians(ang_PQ)) ** 2
+        elif self.plot_type == PLOT_TYPES[2]:  # "(cos^2(a)+1)/2"
+            intensity = (np.cos(np.radians(ang_PQ)) ** 2 + 1) / 2
 
-            if self.plot_type == PLOT_TYPES[1]:  # cos^2(alpha)
-                return dict(Q_low=Q_low, Q_hi=Q_hi, E=E, Q2d=Q2d, E2d=E2d, intensity=np.cos(np.radians(ang_PQ)) ** 2)
-
-            if self.plot_type == PLOT_TYPES[2]:  # "(cos^2(a)+1)/2"
-                return dict(
+        return dict(
                     Q_low=Q_low,
                     Q_hi=Q_hi,
                     E=E,
                     Q2d=Q2d,
                     E2d=E2d,
-                    intensity=(np.cos(np.radians(ang_PQ)) ** 2 + 1) / 2,
+                    intensity=intensity,
                 )
-        except AttributeError:
-            logger.error("The parameters were not initialized")
