@@ -2,6 +2,7 @@
 
 from typing import Optional, Union
 
+import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
@@ -50,25 +51,27 @@ class HyspecPPTView(QWidget):
 
         layout = QHBoxLayout()
         self.setLayout(layout)
-        layoutLeft = QVBoxLayout()
-        layout.addLayout(layoutLeft)
-        self.EW = ExperimentWidget(self)
-        layoutLeft.addWidget(self.EW)
-        self.SCW = SingleCrystalWidget(self)
-        self.CW = CrosshairWidget(self)
-        self.SelW = SelectorWidget(self)
-        layoutLeft.addWidget(self.SelW)
-        layoutLeft.addWidget(self.SCW)
-        layoutLeft.addWidget(self.CW)
+        left_side_layout = QVBoxLayout()
+        layout.addLayout(left_side_layout)
+        self.experiment_widget = ExperimentWidget(self)
+        left_side_layout.addWidget(self.experiment_widget)
+        self.sc_widget = SingleCrystalWidget(self)
+        self.crosshair_widget = CrosshairWidget(self)
+        self.selection_widget = SelectorWidget(self)
+        left_side_layout.addWidget(self.selection_widget)
+        left_side_layout.addWidget(self.sc_widget)
+        left_side_layout.addWidget(self.crosshair_widget)
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        layoutLeft.addItem(spacer)
-        self.PW = PlotWidget(self)
-        layout.addWidget(self.PW)
+        left_side_layout.addItem(spacer)
+        self.plot_widget = PlotWidget(self)
+        layout.addWidget(self.plot_widget)
 
         # signal handling for every valid field update
-        self.EW.valid_signal.connect(self.values_update)
-        self.SCW.valid_signal.connect(self.values_update)
-        self.CW.valid_signal.connect(self.values_update)
+        self.experiment_widget.valid_signal.connect(self.values_update)
+        self.sc_widget.valid_signal.connect(self.values_update)
+        self.crosshair_widget.valid_signal.connect(self.values_update)
+        # plot update
+        self.crosshair_widget.valid_signal.connect(self.plot_widget.update_plot_crosshair)
 
     def connect_fields_update(self, callback):
         """Callback for the fields update - set by the presenter"""
@@ -102,13 +105,13 @@ class HyspecPPTView(QWidget):
 
     def field_visibility_in_SC(self) -> None:
         """Set visibility for Single Crystal mode"""
-        self.SCW.setVisible(True)
-        self.CW.set_Qmod_enabled(False)
+        self.sc_widget.setVisible(True)
+        self.crosshair_widget.set_Qmod_enabled(False)
 
     def field_visibility_in_Powder(self) -> None:
         """Set visibility for Powder mode"""
-        self.SCW.setVisible(False)
-        self.CW.set_Qmod_enabled(True)
+        self.sc_widget.setVisible(False)
+        self.crosshair_widget.set_Qmod_enabled(True)
 
 
 class PlotWidget(QWidget):
@@ -127,6 +130,41 @@ class PlotWidget(QWidget):
         layoutRight.addWidget(self.static_canvas)
         layoutRight.addWidget(NavigationToolbar(self.static_canvas, self))
         self.setLayout(layoutRight)
+
+        # crosshair initialization
+        self.fig, self.ax = plt.subplots()
+        self.eline_data = 0
+        self.qline_data = 0
+        self.qline = self.ax.axvline(x=self.eline_data)
+        self.eline = self.ax.axhline(y=self.qline_data)
+        self.fig.canvas.draw()
+        self.fig.show()
+
+    def update_plot_crosshair(self, crosshair_data: dict) -> None:
+        """Update the plot with valid crosshair_data
+        Args:
+            eline (float): x
+            qline (float): y
+
+        """
+        self.update_crosshair(crosshair_data["data"]["DeltaE"], crosshair_data["data"]["modQ"])
+
+    def update_crosshair(self, eline: float, qline: float) -> None:
+        """Update the plot with crosshair lines
+        Args:
+            eline (float): x
+            qline (float): y
+
+        """
+        self.eline_data = eline
+        self.qline_data = qline
+        # when plot is created this part needs to be updated accordingly to be part of the heatmap
+        self.eline.set_data([0, 1], [self.eline_data, self.eline_data])
+        self.qline.set_data([self.qline_data, self.qline_data], [0, 1])
+        self.ax.relim()
+        self.ax.autoscale()
+        self.fig.canvas.draw()
+        self.fig.show()
 
 
 class SelectorWidget(QWidget):
@@ -566,6 +604,14 @@ class CrosshairWidget(QWidget):
             self.sender().setStyleSheet(INVALID_QLINEEDIT)
         else:
             self.sender().setStyleSheet("")
+
+    def validation_status_all_inputs(self) -> bool:
+        """Return validation status of all inpus, if all are valid returns True, else False"""
+        inputs = [self.DeltaE_edit, self.modQ_edit]
+        for edit in inputs:
+            if not edit.hasAcceptableInput():
+                return False
+        return True
 
     def validate_all_inputs(self):
         """If all inputs are valid emit a valid_signal"""

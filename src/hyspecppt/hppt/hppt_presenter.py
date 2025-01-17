@@ -47,7 +47,7 @@ class HyspecPPTPresenter:
         data = field_values["data"]
         if section == "crosshair":
             # get the current experiment type
-            experiment_type_label = self.view.SelW.get_selected_mode_label()
+            experiment_type_label = self.view.selection_widget.get_selected_mode_label()
             experiment_type = "powder"
             if experiment_type_label.startswith("Single"):
                 experiment_type = "single_crystal"
@@ -64,7 +64,10 @@ class HyspecPPTPresenter:
             # get the valid values for crosshair saved fields
             # if the view contains an invalid value it is overwritten
             saved_values = self.model.get_crosshair_data()
-            self.view.CW.set_values(saved_values)
+            self.view.crosshair_widget.set_values(saved_values)
+            # update the plot crosshair, if valid values are passed
+            if self.view.crosshair_widget.validation_status_all_inputs():
+                self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
 
     def handle_switch_to_powder(self):
         """Switch to Powder mode"""
@@ -77,10 +80,13 @@ class HyspecPPTPresenter:
         # get the valid values for crosshair saved fields
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_crosshair_data()
-        self.view.CW.set_values(saved_values)
+        self.view.crosshair_widget.set_values(saved_values)
+        # update the plot crosshair, if valid values are passed
+        if self.view.crosshair_widget.validation_status_all_inputs():
+            self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
 
         saved_values = self.model.get_experiment_data()
-        self.view.EW.set_values(saved_values)
+        self.view.experiment_widget.set_values(saved_values)
 
     def handle_switch_to_sc(self):
         """Switch to Single Crystal mode"""
@@ -93,14 +99,17 @@ class HyspecPPTPresenter:
         # get the valid values for crosshair saved fields
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_crosshair_data()
-        self.view.CW.set_values(saved_values)
+        self.view.crosshair_widget.set_values(saved_values)
+        # update the plot crosshair, if valid values are passed
+        if self.view.crosshair_widget.validation_status_all_inputs():
+            self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
 
         # get the valid values for experiment saved fields
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_experiment_data()
-        self.view.EW.set_values(saved_values)
+        self.view.experiment_widget.set_values(saved_values)
 
         # get the valid values for single crystal saved fields
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_single_crystal_data()
-        self.view.SCW.set_values(saved_values)
+        self.view.sc_widget.set_values(saved_values)

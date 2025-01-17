@@ -67,22 +67,22 @@ def test_SC_widget(qtbot):
     assert SCWidget.l_edit.text() == "2.5"
 
 
-def test_Crosshair_widget(qtbot):
+def test_crosshair_widget(qtbot):
     """Test the names of the Qlabel are correct and line edits can takes in values (assumes values are valid)"""
-    CHWidget = hppt_view.CrosshairWidget()
-    qtbot.addWidget(CHWidget)
+    crosshair_widget = hppt_view.CrosshairWidget()
+    qtbot.addWidget(crosshair_widget)
 
-    qtbot.keyClicks(CHWidget.DeltaE_edit, "20.0")
-    assert CHWidget.DeltaE_label.text() == "&DeltaE:"
-    assert CHWidget.DeltaE_edit.text() == "20.0"
+    qtbot.keyClicks(crosshair_widget.DeltaE_edit, "20.0")
+    assert crosshair_widget.DeltaE_label.text() == "&DeltaE:"
+    assert crosshair_widget.DeltaE_edit.text() == "20.0"
 
-    assert CHWidget.modQ_label.text() == "|&Q|:"
+    assert crosshair_widget.modQ_label.text() == "|&Q|:"
 
 
-def test_Selector_widget(qtbot):
+def test_selector_widget(qtbot):
     """Test the names of the Qlabel are correct and line edits can takes in values (assumes values are valid)"""
-    SELWidget = hppt_view.SelectorWidget()
-    qtbot.addWidget(SELWidget)
+    selector_widget = hppt_view.SelectorWidget()
+    qtbot.addWidget(selector_widget)
 
-    assert SELWidget.powder_rb.text() == "Po&wder"
-    assert SELWidget.sc_rb.text() == "Single C&rystal"
+    assert selector_widget.powder_rb.text() == "Po&wder"
+    assert selector_widget.sc_rb.text() == "Single C&rystal"
