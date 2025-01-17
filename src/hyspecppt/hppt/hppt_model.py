@@ -55,16 +55,16 @@ class SingleCrystalParameters:
     def get_parameters(self) -> dict[str, float]:
         """Returns all the parameters as a dictionary"""
         return dict(
-                a=self.a,
-                b=self.b,
-                c=self.c,
-                alpha=self.alpha,
-                beta=self.beta,
-                gamma=self.gamma,
-                h=self.h,
-                k=self.k,
-                l=self.l,
-            )
+            a=self.a,
+            b=self.b,
+            c=self.c,
+            alpha=self.alpha,
+            beta=self.beta,
+            gamma=self.gamma,
+            h=self.h,
+            k=self.k,
+            l=self.l,
+        )
 
     def calculate_modQ(self) -> float:
         """Returns |Q| from lattice parameters and h, k, l"""
@@ -84,12 +84,12 @@ class SingleCrystalParameters:
 
         # B matrix
         B = np.array(
-                [
-                    [astar, bstar * cgs, cstar * cbs],
-                    [0, bstar * np.sqrt(1 - cgs**2), -cstar * np.sqrt(1 - cbs**2) * ca],
-                    [0, 0, 1.0 / self.c],
-                ]
-            )
+            [
+                [astar, bstar * cgs, cstar * cbs],
+                [0, bstar * np.sqrt(1 - cgs**2), -cstar * np.sqrt(1 - cbs**2) * ca],
+                [0, 0, 1.0 / self.c],
+            ]
+        )
 
         modQ = 2 * np.pi * np.linalg.norm(B.dot([self.h, self.k, self.l]))
         return modQ
@@ -230,10 +230,10 @@ class HyspecPPTModel:
             intensity = (np.cos(np.radians(ang_PQ)) ** 2 + 1) / 2
 
         return dict(
-                    Q_low=Q_low,
-                    Q_hi=Q_hi,
-                    E=E,
-                    Q2d=Q2d,
-                    E2d=E2d,
-                    intensity=intensity,
-                )
+            Q_low=Q_low,
+            Q_hi=Q_hi,
+            E=E,
+            Q2d=Q2d,
+            E2d=E2d,
+            intensity=intensity,
+        )
