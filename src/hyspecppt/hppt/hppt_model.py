@@ -105,7 +105,8 @@ class CrosshairParameters:
     current_experiment_type: str
     sc_parameters: SingleCrystalParameters
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Constructor"""
         self.set_crosshair(**DEFAULT_MODE, **DEFAULT_CROSSHAIR)
         self.sc_parameters = SingleCrystalParameters()
 
@@ -166,16 +167,8 @@ class HyspecPPTModel:
         self.plot_type = plot_type
 
     def get_experiment_data(self) -> dict[str, float]:
-        data = dict()
-
-        data["Ei"] = self.Ei
-        data["S2"] = self.S2
-        data["alpha_p"] = self.alpha_p
-        data["plot_type"] = self.plot_type
+        data = dict(Ei=self.Ei, S2=self.S2, alpha_p=self.alpha_p, plot_type=self.plot_type)
         return data
-
-    def get_graph_data(self) -> list[float, float, float, list, list, list]:
-        return self.calculate_graph_data()
 
     def calculate_graph_data(self) -> dict[str, np.array]:
         """Returns a dictionary of arrays [Q_low, Q_hi, E, Q2d, E2d, data of plot_types]"""
@@ -189,8 +182,6 @@ class HyspecPPTModel:
             EMin = -self.Ei
 
         E = np.linspace(EMin, self.Ei * 0.9, N_POINTS)
-
-        kfmin = np.sqrt(self.Ei - EMin) * SE2K
 
         # Calculate lines for the edges of the tank
         ki = np.sqrt(self.Ei) * SE2K
