@@ -182,3 +182,32 @@ def test_calculate_graph_data_intensity_negative_S2():
     assert np.isclose(model.calculate_graph_data()["intensity"][84][5], 0.736049)
     assert np.isclose(model.calculate_graph_data()["intensity"][199][0], 0.995790)
     assert np.isnan(model.calculate_graph_data()["intensity"][199][1])  # not allowed (Q, E) positions
+
+
+def test_calculate_graph_data_consistency():
+    """Test consistency for graph data"""
+    model = HyspecPPTModel()
+    model.set_experiment_data(Ei=20,S2=45,alpha_p=45, plot_type=PLOT_TYPES[1])
+    d_45_45 = model.calculate_graph_data()
+    model.set_experiment_data(Ei=20,S2=-45,alpha_p=45, plot_type=PLOT_TYPES[1])
+    d_m45_45 = model.calculate_graph_data()
+    model.set_experiment_data(Ei=20,S2=45,alpha_p=-45, plot_type=PLOT_TYPES[1])
+    d_45_m45 = model.calculate_graph_data()
+    model.set_experiment_data(Ei=20,S2=-45,alpha_p=-45, plot_type=PLOT_TYPES[1])
+    d_m45_m45 = model.calculate_graph_data()
+
+    #check all Q and E arrays are equal
+    assert np.array_equal(d_45_45['Q_low'], d_45_m45['Q_low'])
+    assert np.array_equal(d_45_45['Q_hi'], d_m45_m45['Q_hi'])
+    assert np.array_equal(d_45_45['E'], d_m45_45['E'])
+    assert np.array_equal(d_45_45['Q2d'], d_45_m45['Q2d'])
+    assert np.array_equal(d_45_45['E2d'], d_m45_m45['E2d'])
+
+    #check that cosines are equal in equivalent conditions
+    assert np.array_equal(d_45_45['intensity'],d_m45_m45['intensity'], equal_nan=True)
+    assert np.array_equal(d_m45_45['intensity'],d_45_m45['intensity'], equal_nan=True)
+
+    #assert 90 degree difference using cos^2+sin^2=1
+    inds=np.isfinite(d_45_45['intensity'])
+    assert np.allclose((d_45_45['intensity']+d_m45_45['intensity'])[inds],1)
+    assert np.allclose((d_45_m45['intensity']+d_m45_m45['intensity'])[inds],1)
