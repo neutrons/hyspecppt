@@ -12,6 +12,8 @@ from .experiment_settings import (
     DEFAULT_MODE,
     MAX_MODQ,
     PLOT_TYPES,
+    N_POINTS,
+    TANK_HALF_WIDTH,
 )
 
 logger = logging.getLogger("hyspecppt")
@@ -177,51 +179,54 @@ class HyspecPPTModel:
 
     def calculate_graph_data(self) -> dict[str, np.array]:
         """Returns a dictionary of arrays [Q_low, Q_hi, E, Q2d, E2d, data of plot_types]"""
+        #constant to transform from energy in meV to momentum in Angstrom^-1
         SE2K = np.sqrt(2e-3 * e * m_n) * 1e-10 / hbar
-        if self.cp.DeltaE is not None and self.cp.DeltaE > -self.Ei:
-            EMin = -self.Ei
-        elif self.cp.DeltaE is not None and self.cp.DeltaE <= -self.Ei:
+
+        #adust minimum energy
+        if self.cp.DeltaE is not None and self.cp.DeltaE <= -self.Ei:
             EMin = 1.2 * self.cp.DeltaE
         else:
             EMin = -self.Ei
-        E = np.linspace(EMin, self.Ei * 0.9, 200)
+
+        E = np.linspace(EMin, self.Ei * 0.9, N_POINTS)
 
         kfmin = np.sqrt(self.Ei - EMin) * SE2K
-        ki = np.sqrt(self.Ei) * SE2K
 
-        # Create Qmin and Qmax
-        Qmax = np.sqrt(ki**2 + kfmin**2 - 2 * ki * kfmin * np.cos(np.radians(np.abs(self.S2) + 30)))
-        Qmin = 0
-        Q = np.linspace(Qmin, Qmax, 200)
+        # Calculate lines for the edges of the tank
+        ki = np.sqrt(self.Ei) * SE2K
+        kf = np.sqrt(self.Ei - E) * SE2K
+        Q_low = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(np.abs(self.S2) - TANK_HALF_WIDTH)))
+        Q_hi = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(np.abs(self.S2) + TANK_HALF_WIDTH)))
 
         # Create 2D array
+        Q = np.linspace(0, np.max(Q_hi), N_POINTS)
         E2d, Q2d = np.meshgrid(E, Q)
-
         Ef2d = self.Ei - E2d
         kf2d = np.sqrt(Ef2d) * SE2K
 
+        # Calculate the angle between Q and z axis. Set to NAN values outside the detector range
+        cos_theta = (ki**2 + kf2d**2 - Q2d**2) / (2 * ki * kf2d)
+        cos_theta[cos_theta < np.cos(np.radians(np.abs(self.S2) + TANK_HALF_WIDTH))] = np.nan
+        cos_theta[cos_theta > np.cos(np.radians(np.abs(self.S2) - TANK_HALF_WIDTH))] = np.nan
+
+        # Calculate Qz
+        Qz = ki - kf2d * cos_theta
+
+        # Calculate Qx. Note that is in the opposite direction as detector position
+        if self.S2 >= TANK_HALF_WIDTH:
+            Qx = (-1) * kf2d * np.sqrt((1 - cos_theta**2))
+        elif self.S2 <= -TANK_HALF_WIDTH:
+            Qx = kf2d * np.sqrt((1 - cos_theta**2))
+
+        # Transform polarization angle in the lab frame to vector
         Px = np.cos(np.radians(self.alpha_p))
         Pz = np.sin(np.radians(self.alpha_p))
 
-        cos_theta = (ki**2 + kf2d**2 - Q2d**2) / (2 * ki * kf2d)
-        cos_theta[cos_theta < np.cos(np.radians(np.abs(self.S2) + 30))] = np.nan
-        cos_theta[cos_theta > np.cos(np.radians(np.abs(self.S2) - 30))] = np.nan
-
-        Qz = ki - kf2d * cos_theta
-
-        if self.S2 >= 30:
-            Qx = (-1) * kf2d * np.sqrt((1 - cos_theta**2))
-        elif self.S2 <= -30:
-            Qx = kf2d * np.sqrt((1 - cos_theta**2))
-
+        # Calculate angle between polarization vector and momentum transfer
         cos_ang_PQ = (Qx * Px + Qz * Pz) / Q2d / np.sqrt(Px**2 + Pz**2)
         ang_PQ = np.degrees(np.arccos(cos_ang_PQ))
 
-        kf = np.sqrt(self.Ei - E) * SE2K
-
-        Q_low = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(np.abs(self.S2) - 30)))
-        Q_hi = np.sqrt(ki**2 + kf**2 - 2 * ki * kf * np.cos(np.radians(np.abs(self.S2) + 30)))
-
+        # Select return value for intensity
         if self.plot_type == PLOT_TYPES[0]:  # alpha
             intensity = ang_PQ
         elif self.plot_type == PLOT_TYPES[1]:  # cos^2(alpha)

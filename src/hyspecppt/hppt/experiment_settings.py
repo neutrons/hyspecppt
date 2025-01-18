@@ -21,6 +21,11 @@ DEFAULT_CROSSHAIR = dict(DeltaE=0, modQ=0)
 DEFAULT_MODE = dict(current_experiment_type="single_crystal")
 # maximum momentum transfer
 MAX_MODQ = 15
+# number of points in the plot
+N_POINTS = 200
+# tank half-width
+TANK_HALF_WIDTH = 30.
+
 
 # invalid style
 INVALID_QLINEEDIT = """
