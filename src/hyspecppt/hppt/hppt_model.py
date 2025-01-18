@@ -221,9 +221,9 @@ class HyspecPPTModel:
             ang_PQ = np.arccos(cos_ang_PQ)
             intensity = np.degrees(ang_PQ)
         elif self.plot_type == PLOT_TYPES[1]:  # cos^2(alpha)
-            intensity = cos_ang_PQ ** 2
+            intensity = cos_ang_PQ**2
         elif self.plot_type == PLOT_TYPES[2]:  # "(cos^2(a)+1)/2"
-            intensity = (cos_ang_PQ ** 2 + 1) / 2
+            intensity = (cos_ang_PQ**2 + 1) / 2
 
         return dict(
             Q_low=Q_low,
