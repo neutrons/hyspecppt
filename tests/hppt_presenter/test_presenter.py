@@ -14,10 +14,10 @@ def test_presenter_init(qtbot, hyspec_app):
     view = hyspec_app.main_window.HPPT_view
 
     # check the default values are populated
-    assert view.EW.Ei_edit.text() == "20.0"
-    assert view.EW.Pangle_edit.text() == "0.0"
-    assert view.EW.S2_edit.text() == "30.0"
-    assert view.EW.Type_combobox.currentText() == "cos" + "\u03b1" + "\u209b" + "\u00b2"
+    assert view.experiment_widget.Ei_edit.text() == "20.0"
+    assert view.experiment_widget.Pangle_edit.text() == "0.0"
+    assert view.experiment_widget.S2_edit.text() == "30.0"
+    assert view.experiment_widget.Type_combobox.currentText() == "cos" + "\u03b1" + "\u209b" + "\u00b2"
 
 
 def test_selector_widget_powder_mode(hyspec_app, qtbot):

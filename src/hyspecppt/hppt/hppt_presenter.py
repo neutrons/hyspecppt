@@ -20,16 +20,15 @@ class HyspecPPTPresenter:
         self.view.connect_sc_mode_switch(self.handle_switch_to_sc)
 
         # populate fields
-        self.view.SCW.set_values(self.model.get_single_crystal_data())
-        self.view.EW.initializeCombo(PLOT_TYPES)
-        self.view.EW.set_values(self.model.get_experiment_data())
-        self.view.CW.set_values(self.model.get_crosshair_data())
+        self.view.sc_widget.set_values(self.model.get_single_crystal_data())
+        self.view.experiment_widget.initializeCombo(PLOT_TYPES)
+        self.view.experiment_widget.set_values(self.model.get_experiment_data())
 
         # set default selection mode
-        experiment_type = self.view.SelW.powder_label
+        experiment_type = self.view.selection_widget.powder_label
         if self.model.cp.get_experiment_type().startswith("single"):
-            experiment_type = self.view.SelW.sc_label
-        self.view.SelW.selector_init(experiment_type)  # pass the default mode from experiment type
+            experiment_type = self.view.selection_widget.sc_label
+        self.view.selection_widget.selector_init(experiment_type)  # pass the default mode from experiment type
 
     @property
     def view(self):
