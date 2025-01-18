@@ -11,8 +11,8 @@ from .experiment_settings import (
     DEFAULT_LATTICE,
     DEFAULT_MODE,
     MAX_MODQ,
-    PLOT_TYPES,
     N_POINTS,
+    PLOT_TYPES,
     TANK_HALF_WIDTH,
 )
 
@@ -179,10 +179,10 @@ class HyspecPPTModel:
 
     def calculate_graph_data(self) -> dict[str, np.array]:
         """Returns a dictionary of arrays [Q_low, Q_hi, E, Q2d, E2d, data of plot_types]"""
-        #constant to transform from energy in meV to momentum in Angstrom^-1
+        # constant to transform from energy in meV to momentum in Angstrom^-1
         SE2K = np.sqrt(2e-3 * e * m_n) * 1e-10 / hbar
 
-        #adust minimum energy
+        # adust minimum energy
         if self.cp.DeltaE is not None and self.cp.DeltaE <= -self.Ei:
             EMin = 1.2 * self.cp.DeltaE
         else:

@@ -24,7 +24,7 @@ MAX_MODQ = 15
 # number of points in the plot
 N_POINTS = 200
 # tank half-width
-TANK_HALF_WIDTH = 30.
+TANK_HALF_WIDTH = 30.0
 
 
 # invalid style
