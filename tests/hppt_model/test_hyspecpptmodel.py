@@ -1,34 +1,23 @@
 import numpy as np
 
-from hyspecppt.hppt.experiment_settings import DEFAULT_EXPERIMENT, DEFAULT_LATTICE, PLOT_TYPES
+from hyspecppt.hppt.experiment_settings import DEFAULT_CROSSHAIR, DEFAULT_EXPERIMENT, DEFAULT_LATTICE, PLOT_TYPES
 from hyspecppt.hppt.hppt_model import HyspecPPTModel  # noqa: F401
 
 
-def test_setdefaultvalues():
+def test_defaultvalues():
     """Test setting single crystal data function"""
     model = HyspecPPTModel()
-    assert model.Ei == DEFAULT_EXPERIMENT["Ei"]
-    assert model.S2 == DEFAULT_EXPERIMENT["S2"]
-    assert model.alpha_p == DEFAULT_EXPERIMENT["alpha_p"]
-    assert model.plot_type == DEFAULT_EXPERIMENT["plot_type"]
+    assert model.get_experiment_data() == DEFAULT_EXPERIMENT
+    assert model.get_single_crystal_data() == DEFAULT_LATTICE
+    assert model.get_crosshair_data() == DEFAULT_CROSSHAIR
 
 
 def test_set_and_get_singlecrystaldata():
     """Test setting and getting single crystal data function"""
     model = HyspecPPTModel()
-    params = DEFAULT_LATTICE
+    params = dict(a=5.0, b=6.0, c=7.0, alpha=90.0, beta=90.0, gamma=120.0, h=1.0, k=2.0, l=3.0)
     model.set_single_crystal_data(params)
-    assert model.get_single_crystal_data()["a"] == params["a"]
-    assert model.get_single_crystal_data()["b"] == params["b"]
-    assert model.get_single_crystal_data()["c"] == params["c"]
-
-    assert model.get_single_crystal_data()["alpha"] == params["alpha"]
-    assert model.get_single_crystal_data()["beta"] == params["beta"]
-    assert model.get_single_crystal_data()["gamma"] == params["gamma"]
-
-    assert model.get_single_crystal_data()["h"] == params["h"]
-    assert model.get_single_crystal_data()["k"] == params["k"]
-    assert model.get_single_crystal_data()["l"] == params["l"]
+    assert model.get_single_crystal_data() == params
 
 
 def test_set_and_get_crosshairdata():

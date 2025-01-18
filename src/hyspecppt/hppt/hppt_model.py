@@ -175,7 +175,7 @@ class HyspecPPTModel:
         # constant to transform from energy in meV to momentum in Angstrom^-1
         SE2K = np.sqrt(2e-3 * e * m_n) * 1e-10 / hbar
 
-        # adust minimum energy
+        # adjust minimum energy
         if self.cp.DeltaE is not None and self.cp.DeltaE <= -self.Ei:
             EMin = 1.2 * self.cp.DeltaE
         else:
