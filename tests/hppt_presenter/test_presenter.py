@@ -14,9 +14,9 @@ def test_presenter_init(qtbot, hyspec_app):
     view = hyspec_app.main_window.HPPT_view
 
     # check the default values are populated
-    assert view.experiment_widget.Ei_edit.text() == "20"
-    assert view.experiment_widget.Pangle_edit.text() == "0"
-    assert view.experiment_widget.S2_edit.text() == "30"
+    assert view.experiment_widget.Ei_edit.text() == "20.0"
+    assert view.experiment_widget.Pangle_edit.text() == "0.0"
+    assert view.experiment_widget.S2_edit.text() == "30.0"
     assert view.experiment_widget.Type_combobox.currentText() == "cos" + "\u03b1" + "\u209b" + "\u00b2"
 
 
@@ -72,7 +72,7 @@ def test_switch_to_powder_ei(hyspec_app, qtbot):
     experiment_widget = hyspec_view.experiment_widget
 
     # set Ei invalid value
-    qtbot.keyClicks(experiment_widget.Ei_edit, "4")
+    qtbot.keyClicks(experiment_widget.Ei_edit, "\b\b4")
     assert experiment_widget.Ei_edit.text() == "204"
     assert experiment_widget.Ei_edit.styleSheet() == INVALID_QLINEEDIT
 
@@ -80,7 +80,7 @@ def test_switch_to_powder_ei(hyspec_app, qtbot):
     hyspec_view.switch_to_powder()
 
     # Ei value should have the default valid value
-    assert experiment_widget.Ei_edit.text() == "20"
+    assert experiment_widget.Ei_edit.text() == "20.0"
     assert experiment_widget.Ei_edit.styleSheet() != INVALID_QLINEEDIT
 
 
@@ -103,7 +103,7 @@ def test_switch_to_powder_pangle(hyspec_app, qtbot):
     hyspec_view.switch_to_powder()
 
     # P angle value should have the default valid value
-    assert experiment_widget.Pangle_edit.text() == "0"
+    assert experiment_widget.Pangle_edit.text() == "0.0"
     assert experiment_widget.Pangle_edit.styleSheet() != INVALID_QLINEEDIT
 
 
@@ -118,7 +118,7 @@ def test_switch_to_powder_s2(hyspec_app, qtbot):
     experiment_widget = hyspec_view.experiment_widget
 
     # set Ei invalid value
-    qtbot.keyClicks(experiment_widget.S2_edit, "6")
+    qtbot.keyClicks(experiment_widget.S2_edit, "\b\b6")
     assert experiment_widget.S2_edit.text() == "306"
     assert experiment_widget.S2_edit.styleSheet() == INVALID_QLINEEDIT
 
@@ -126,7 +126,7 @@ def test_switch_to_powder_s2(hyspec_app, qtbot):
     hyspec_view.switch_to_powder()
 
     # Ei value should have the default valid value
-    assert experiment_widget.S2_edit.text() == "30"
+    assert experiment_widget.S2_edit.text() == "30.0"
     assert experiment_widget.S2_edit.styleSheet() != INVALID_QLINEEDIT
 
 

@@ -1,6 +1,6 @@
 """Presenter for the Main tab"""
 
-from .experiment_settings import DEFAULT_CROSSHAIR, DEFAULT_EXPERIMENT, DEFAULT_LATTICE, DEFAULT_MODE, PLOT_TYPES
+from .experiment_settings import PLOT_TYPES
 
 
 class HyspecPPTPresenter:
@@ -20,20 +20,13 @@ class HyspecPPTPresenter:
         self.view.connect_sc_mode_switch(self.handle_switch_to_sc)
 
         # populate fields
-        self.view.sc_widget.set_values(DEFAULT_LATTICE)
+        self.view.sc_widget.set_values(self.model.get_single_crystal_data())
         self.view.experiment_widget.initializeCombo(PLOT_TYPES)
-        self.view.experiment_widget.set_values(DEFAULT_EXPERIMENT)
-        self.view.crosshair_widget.set_values(DEFAULT_CROSSHAIR)
-
-        # model init
-        # to be removed needs to happen in the model
-        self.model.set_experiment_data(**DEFAULT_EXPERIMENT)
-        self.model.set_crosshair_data(**DEFAULT_CROSSHAIR, **DEFAULT_MODE)
-        self.model.set_single_crystal_data(params=DEFAULT_LATTICE)
+        self.view.experiment_widget.set_values(self.model.get_experiment_data())
 
         # set default selection mode
         experiment_type = self.view.selection_widget.powder_label
-        if DEFAULT_MODE["current_experiment_type"].startswith("single"):
+        if self.model.cp.get_experiment_type().startswith("single"):
             experiment_type = self.view.selection_widget.sc_label
         self.view.selection_widget.selector_init(experiment_type)  # pass the default mode from experiment type
 

@@ -57,8 +57,8 @@ class Model:
         Qx= (-1 if left else 1) * kf2d*np.sqrt((1-cos_theta**2))
         
         cos_ang_PQ = (Qx*Px + Qz*Pz)/Q2d/np.sqrt(Px**2+Pz**2)
-        cos_ang_PQ[cos_ang_PQ**2 <0.4] = np.nan 
-        cos_ang_PQ[cos_ang_PQ**2 >0.6] = np.nan
+        # cos_ang_PQ[cos_ang_PQ**2 <0.4] = np.nan 
+        # cos_ang_PQ[cos_ang_PQ**2 >0.6] = np.nan
         ang_PQ = np.degrees(np.arccos(cos_ang_PQ))
         
         kf=np.sqrt(Ei-E)*SE2K
@@ -124,7 +124,7 @@ class Model:
 
 if __name__ == "__main__":
     obj = Model()
-    output = obj.polarization_powder(20, None, 60, 30,plot_options="alpha",left=True)
+    output = obj.polarization_powder(20, None, 40, 0,plot_options="cos^2(a)",left=True)
     Q_low, Q_hi, E, Q2d, E2d, ang_PQ = output[0], output[1], output[2], output[3], output[4], output[5]
     
     fig, ax = plt.subplots()
