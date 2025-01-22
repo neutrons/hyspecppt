@@ -2,7 +2,6 @@
 
 from typing import Optional, Union
 
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
@@ -126,19 +125,27 @@ class PlotWidget(QWidget):
         """
         super().__init__(parent)
         layoutRight = QVBoxLayout()
-        self.static_canvas = FigureCanvas(Figure(figsize=(5, 3)))
+
+        self.figure = Figure(figsize=(5, 3))
+        self.static_canvas = FigureCanvas(self.figure)
         layoutRight.addWidget(self.static_canvas)
         layoutRight.addWidget(NavigationToolbar(self.static_canvas, self))
         self.setLayout(layoutRight)
 
+        # heatmap initialization
+        self.ax = self.static_canvas.figure.subplots()
+        self.heatmap = self.ax.pcolormesh([[0, 0]], [[0, 0]], [[0, 0]])
+        self.qmin_line = self.ax.plot([0, 0], [0, 0])[0]
+        self.qmax_line = self.ax.plot([0, 0], [0, 0])[0]
+
         # crosshair initialization
-        self.fig, self.ax = plt.subplots()
         self.eline_data = 0
         self.qline_data = 0
         self.qline = self.ax.axvline(x=self.eline_data)
         self.eline = self.ax.axhline(y=self.qline_data)
-        self.fig.canvas.draw()
-        self.fig.show()
+
+        # draw the plot
+        self.static_canvas.draw()
 
     def update_plot_crosshair(self, crosshair_data: dict) -> None:
         """Update the plot with valid crosshair_data
@@ -158,13 +165,36 @@ class PlotWidget(QWidget):
         """
         self.eline_data = eline
         self.qline_data = qline
-        # when plot is created this part needs to be updated accordingly to be part of the heatmap
         self.eline.set_data([0, 1], [self.eline_data, self.eline_data])
         self.qline.set_data([self.qline_data, self.qline_data], [0, 1])
         self.ax.relim()
         self.ax.autoscale()
-        self.fig.canvas.draw()
-        self.fig.show()
+        self.static_canvas.draw()
+
+    def update_plot(
+        self,
+        q_min: list[float],
+        q_max: list[float],
+        energy_transfer: list[float],
+        q2d: list[list[float]],
+        e2d: list[list[float]],
+        scharpf_angle: list[list[float]],
+    ):
+        # update heatmap
+        self.ax.clear()
+        self.heatmap = self.ax.pcolormesh(q2d, e2d, scharpf_angle)
+        self.ax.plot(q_min, energy_transfer)
+        self.ax.plot(q_max, energy_transfer)
+        # redraw crosshair
+        self.qline = self.ax.axvline(x=self.eline_data)
+        self.eline = self.ax.axhline(y=self.qline_data)
+
+        # self.ax.set_xlabel(r"|Q| ($\AA^{-1}$)")
+        # self.ax.set_ylabel("E (meV)")
+
+        self.ax.relim()
+        self.ax.autoscale()
+        self.static_canvas.draw()
 
 
 class SelectorWidget(QWidget):
