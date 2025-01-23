@@ -126,7 +126,7 @@ class PlotWidget(QWidget):
         super().__init__(parent)
         layoutRight = QVBoxLayout()
 
-        self.figure = Figure(figsize=(5, 3))
+        self.figure = Figure(figsize=(6, 4.5))
         self.static_canvas = FigureCanvas(self.figure)
         layoutRight.addWidget(self.static_canvas)
         layoutRight.addWidget(NavigationToolbar(self.static_canvas, self))
@@ -137,6 +137,7 @@ class PlotWidget(QWidget):
         self.heatmap = self.ax.pcolormesh([[0, 0]], [[0, 0]], [[0, 0]])
         self.qmin_line = self.ax.plot([0, 0], [0, 0])[0]
         self.qmax_line = self.ax.plot([0, 0], [0, 0])[0]
+        self.cb = self.figure.colorbar(self.heatmap, ax=self.ax, pad=0.0)
 
         # crosshair initialization
         self.eline_data = 0
@@ -167,9 +168,8 @@ class PlotWidget(QWidget):
         self.qline_data = qline
         self.eline.set_data([0, 1], [self.eline_data, self.eline_data])
         self.qline.set_data([self.qline_data, self.qline_data], [0, 1])
-        self.ax.relim()
-        self.ax.autoscale()
-        self.static_canvas.draw()
+
+        self.set_axes_meta_and_draw_plot()
 
     def update_plot(
         self,
@@ -179,19 +179,31 @@ class PlotWidget(QWidget):
         q2d: list[list[float]],
         e2d: list[list[float]],
         scharpf_angle: list[list[float]],
+        plot_label: str,
     ):
-        # update heatmap
+        # clear
+        self.cb.remove()
         self.ax.clear()
+
+        # update heatmap
         self.heatmap = self.ax.pcolormesh(q2d, e2d, scharpf_angle)
         self.ax.plot(q_min, energy_transfer)
         self.ax.plot(q_max, energy_transfer)
+
+        # Add colorbar
+        self.cb = self.figure.colorbar(self.heatmap, ax=self.ax, pad=0.0)
+        self.cb.set_label(plot_label)
+
         # redraw crosshair
         self.qline = self.ax.axvline(x=self.eline_data)
         self.eline = self.ax.axhline(y=self.qline_data)
 
-        # self.ax.set_xlabel(r"|Q| ($\AA^{-1}$)")
-        # self.ax.set_ylabel("E (meV)")
+        self.set_axes_meta_and_draw_plot()
 
+    def set_axes_meta_and_draw_plot(self):
+        """Set labels and draw static canvas"""
+        self.ax.set_xlabel(r"$\Delta E$")
+        self.ax.set_ylabel("$|Q|$")
         self.ax.relim()
         self.ax.autoscale()
         self.static_canvas.draw()

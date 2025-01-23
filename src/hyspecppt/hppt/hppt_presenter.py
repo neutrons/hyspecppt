@@ -64,7 +64,6 @@ class HyspecPPTPresenter:
 
             # update the heatmap, if valid values are passed
             plot_data = self.model.calculate_graph_data()
-            print("plot_data")
             self.view.plot_widget.update_plot(
                 q_min=plot_data["Q_low"],
                 q_max=plot_data["Q_hi"],
@@ -72,6 +71,7 @@ class HyspecPPTPresenter:
                 q2d=plot_data["Q2d"],
                 e2d=plot_data["E2d"],
                 scharpf_angle=plot_data["intensity"],
+                plot_label=data["plot_type"],
             )
 
         else:
@@ -102,17 +102,17 @@ class HyspecPPTPresenter:
         if self.view.crosshair_widget.validation_status_all_inputs():
             self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
 
-        # update the heatmap, if valid values are passed
-        plot_data = self.model.calculate_graph_data()
-        print("plot_data")
-        self.view.plot_widget.update_plot(
-            q_min=plot_data["Q_low"],
-            q_max=plot_data["Q_hi"],
-            energy_transfer=plot_data["E"],
-            q2d=plot_data["Q2d"],
-            e2d=plot_data["E2d"],
-            scharpf_angle=plot_data["intensity"],
-        )
+        # # update the heatmap, if valid values are passed
+        # plot_data = self.model.calculate_graph_data()
+        # print("plot_data")
+        # self.view.plot_widget.update_plot(
+        #     q_min=plot_data["Q_low"],
+        #     q_max=plot_data["Q_hi"],
+        #     energy_transfer=plot_data["E"],
+        #     q2d=plot_data["Q2d"],
+        #     e2d=plot_data["E2d"],
+        #     scharpf_angle=plot_data["intensity"],
+        # )
 
         # update view values
         saved_values = self.model.get_experiment_data()
@@ -135,17 +135,17 @@ class HyspecPPTPresenter:
         if self.view.crosshair_widget.validation_status_all_inputs():
             self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
 
-        # update the heatmap, if valid values are passed
-        plot_data = self.model.calculate_graph_data()
-        print("plot_data")
-        self.view.plot_widget.update_plot(
-            q_min=plot_data["Q_low"],
-            q_max=plot_data["Q_hi"],
-            energy_transfer=plot_data["E"],
-            q2d=plot_data["Q2d"],
-            e2d=plot_data["E2d"],
-            scharpf_angle=plot_data["intensity"],
-        )
+        # # update the heatmap, if valid values are passed
+        # plot_data = self.model.calculate_graph_data()
+        # print("plot_data")
+        # self.view.plot_widget.update_plot(
+        #     q_min=plot_data["Q_low"],
+        #     q_max=plot_data["Q_hi"],
+        #     energy_transfer=plot_data["E"],
+        #     q2d=plot_data["Q2d"],
+        #     e2d=plot_data["E2d"],
+        #     scharpf_angle=plot_data["intensity"],
+        # )
 
         # get the valid values for experiment saved fields
         # if the view contains an invalid value it is overwritten
