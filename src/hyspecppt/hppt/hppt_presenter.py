@@ -53,9 +53,8 @@ class HyspecPPTPresenter:
             self.model.set_crosshair_data(
                 current_experiment_type=experiment_type, DeltaE=float(data["DeltaE"]), modQ=float(data["modQ"])
             )
-            # update the plot crosshair, if valid values are passed
-            if self.view.crosshair_widget.validation_status_all_inputs():
-                self.view.plot_widget.update_crosshair(eline=data["DeltaE"], qline=data["modQ"])
+            # update the plot crosshair, if valid values are passed from the model; could be invalid q
+            self.view.plot_widget.update_crosshair(eline=data["DeltaE"], qline=data["modQ"])
 
         elif section == "experiment":
             self.model.set_experiment_data(
@@ -81,7 +80,7 @@ class HyspecPPTPresenter:
             # if the view contains an invalid value it is overwritten
             saved_values = self.model.get_crosshair_data()
             self.view.crosshair_widget.set_values(saved_values)
-            # update the plot crosshair, if valid values are passed
+            # update the plot crosshair, if valid values are passed from the model; could be invalid q
             if self.view.crosshair_widget.validation_status_all_inputs():
                 self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
 
@@ -97,22 +96,8 @@ class HyspecPPTPresenter:
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_crosshair_data()
         self.view.crosshair_widget.set_values(saved_values)
-        # update the plot crosshair, if valid values are passed
-        # to check if not needed
-        if self.view.crosshair_widget.validation_status_all_inputs():
-            self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
-
-        # # update the heatmap, if valid values are passed
-        # plot_data = self.model.calculate_graph_data()
-        # print("plot_data")
-        # self.view.plot_widget.update_plot(
-        #     q_min=plot_data["Q_low"],
-        #     q_max=plot_data["Q_hi"],
-        #     energy_transfer=plot_data["E"],
-        #     q2d=plot_data["Q2d"],
-        #     e2d=plot_data["E2d"],
-        #     scharpf_angle=plot_data["intensity"],
-        # )
+        # update the plot crosshair
+        self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
 
         # update view values
         saved_values = self.model.get_experiment_data()
@@ -127,25 +112,12 @@ class HyspecPPTPresenter:
         self.model.set_crosshair_data(current_experiment_type=experiment_type)
 
         # get the valid values for crosshair saved fields
-        # if the view contains an invalid value it is overwritten
+        # if the view contains an invalid value, except from calculated q, it is overwritten
         saved_values = self.model.get_crosshair_data()
         self.view.crosshair_widget.set_values(saved_values)
-        # update the plot crosshair, if valid values are passed
-        # to check if not needed
+        # update the plot crosshair, if valid values are passed from the model; could be invalid q
         if self.view.crosshair_widget.validation_status_all_inputs():
             self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
-
-        # # update the heatmap, if valid values are passed
-        # plot_data = self.model.calculate_graph_data()
-        # print("plot_data")
-        # self.view.plot_widget.update_plot(
-        #     q_min=plot_data["Q_low"],
-        #     q_max=plot_data["Q_hi"],
-        #     energy_transfer=plot_data["E"],
-        #     q2d=plot_data["Q2d"],
-        #     e2d=plot_data["E2d"],
-        #     scharpf_angle=plot_data["intensity"],
-        # )
 
         # get the valid values for experiment saved fields
         # if the view contains an invalid value it is overwritten
