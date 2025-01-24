@@ -181,6 +181,18 @@ class PlotWidget(QWidget):
         scharpf_angle: list[list[float]],
         plot_label: str,
     ):
+        """Update the colormesh, colorbar and redraw the crosshair
+
+        Args:
+            q_min: list of float numbers,
+            q_max: list of float numbers,
+            energy_transfer: list of float numbers,
+            q2d: list of lists of float numbers,
+            e2d: list of lists of float numbers,
+            scharpf_angle: list of lists of float numbers,
+            plot_label: used for colormap label,
+
+        """
         # clear
         self.cb.remove()
         self.ax.clear()
@@ -201,7 +213,9 @@ class PlotWidget(QWidget):
         self.set_axes_meta_and_draw_plot()
 
     def set_axes_meta_and_draw_plot(self):
-        """Set labels and draw static canvas"""
+        """Set labels and draw static canvas
+        Args:
+        """
         self.ax.set_ylabel(r"$\Delta E$")
         self.ax.set_xlabel("$|Q|$")
         self.ax.relim()
