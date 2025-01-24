@@ -127,8 +127,9 @@ class PlotWidget(QWidget):
         super().__init__(parent)
         layoutRight = QVBoxLayout()
         self.static_canvas = FigureCanvas(Figure(figsize=(5, 3)))
+        self.toolbar = NavigationToolbar(self.static_canvas, self)
         layoutRight.addWidget(self.static_canvas)
-        layoutRight.addWidget(NavigationToolbar(self.static_canvas, self))
+        layoutRight.addWidget(self.toolbar)
         self.setLayout(layoutRight)
 
         # crosshair initialization
