@@ -276,25 +276,25 @@ def test_handle_field_values_update(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    experiment_widget = hyspec_view.sc_widget
+    sc_widget = hyspec_view.sc_widget
     crosshair_widget = hyspec_view.crosshair_widget
 
     # switch to single crystal
     hyspec_view.switch_to_sc()
 
     # set a valid a h value
-    experiment_widget.h_edit.clear()
-    qtbot.keyClicks(experiment_widget.h_edit, "1")
-    assert experiment_widget.h_edit.text() == "1"
+    sc_widget.h_edit.clear()
+    qtbot.keyClicks(sc_widget.h_edit, "1")
+    assert sc_widget.h_edit.text() == "1"
 
     # set a valid a k value
-    experiment_widget.k_edit.clear()
-    qtbot.keyClicks(experiment_widget.k_edit, "2")
-    assert experiment_widget.k_edit.text() == "2"
+    sc_widget.k_edit.clear()
+    qtbot.keyClicks(sc_widget.k_edit, "2")
+    assert sc_widget.k_edit.text() == "2"
 
     # Simulate gaining/losing focus
-    experiment_widget.k_edit.setFocus()
-    qtbot.keyPress(experiment_widget.k_edit, Qt.Key_Return)
+    sc_widget.k_edit.setFocus()
+    qtbot.keyPress(sc_widget.k_edit, Qt.Key_Return)
 
     # Qmod value should be updated with the new value
     assert crosshair_widget.modQ_edit.text() == "14.050"
@@ -309,7 +309,7 @@ def test_switch_to_sc_invalid_updated_default(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    experiment_widget = hyspec_view.sc_widget
+    sc_widget = hyspec_view.sc_widget
     crosshair_widget = hyspec_view.crosshair_widget
     plot_widget = hyspec_view.plot_widget
 
@@ -317,14 +317,14 @@ def test_switch_to_sc_invalid_updated_default(hyspec_app, qtbot):
     hyspec_view.switch_to_sc()
 
     # set an invalid alpha value
-    qtbot.keyClicks(experiment_widget.alpha_edit, "00")
-    assert experiment_widget.alpha_edit.text() == "900"
-    assert experiment_widget.alpha_edit.styleSheet() == INVALID_QLINEEDIT
+    qtbot.keyClicks(sc_widget.alpha_edit, "00")
+    assert sc_widget.alpha_edit.text() == "900"
+    assert sc_widget.alpha_edit.styleSheet() == INVALID_QLINEEDIT
 
     # set an invalid H value
-    experiment_widget.h_edit.clear()
-    assert experiment_widget.h_edit.text() == ""
-    assert experiment_widget.h_edit.styleSheet() == INVALID_QLINEEDIT
+    sc_widget.h_edit.clear()
+    assert sc_widget.h_edit.text() == ""
+    assert sc_widget.h_edit.styleSheet() == INVALID_QLINEEDIT
 
     # switch to powder
     hyspec_view.switch_to_powder()
@@ -336,11 +336,11 @@ def test_switch_to_sc_invalid_updated_default(hyspec_app, qtbot):
     hyspec_view.switch_to_sc()
 
     # single crystals fields back to default values
-    assert experiment_widget.alpha_edit.text() == "90"
-    assert experiment_widget.alpha_edit.styleSheet() != INVALID_QLINEEDIT
+    assert sc_widget.alpha_edit.text() == "90"
+    assert sc_widget.alpha_edit.styleSheet() != INVALID_QLINEEDIT
 
-    assert experiment_widget.h_edit.text() == "0"
-    assert experiment_widget.h_edit.styleSheet() != INVALID_QLINEEDIT
+    assert sc_widget.h_edit.text() == "0"
+    assert sc_widget.h_edit.styleSheet() != INVALID_QLINEEDIT
 
     # qmod has default value
     assert crosshair_widget.modQ_edit.text() == "0.000"
@@ -358,7 +358,7 @@ def test_switch_to_sc_invalid_updated_new(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    experiment_widget = hyspec_view.sc_widget
+    sc_widget = hyspec_view.sc_widget
     crosshair_widget = hyspec_view.crosshair_widget
     plot_widget = hyspec_view.plot_widget
 
@@ -366,31 +366,31 @@ def test_switch_to_sc_invalid_updated_new(hyspec_app, qtbot):
     hyspec_view.switch_to_sc()
 
     # set a valid a k value
-    experiment_widget.h_edit.clear()
-    qtbot.keyClicks(experiment_widget.h_edit, "2.2")
-    assert experiment_widget.h_edit.text() == "2.2"
+    sc_widget.h_edit.clear()
+    qtbot.keyClicks(sc_widget.h_edit, "2.2")
+    assert sc_widget.h_edit.text() == "2.2"
 
     # Simulate gaining/losing focus
-    experiment_widget.h_edit.setFocus()
-    qtbot.keyPress(experiment_widget.h_edit, Qt.Key_Return)
+    sc_widget.h_edit.setFocus()
+    qtbot.keyPress(sc_widget.h_edit, Qt.Key_Return)
 
     # set an invalid alpha value
-    qtbot.keyClicks(experiment_widget.alpha_edit, "00")
-    assert experiment_widget.alpha_edit.text() == "900"
-    assert experiment_widget.alpha_edit.styleSheet() == INVALID_QLINEEDIT
+    qtbot.keyClicks(sc_widget.alpha_edit, "00")
+    assert sc_widget.alpha_edit.text() == "900"
+    assert sc_widget.alpha_edit.styleSheet() == INVALID_QLINEEDIT
 
     # Simulate gaining/losing focus
-    experiment_widget.alpha_edit.setFocus()
-    qtbot.keyPress(experiment_widget.alpha_edit, Qt.Key_Return)
+    sc_widget.alpha_edit.setFocus()
+    qtbot.keyPress(sc_widget.alpha_edit, Qt.Key_Return)
 
     # set an invalid H value
-    experiment_widget.h_edit.clear()
-    assert experiment_widget.h_edit.text() == ""
-    assert experiment_widget.h_edit.styleSheet() == INVALID_QLINEEDIT
+    sc_widget.h_edit.clear()
+    assert sc_widget.h_edit.text() == ""
+    assert sc_widget.h_edit.styleSheet() == INVALID_QLINEEDIT
 
     # Simulate gaining/losing focus
-    experiment_widget.h_edit.setFocus()
-    qtbot.keyPress(experiment_widget.h_edit, Qt.Key_Return)
+    sc_widget.h_edit.setFocus()
+    qtbot.keyPress(sc_widget.h_edit, Qt.Key_Return)
 
     # switch to powder
     hyspec_view.switch_to_powder()
@@ -406,12 +406,12 @@ def test_switch_to_sc_invalid_updated_new(hyspec_app, qtbot):
     hyspec_view.switch_to_sc()
 
     # single crystals fields back to default values
-    assert experiment_widget.alpha_edit.text() == "90.0"
-    assert experiment_widget.alpha_edit.styleSheet() != INVALID_QLINEEDIT
+    assert sc_widget.alpha_edit.text() == "90.0"
+    assert sc_widget.alpha_edit.styleSheet() != INVALID_QLINEEDIT
 
     # single crystals fields back to the last valid value
-    assert experiment_widget.h_edit.text() == "2.2"
-    assert experiment_widget.h_edit.styleSheet() != INVALID_QLINEEDIT
+    assert sc_widget.h_edit.text() == "2.2"
+    assert sc_widget.h_edit.styleSheet() != INVALID_QLINEEDIT
 
     # qmod has the calculated value
     assert crosshair_widget.modQ_edit.text() == "13.823"
@@ -430,33 +430,33 @@ def test_return_invalid_qmod(hyspec_app, qtbot):
 
     hyspec_view = hyspec_app.main_window.HPPT_view
     crosshair_widget = hyspec_view.crosshair_widget
-    experiment_widget = hyspec_view.sc_widget
+    sc_widget = hyspec_view.sc_widget
     plot_widget = hyspec_view.plot_widget
 
     # switch to single crystal
     hyspec_view.switch_to_sc()
 
     # lattice parameter H update
-    experiment_widget.h_edit.clear()
-    qtbot.keyClicks(experiment_widget.h_edit, "1")
-    assert experiment_widget.h_edit.text() == "1"
-    assert experiment_widget.h_edit.styleSheet() != INVALID_QLINEEDIT
+    sc_widget.h_edit.clear()
+    qtbot.keyClicks(sc_widget.h_edit, "1")
+    assert sc_widget.h_edit.text() == "1"
+    assert sc_widget.h_edit.styleSheet() != INVALID_QLINEEDIT
 
     # lattice parameter K update
-    experiment_widget.k_edit.clear()
-    qtbot.keyClicks(experiment_widget.k_edit, "2")
-    assert experiment_widget.k_edit.text() == "2"
-    assert experiment_widget.k_edit.styleSheet() != INVALID_QLINEEDIT
+    sc_widget.k_edit.clear()
+    qtbot.keyClicks(sc_widget.k_edit, "2")
+    assert sc_widget.k_edit.text() == "2"
+    assert sc_widget.k_edit.styleSheet() != INVALID_QLINEEDIT
 
     # lattice parameter L update
-    experiment_widget.l_edit.clear()
-    qtbot.keyClicks(experiment_widget.l_edit, "1")
-    assert experiment_widget.l_edit.text() == "1"
-    assert experiment_widget.l_edit.styleSheet() != INVALID_QLINEEDIT
+    sc_widget.l_edit.clear()
+    qtbot.keyClicks(sc_widget.l_edit, "1")
+    assert sc_widget.l_edit.text() == "1"
+    assert sc_widget.l_edit.styleSheet() != INVALID_QLINEEDIT
 
     # Simulate gaining/losing focus
-    experiment_widget.h_edit.setFocus()
-    qtbot.keyPress(experiment_widget.h_edit, Qt.Key_Return)
+    sc_widget.h_edit.setFocus()
+    qtbot.keyPress(sc_widget.h_edit, Qt.Key_Return)
 
     # Qmod has the calculated invalid value
     assert crosshair_widget.modQ_edit.text() == "15.391"
@@ -471,8 +471,6 @@ def test_default_plot_data(hyspec_app, qtbot):
     """Test to compare the plot image for default values"""
     # unicode
     alpha = "\u03b1"
-    # beta = "\u03b2"
-    # gamma = "\u03b3"
     square = "\u00b2"
     subscript_s = "\u209b"
 
@@ -482,7 +480,6 @@ def test_default_plot_data(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    # experiment_widget = hyspec_view.sc_widget
     plot_widget = hyspec_view.plot_widget
 
     # switch to single crystal
@@ -495,8 +492,8 @@ def test_default_plot_data(hyspec_app, qtbot):
     assert plot_widget.qline_data == 0
 
     # assert heatmap
-    assert plot_widget.ax.get_xlabel() == r"$\Delta E$"
-    assert plot_widget.ax.get_ylabel() == "$|Q|$"
+    assert plot_widget.ax.get_ylabel() == r"$\Delta E$"
+    assert plot_widget.ax.get_xlabel() == "$|Q|$"
     assert plot_widget.cb.ax.get_ylabel() == "cos" + alpha + subscript_s + square
 
 
@@ -504,9 +501,6 @@ def test_update_plot_data(hyspec_app, qtbot):
     """Test to compare the plot image for default values"""
     # unicode
     alpha = "\u03b1"
-    # beta = "\u03b2"
-    # gamma = "\u03b3"
-    square = "\u00b2"
     subscript_s = "\u209b"
 
     # show the app
@@ -515,26 +509,32 @@ def test_update_plot_data(hyspec_app, qtbot):
     assert hyspec_app.isVisible()
 
     hyspec_view = hyspec_app.main_window.HPPT_view
-    experiment_widget = hyspec_view.sc_widget
+    sc_widget = hyspec_view.sc_widget
+    experiment_widget = hyspec_view.experiment_widget
     plot_widget = hyspec_view.plot_widget
 
     # switch to single crystal
     hyspec_view.switch_to_sc()
 
-    # set a valid H value
-    experiment_widget.h_edit.clear()
-    qtbot.keyClicks(experiment_widget.h_edit, "1.2")
+    # update type to first item
+    # choice = alpha + subscript_s
+    experiment_widget.Type_combobox.setCurrentIndex(0)
 
-    # switch to powder
-    hyspec_view.switch_to_powder()
+    # set a valid H value
+    sc_widget.h_edit.clear()
+    qtbot.keyClicks(sc_widget.h_edit, "1.2")
+
+    # Simulate gaining/losing focus
+    sc_widget.h_edit.setFocus()
+    qtbot.keyPress(sc_widget.h_edit, Qt.Key_Return)
 
     # plot should exist
 
     # assert crosshair
     assert plot_widget.eline_data == 0
-    assert plot_widget.qline_data == 0
+    assert round(plot_widget.qline_data, 2) == approx(7.540)
 
     # assert heatmap
-    assert plot_widget.ax.get_xlabel() == r"$\Delta E$"
-    assert plot_widget.ax.get_ylabel() == "$|Q|$"
-    assert plot_widget.cb.ax.get_ylabel() == "cos" + alpha + subscript_s + square
+    assert plot_widget.ax.get_ylabel() == r"$\Delta E$"
+    assert plot_widget.ax.get_xlabel() == "$|Q|$"
+    assert plot_widget.cb.ax.get_ylabel() == alpha + subscript_s
