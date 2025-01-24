@@ -465,3 +465,76 @@ def test_return_invalid_qmod(hyspec_app, qtbot):
     # plot crosshair lines are not updated / stay default
     assert plot_widget.eline_data == 0
     assert plot_widget.qline_data == 0
+
+
+def test_default_plot_data(hyspec_app, qtbot):
+    """Test to compare the plot image for default values"""
+    # unicode
+    alpha = "\u03b1"
+    # beta = "\u03b2"
+    # gamma = "\u03b3"
+    square = "\u00b2"
+    subscript_s = "\u209b"
+
+    # show the app
+    hyspec_app.show()
+    qtbot.waitUntil(hyspec_app.show, timeout=5000)
+    assert hyspec_app.isVisible()
+
+    hyspec_view = hyspec_app.main_window.HPPT_view
+    # experiment_widget = hyspec_view.sc_widget
+    plot_widget = hyspec_view.plot_widget
+
+    # switch to single crystal
+    hyspec_view.switch_to_sc()
+
+    # plot should exist
+
+    # assert crosshair
+    assert plot_widget.eline_data == 0
+    assert plot_widget.qline_data == 0
+
+    # assert heatmap
+    assert plot_widget.ax.get_xlabel() == r"$\Delta E$"
+    assert plot_widget.ax.get_ylabel() == "$|Q|$"
+    assert plot_widget.cb.ax.get_ylabel() == "cos" + alpha + subscript_s + square
+
+
+def test_update_plot_data(hyspec_app, qtbot):
+    """Test to compare the plot image for default values"""
+    # unicode
+    alpha = "\u03b1"
+    # beta = "\u03b2"
+    # gamma = "\u03b3"
+    square = "\u00b2"
+    subscript_s = "\u209b"
+
+    # show the app
+    hyspec_app.show()
+    qtbot.waitUntil(hyspec_app.show, timeout=5000)
+    assert hyspec_app.isVisible()
+
+    hyspec_view = hyspec_app.main_window.HPPT_view
+    experiment_widget = hyspec_view.sc_widget
+    plot_widget = hyspec_view.plot_widget
+
+    # switch to single crystal
+    hyspec_view.switch_to_sc()
+
+    # set a valid H value
+    experiment_widget.h_edit.clear()
+    qtbot.keyClicks(experiment_widget.h_edit, "1.2")
+
+    # switch to powder
+    hyspec_view.switch_to_powder()
+
+    # plot should exist
+
+    # assert crosshair
+    assert plot_widget.eline_data == 0
+    assert plot_widget.qline_data == 0
+
+    # assert heatmap
+    assert plot_widget.ax.get_xlabel() == r"$\Delta E$"
+    assert plot_widget.ax.get_ylabel() == "$|Q|$"
+    assert plot_widget.cb.ax.get_ylabel() == "cos" + alpha + subscript_s + square

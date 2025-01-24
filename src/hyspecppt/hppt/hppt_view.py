@@ -142,8 +142,8 @@ class PlotWidget(QWidget):
         # crosshair initialization
         self.eline_data = 0
         self.qline_data = 0
-        self.qline = self.ax.axvline(x=self.eline_data)
-        self.eline = self.ax.axhline(y=self.qline_data)
+        self.eline = self.ax.axhline(y=self.eline_data)
+        self.qline = self.ax.axvline(x=self.qline_data)
 
         # draw the plot
         self.static_canvas.draw()
@@ -195,15 +195,15 @@ class PlotWidget(QWidget):
         self.cb.set_label(plot_label)
 
         # redraw crosshair
-        self.qline = self.ax.axvline(x=self.eline_data)
-        self.eline = self.ax.axhline(y=self.qline_data)
+        self.eline = self.ax.axhline(y=self.eline_data)
+        self.qline = self.ax.axvline(x=self.qline_data)
 
         self.set_axes_meta_and_draw_plot()
 
     def set_axes_meta_and_draw_plot(self):
         """Set labels and draw static canvas"""
-        self.ax.set_xlabel(r"$\Delta E$")
-        self.ax.set_ylabel("$|Q|$")
+        self.ax.set_ylabel(r"$\Delta E$")
+        self.ax.set_xlabel("$|Q|$")
         self.ax.relim()
         self.ax.autoscale()
         self.static_canvas.draw()
