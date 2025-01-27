@@ -129,6 +129,7 @@ class PlotWidget(QWidget):
         self.figure = Figure(figsize=(6, 4.5))
         self.static_canvas = FigureCanvas(self.figure)
         self.toolbar = NavigationToolbar(self.static_canvas, self)
+
         layoutRight.addWidget(self.static_canvas)
         layoutRight.addWidget(self.toolbar)
         self.setLayout(layoutRight)
