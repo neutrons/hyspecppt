@@ -17,7 +17,7 @@ def test_presenter_init(qtbot, hyspec_app):
     assert view.experiment_widget.Ei_edit.text() == "20.0"
     assert view.experiment_widget.Pangle_edit.text() == "0.0"
     assert view.experiment_widget.S2_edit.text() == "30.0"
-    assert view.experiment_widget.Type_combobox.currentText() == "cos" + "\u03b1" + "\u209b" + "\u00b2"
+    assert view.experiment_widget.Type_combobox.currentText() == "cos" + "\u00b2" + "\u03b1" + "\u209b"
 
 
 def test_selector_widget_powder_mode(hyspec_app, qtbot):
@@ -500,7 +500,7 @@ def test_default_plot_data(hyspec_app, qtbot):
     # assert heatmap
     assert plot_widget.ax.get_ylabel() == r"$\Delta E$"
     assert plot_widget.ax.get_xlabel() == "$|Q|$"
-    assert plot_widget.cb.ax.get_ylabel() == "cos" + alpha + subscript_s + square
+    assert plot_widget.cb.ax.get_ylabel() == "cos" + square + alpha + subscript_s
 
 
 def test_update_plot_data(hyspec_app, qtbot):
