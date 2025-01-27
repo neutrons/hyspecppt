@@ -178,7 +178,7 @@ class HyspecPPTModel:
             Emin = 1.2 * deltaE
         else:
             Emin = -self.Ei
-        # check if it the same
+        # check if it is the same
         return self.Emin != Emin
 
     def calculate_graph_data(self) -> dict[str, np.array]:
