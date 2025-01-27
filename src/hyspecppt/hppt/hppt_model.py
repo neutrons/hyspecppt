@@ -139,6 +139,7 @@ class HyspecPPTModel:
 
     Ei: float
     S2: float
+    Emin: float
     alpha_p: float
     plot_type: str
     cp: CrosshairParameters
@@ -170,6 +171,16 @@ class HyspecPPTModel:
         data = dict(Ei=self.Ei, S2=self.S2, alpha_p=self.alpha_p, plot_type=self.plot_type)
         return data
 
+    def check_plot_update(self, deltaE) -> bool:
+        """Returns bool to indicate whether the Emin is different and indicate replotting"""
+        # calculate the new emin
+        if deltaE is not None and deltaE <= -self.Ei:
+            EMin = 1.2 * deltaE
+        else:
+            EMin = -self.Ei
+        # check if it the same
+        return self.EMin != EMin
+
     def calculate_graph_data(self) -> dict[str, np.array]:
         """Returns a dictionary of arrays [Q_low, Q_hi, E, Q2d, E2d, data of plot_types]"""
         # constant to transform from energy in meV to momentum in Angstrom^-1
@@ -177,11 +188,11 @@ class HyspecPPTModel:
 
         # adjust minimum energy
         if self.cp.DeltaE is not None and self.cp.DeltaE <= -self.Ei:
-            EMin = 1.2 * self.cp.DeltaE
+            self.EMin = 1.2 * self.cp.DeltaE
         else:
-            EMin = -self.Ei
+            self.EMin = -self.Ei
 
-        E = np.linspace(EMin, self.Ei * 0.9, N_POINTS)
+        E = np.linspace(self.EMin, self.Ei * 0.9, N_POINTS)
 
         # Calculate lines for the edges of the tank
         ki = np.sqrt(self.Ei) * SE2K
@@ -225,11 +236,4 @@ class HyspecPPTModel:
         elif self.plot_type == PLOT_TYPES[2]:  # "(cos^2(a)+1)/2"
             intensity = (cos_ang_PQ**2 + 1) / 2
 
-        return dict(
-            Q_low=Q_low,
-            Q_hi=Q_hi,
-            E=E,
-            Q2d=Q2d,
-            E2d=E2d,
-            intensity=intensity,
-        )
+        return dict(Q_low=Q_low, Q_hi=Q_hi, E=E, Q2d=Q2d, E2d=E2d, intensity=intensity, plot_type=self.plot_type)

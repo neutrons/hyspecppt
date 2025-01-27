@@ -50,9 +50,24 @@ class HyspecPPTPresenter:
             experiment_type = "powder"
             if experiment_type_label.startswith("Single"):
                 experiment_type = "single_crystal"
+            # check whether we need to replot - new deltae
+            replot = self.model.check_plot_update(float(data["DeltaE"]))
+            # update crosshair
             self.model.set_crosshair_data(
                 current_experiment_type=experiment_type, DeltaE=float(data["DeltaE"]), modQ=float(data["modQ"])
             )
+            if replot:
+                # update the heatmap
+                plot_data = self.model.calculate_graph_data()
+                self.view.plot_widget.update_plot(
+                    q_min=plot_data["Q_low"],
+                    q_max=plot_data["Q_hi"],
+                    energy_transfer=plot_data["E"],
+                    q2d=plot_data["Q2d"],
+                    e2d=plot_data["E2d"],
+                    scharpf_angle=plot_data["intensity"],
+                    plot_label=plot_data["plot_type"],
+                )
             # update the plot crosshair, if valid values are passed from the model; could be invalid q
             self.view.plot_widget.update_crosshair(eline=data["DeltaE"], qline=data["modQ"])
 
@@ -70,7 +85,7 @@ class HyspecPPTPresenter:
                 q2d=plot_data["Q2d"],
                 e2d=plot_data["E2d"],
                 scharpf_angle=plot_data["intensity"],
-                plot_label=data["plot_type"],
+                plot_label=plot_data["plot_type"],
             )
 
         else:
