@@ -249,7 +249,7 @@ class SelectorWidget(QWidget):
         tooltip = (
             "Selection of cursor momentum transfer calculation:"
             + "\n   - for Powder user enters |Q| directly"
-            + "\n   - for Single Crystal user enters |Q| vial lattice parameters and H, K, L values"
+            + "\n   - for Single Crystal user enters |Q| via lattice parameters and H, K, L values"
         )
         self.powder_rb.setToolTip(tooltip)
         self.sc_rb.setToolTip(tooltip)
@@ -561,7 +561,7 @@ class ExperimentWidget(QWidget):
         self.S2_label.setBuddy(self.S2_edit)
         tooltip_S2 = (
             "Detector tank angle in degrees, a number between -100 and 100,"
-            + "\nbut not between -30 and 30. The detector coverage is +/- 30 degrees"
+            + "\nbut not between -30 and 30. The detector coverage is +/- 30 degrees around S2"
         )
         self.S2_edit.setToolTip(tooltip_S2)
         self.S2_label.setToolTip(tooltip_S2)
