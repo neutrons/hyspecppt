@@ -419,6 +419,8 @@ def test_switch_to_sc_invalid_updated_new(hyspec_app, qtbot):
     # plot crosshair lines are updated
     assert plot_widget.eline_data == 0
     assert plot_widget.qline_data == approx(13.823, rel=1e-6)
+    assert plot_widget.eline.get_color() == "darkred"
+    assert plot_widget.qline.get_color() == "darkred"
 
 
 def test_return_invalid_qmod(hyspec_app, qtbot):
@@ -465,6 +467,8 @@ def test_return_invalid_qmod(hyspec_app, qtbot):
     # plot crosshair lines are not updated / stay default
     assert plot_widget.eline_data == 0
     assert plot_widget.qline_data == 0
+    assert plot_widget.eline.get_color() == "darkred"
+    assert plot_widget.qline.get_color() == "darkred"
 
 
 def test_default_plot_data(hyspec_app, qtbot):
@@ -490,6 +494,8 @@ def test_default_plot_data(hyspec_app, qtbot):
     # assert crosshair
     assert plot_widget.eline_data == 0
     assert plot_widget.qline_data == 0
+    assert plot_widget.eline.get_color() == "darkred"
+    assert plot_widget.qline.get_color() == "darkred"
 
     # assert heatmap
     assert plot_widget.ax.get_ylabel() == r"$\Delta E$"
@@ -533,6 +539,8 @@ def test_update_plot_data(hyspec_app, qtbot):
     # assert crosshair
     assert plot_widget.eline_data == 0
     assert round(plot_widget.qline_data, 2) == approx(7.540)
+    assert plot_widget.eline.get_color() == "darkred"
+    assert plot_widget.qline.get_color() == "darkred"
 
     # assert heatmap
     assert plot_widget.ax.get_ylabel() == r"$\Delta E$"
@@ -573,6 +581,8 @@ def test_emin_deltae_updated_values(hyspec_app, qtbot):
     # assert crosshair
     assert plot_widget.eline_data == -30.0
     assert round(plot_widget.qline_data, 2) == 0.0
+    assert plot_widget.eline.get_color() == "darkred"
+    assert plot_widget.qline.get_color() == "darkred"
 
     # assert heatmap
     assert plot_widget.ax.get_ylabel() == r"$\Delta E$"

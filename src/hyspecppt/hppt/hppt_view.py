@@ -213,13 +213,14 @@ class PlotWidget(QWidget):
         self.set_axes_meta_and_draw_plot()
 
     def set_axes_meta_and_draw_plot(self):
-        """Set labels and draw static canvas
+        """Set labels, color and draw static canvas
         Args:
         """
         self.ax.set_ylabel(r"$\Delta E$")
         self.ax.set_xlabel("$|Q|$")
         self.ax.relim()
         self.ax.autoscale()
+        # set the croshair color
         self.qline.set_color("darkred")
         self.eline.set_color("darkred")
 
