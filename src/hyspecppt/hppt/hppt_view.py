@@ -246,9 +246,11 @@ class SelectorWidget(QWidget):
         self.sc_label = "Single C&rystal"
         self.powder_rb = QRadioButton(self.powder_label)
         self.sc_rb = QRadioButton(self.sc_label)
-        tooltip = "Selection of cursor momentum transfer calculation:" +\
-            "\n   - for Powder user enters |Q| directly" +\
-            "\n   - for Single Crystal user enters |Q| vial lattice parameters and H, K, L values"
+        tooltip = (
+            "Selection of cursor momentum transfer calculation:"
+            + "\n   - for Powder user enters |Q| directly"
+            + "\n   - for Single Crystal user enters |Q| vial lattice parameters and H, K, L values"
+        )
         self.powder_rb.setToolTip(tooltip)
         self.sc_rb.setToolTip(tooltip)
 
@@ -325,12 +327,15 @@ class SingleCrystalWidget(QWidget):
         self.rlu_validator.setNotation(QDoubleValidator.StandardNotation)
 
         # tooltips
-        tooltip_lattice_length = "Lattice parameter {} in Angstroms, a number between 1 and 100." +\
-            "\nSee help for validation rules."
-        tooltip_lattice_angle = "Lattice angle {} in degrees, a number between 30 and 150." +\
-            "\nSee help for validation rules."
-        tooltip_hkl = "Single crystal {} coordinate in r.l.u., a number between -100 and 100" +\
-            "\nSee help for validation rules."
+        tooltip_lattice_length = (
+            "Lattice parameter {} in Angstroms, a number between 1 and 100." + "\nSee help for validation rules."
+        )
+        tooltip_lattice_angle = (
+            "Lattice angle {} in degrees, a number between 30 and 150." + "\nSee help for validation rules."
+        )
+        tooltip_hkl = (
+            "Single crystal {} coordinate in r.l.u., a number between -100 and 100" + "\nSee help for validation rules."
+        )
 
         self.a_edit = QLineEdit(self)
         self.a_label = QLabel("&a:", self)
@@ -554,8 +559,10 @@ class ExperimentWidget(QWidget):
         self.S2_edit = QLineEdit(self)
         self.S2_label = QLabel("Detector angle &S2:", self)
         self.S2_label.setBuddy(self.S2_edit)
-        tooltip_S2 = "Detector tank angle in degrees, a number between -100 and 100," +\
-            "\nbut not between -30 and 30. The detector coverage is +/- 30 degrees"
+        tooltip_S2 = (
+            "Detector tank angle in degrees, a number between -100 and 100,"
+            + "\nbut not between -30 and 30. The detector coverage is +/- 30 degrees"
+        )
         self.S2_edit.setToolTip(tooltip_S2)
         self.S2_label.setToolTip(tooltip_S2)
         self.S2_validator = AbsValidator(bottom=30, top=100, parent=self)
@@ -565,8 +572,12 @@ class ExperimentWidget(QWidget):
         self.Type_combobox = QComboBox(self)
         self.Type_label = QLabel("&Type:", self)
         self.Type_label.setBuddy(self.Type_combobox)
-        tooltip_type = "Quantity to plot. " + PLOT_TYPES[0] + " is the angle between" +\
-            "momentum transfer vector Q and the polarization direction."
+        tooltip_type = (
+            "Quantity to plot. "
+            + PLOT_TYPES[0]
+            + " is the angle between"
+            + "momentum transfer vector Q and the polarization direction."
+        )
         self.Type_combobox.setToolTip(tooltip_type)
         self.Type_label.setToolTip(tooltip_type)
 
@@ -662,9 +673,11 @@ class CrosshairWidget(QWidget):
         self.modQ_edit = QLineEdit(self)
         self.modQ_label = QLabel("|&Q|:", self)
         self.modQ_label.setBuddy(self.modQ_edit)
-        tooltip_modQ = "Magnitude of momentum transfer in inverse Angstroms, " +\
-            f"\na number between 0 and {MAX_MODQ}. Users can enter it directly in powder mode," +\
-            "or calculate it based on lattice parameters and H, K, L for single crystal experiments."
+        tooltip_modQ = (
+            "Magnitude of momentum transfer in inverse Angstroms, "
+            + f"\na number between 0 and {MAX_MODQ}. Users can enter it directly in powder mode,"
+            + "or calculate it based on lattice parameters and H, K, L for single crystal experiments."
+        )
         self.modQ_edit.setToolTip(tooltip_modQ)
         self.modQ_label.setToolTip(tooltip_modQ)
 
