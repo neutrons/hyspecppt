@@ -200,7 +200,7 @@ class PlotWidget(QWidget):
         self.ax.clear()
 
         # update heatmap
-        self.heatmap = self.ax.pcolormesh(q2d, e2d, scharpf_angle)
+        self.heatmap = self.ax.pcolormesh(q2d, e2d, scharpf_angle, cmap="jet")
         self.ax.plot(q_min, energy_transfer)
         self.ax.plot(q_max, energy_transfer)
 
