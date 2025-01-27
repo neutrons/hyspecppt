@@ -246,6 +246,11 @@ class SelectorWidget(QWidget):
         self.sc_label = "Single C&rystal"
         self.powder_rb = QRadioButton(self.powder_label)
         self.sc_rb = QRadioButton(self.sc_label)
+        tooltip = "Selection of cursor momentum transfer calculation:" +\
+            "\n   - for Powder user enters |Q| directly" +\
+            "\n   - for Single Crystal user enters |Q| vial lattice parameters and H, K, L values"
+        self.powder_rb.setToolTip(tooltip)
+        self.sc_rb.setToolTip(tooltip)
 
         selector_group = QButtonGroup(self)
         selector_group.addButton(self.powder_rb)
@@ -319,49 +324,75 @@ class SingleCrystalWidget(QWidget):
         self.rlu_validator = QDoubleValidator(bottom=-100, top=100, parent=self)
         self.rlu_validator.setNotation(QDoubleValidator.StandardNotation)
 
+        # tooltips
+        tooltip_lattice_length = "Lattice parameter {} in Angstroms, a number between 1 and 100." +\
+            "\nSee help for validation rules."
+        tooltip_lattice_angle = "Lattice angle {} in degrees, a number between 30 and 150." +\
+            "\nSee help for validation rules."
+        tooltip_hkl = "Single crystal {} coordinate in r.l.u., a number between -100 and 100" +\
+            "\nSee help for validation rules."
+
         self.a_edit = QLineEdit(self)
         self.a_label = QLabel("&a:", self)
         self.a_label.setBuddy(self.a_edit)
+        self.a_edit.setToolTip(tooltip_lattice_length.format("a"))
+        self.a_label.setToolTip(tooltip_lattice_length.format("a"))
         self.a_edit.setValidator(self.lattice_length_validator)
 
         self.b_edit = QLineEdit(self)
         self.b_label = QLabel("b:", self)
         self.b_label.setBuddy(self.b_edit)
+        self.b_edit.setToolTip(tooltip_lattice_length.format("b"))
+        self.b_label.setToolTip(tooltip_lattice_length.format("b"))
         self.b_edit.setValidator(self.lattice_length_validator)
 
         self.c_edit = QLineEdit(self)
         self.c_label = QLabel("c:", self)
         self.c_label.setBuddy(self.c_edit)
+        self.c_edit.setToolTip(tooltip_lattice_length.format("c"))
+        self.c_label.setToolTip(tooltip_lattice_length.format("c"))
         self.c_edit.setValidator(self.lattice_length_validator)
 
         self.alpha_edit = QLineEdit(self)
         self.alpha_label = QLabel(alpha + ":", self)
         self.alpha_label.setBuddy(self.alpha_edit)
+        self.alpha_edit.setToolTip(tooltip_lattice_angle.format(alpha))
+        self.alpha_label.setToolTip(tooltip_lattice_angle.format(alpha))
         self.alpha_edit.setObjectName("alpha")
 
         self.beta_edit = QLineEdit(self)
         self.beta_label = QLabel(beta + ":", self)
         self.beta_label.setBuddy(self.beta_edit)
+        self.beta_edit.setToolTip(tooltip_lattice_angle.format(beta))
+        self.beta_label.setToolTip(tooltip_lattice_angle.format(beta))
         self.beta_edit.setObjectName("beta")
 
         self.gamma_edit = QLineEdit(self)
         self.gamma_label = QLabel(gamma + ":", self)
         self.gamma_label.setBuddy(self.gamma_edit)
+        self.gamma_edit.setToolTip(tooltip_lattice_angle.format(gamma))
+        self.gamma_label.setToolTip(tooltip_lattice_angle.format(gamma))
         self.gamma_edit.setObjectName("gamma")
 
         self.h_edit = QLineEdit(self)
         self.h_label = QLabel("H:", self)
         self.h_label.setBuddy(self.h_edit)
+        self.h_edit.setToolTip(tooltip_hkl.format("H"))
+        self.h_label.setToolTip(tooltip_hkl.format("H"))
         self.h_edit.setValidator(self.rlu_validator)
 
         self.k_edit = QLineEdit(self)
         self.k_label = QLabel("K:", self)
         self.k_label.setBuddy(self.k_edit)
+        self.k_edit.setToolTip(tooltip_hkl.format("K"))
+        self.k_label.setToolTip(tooltip_hkl.format("K"))
         self.k_edit.setValidator(self.rlu_validator)
 
         self.l_edit = QLineEdit(self)
         self.l_label = QLabel("L:", self)
         self.l_label.setBuddy(self.l_edit)
+        self.l_edit.setToolTip(tooltip_hkl.format("L"))
+        self.l_label.setToolTip(tooltip_hkl.format("L"))
         self.l_edit.setValidator(self.rlu_validator)
 
         # cumulative angle validator
@@ -503,6 +534,9 @@ class ExperimentWidget(QWidget):
         self.Ei_edit = QLineEdit(self)
         self.Ei_label = QLabel("Incident energy &Ei:", self)
         self.Ei_label.setBuddy(self.Ei_edit)
+        tooltip_Ei = "Incident energy in meV, a number between 0 and 100."
+        self.Ei_edit.setToolTip(tooltip_Ei)
+        self.Ei_label.setToolTip(tooltip_Ei)
         self.Ei_validator = QDoubleValidator(bottom=0, top=100, parent=self)
         self.Ei_validator.setNotation(QDoubleValidator.StandardNotation)
         self.Ei_edit.setValidator(self.Ei_validator)
@@ -510,6 +544,9 @@ class ExperimentWidget(QWidget):
         self.Pangle_edit = QLineEdit(self)
         self.Pangle_label = QLabel("&Polarization angle:", self)
         self.Pangle_label.setBuddy(self.Pangle_edit)
+        tooltip_P_angle = "Polarization angle with respect to incident beam, in degrees, a number between -180 and 180."
+        self.Pangle_edit.setToolTip(tooltip_P_angle)
+        self.Pangle_label.setToolTip(tooltip_P_angle)
         self.Pangle_validator = QDoubleValidator(bottom=-180, top=180, parent=self)
         self.Pangle_validator.setNotation(QDoubleValidator.StandardNotation)
         self.Pangle_edit.setValidator(self.Pangle_validator)
@@ -517,6 +554,10 @@ class ExperimentWidget(QWidget):
         self.S2_edit = QLineEdit(self)
         self.S2_label = QLabel("Detector angle &S2:", self)
         self.S2_label.setBuddy(self.S2_edit)
+        tooltip_S2 = "Detector tank angle in degrees, a number between -100 and 100," +\
+            "\nbut not between -30 and 30. The detector coverage is +/- 30 degrees"
+        self.S2_edit.setToolTip(tooltip_S2)
+        self.S2_label.setToolTip(tooltip_S2)
         self.S2_validator = AbsValidator(bottom=30, top=100, parent=self)
         self.S2_validator.setNotation(QDoubleValidator.StandardNotation)
         self.S2_edit.setValidator(self.S2_validator)
@@ -524,6 +565,10 @@ class ExperimentWidget(QWidget):
         self.Type_combobox = QComboBox(self)
         self.Type_label = QLabel("&Type:", self)
         self.Type_label.setBuddy(self.Type_combobox)
+        tooltip_type = "Quantity to plot. " + PLOT_TYPES[0] + " is the angle between" +\
+            "momentum transfer vector Q and the polarization direction."
+        self.Type_combobox.setToolTip(tooltip_type)
+        self.Type_label.setToolTip(tooltip_type)
 
         layout = QGridLayout()
         self.setLayout(layout)
@@ -610,10 +655,18 @@ class CrosshairWidget(QWidget):
         self.DeltaE_edit = QLineEdit(self)
         self.DeltaE_label = QLabel("&DeltaE:", self)
         self.DeltaE_label.setBuddy(self.DeltaE_edit)
+        tooltip_DeltaE = "Energy transfer in meV"
+        self.DeltaE_edit.setToolTip(tooltip_DeltaE)
+        self.DeltaE_label.setToolTip(tooltip_DeltaE)
 
         self.modQ_edit = QLineEdit(self)
         self.modQ_label = QLabel("|&Q|:", self)
         self.modQ_label.setBuddy(self.modQ_edit)
+        tooltip_modQ = "Magnitude of momentum transfer in inverse Angstroms, " +\
+            f"\na number between 0 and {MAX_MODQ}. Users can enter it directly in powder mode," +\
+            "or calculate it based on lattice parameters and H, K, L for single crystal experiments."
+        self.modQ_edit.setToolTip(tooltip_modQ)
+        self.modQ_label.setToolTip(tooltip_modQ)
 
         box_layout = QHBoxLayout()
         box_layout.addWidget(self.DeltaE_label)
