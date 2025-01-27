@@ -575,7 +575,7 @@ class ExperimentWidget(QWidget):
         tooltip_type = (
             "Quantity to plot. "
             + PLOT_TYPES[0]
-            + " is the angle between"
+            + " is the angle between "
             + "momentum transfer vector Q and the polarization direction."
         )
         self.Type_combobox.setToolTip(tooltip_type)
