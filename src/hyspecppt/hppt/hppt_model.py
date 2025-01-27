@@ -173,13 +173,13 @@ class HyspecPPTModel:
 
     def check_plot_update(self, deltaE) -> bool:
         """Returns bool to indicate whether the Emin is different and indicate replotting"""
-        # calculate the new emin
+        # calculate the new Emin
         if deltaE is not None and deltaE <= -self.Ei:
-            EMin = 1.2 * deltaE
+            Emin = 1.2 * deltaE
         else:
-            EMin = -self.Ei
+            Emin = -self.Ei
         # check if it the same
-        return self.EMin != EMin
+        return self.Emin != Emin
 
     def calculate_graph_data(self) -> dict[str, np.array]:
         """Returns a dictionary of arrays [Q_low, Q_hi, E, Q2d, E2d, data of plot_types]"""
@@ -188,11 +188,11 @@ class HyspecPPTModel:
 
         # adjust minimum energy
         if self.cp.DeltaE is not None and self.cp.DeltaE <= -self.Ei:
-            self.EMin = 1.2 * self.cp.DeltaE
+            self.Emin = 1.2 * self.cp.DeltaE
         else:
-            self.EMin = -self.Ei
+            self.Emin = -self.Ei
 
-        E = np.linspace(self.EMin, self.Ei * 0.9, N_POINTS)
+        E = np.linspace(self.Emin, self.Ei * 0.9, N_POINTS)
 
         # Calculate lines for the edges of the tank
         ki = np.sqrt(self.Ei) * SE2K

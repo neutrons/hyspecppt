@@ -468,7 +468,7 @@ def test_return_invalid_qmod(hyspec_app, qtbot):
 
 
 def test_default_plot_data(hyspec_app, qtbot):
-    """Test to compare the plot image for default values"""
+    """Test to compare the plot meta data for default values"""
     # unicode
     alpha = "\u03b1"
     square = "\u00b2"
@@ -498,7 +498,7 @@ def test_default_plot_data(hyspec_app, qtbot):
 
 
 def test_update_plot_data(hyspec_app, qtbot):
-    """Test to compare the plot image for default values"""
+    """Test to compare the updated plot meta data for default values"""
     # unicode
     alpha = "\u03b1"
     subscript_s = "\u209b"
@@ -538,3 +538,42 @@ def test_update_plot_data(hyspec_app, qtbot):
     assert plot_widget.ax.get_ylabel() == r"$\Delta E$"
     assert plot_widget.ax.get_xlabel() == "$|Q|$"
     assert plot_widget.cb.ax.get_ylabel() == alpha + subscript_s
+
+
+def test_emin_deltae_updated_values(hyspec_app, qtbot):
+    """Test deltae value the causes replotting"""
+    # show the app
+    hyspec_app.show()
+    qtbot.waitUntil(hyspec_app.show, timeout=5000)
+    assert hyspec_app.isVisible()
+
+    hyspec_view = hyspec_app.main_window.HPPT_view
+    hyspec_model = hyspec_app.main_window.HPPT_presenter.model
+    crosshair_widget = hyspec_view.crosshair_widget
+    plot_widget = hyspec_view.plot_widget
+
+    assert hyspec_model.Emin == -20
+    default_axes = plot_widget.heatmap.get_array()
+    # set a valid DeltaE value
+    crosshair_widget.DeltaE_edit.clear()
+
+    qtbot.keyClicks(crosshair_widget.DeltaE_edit, "-30")
+    assert crosshair_widget.DeltaE_edit.text() == "-30"
+
+    # Simulate gaining/losing focus
+    crosshair_widget.DeltaE_edit.setFocus()
+    qtbot.keyPress(crosshair_widget.DeltaE_edit, Qt.Key_Return)
+
+    # assert emin has changed
+    assert hyspec_model.Emin == -36
+
+    # plot should be updated
+    assert not (default_axes == plot_widget.heatmap.get_array()).all()
+
+    # assert crosshair
+    assert plot_widget.eline_data == -30.0
+    assert round(plot_widget.qline_data, 2) == 0.0
+
+    # assert heatmap
+    assert plot_widget.ax.get_ylabel() == r"$\Delta E$"
+    assert plot_widget.ax.get_xlabel() == "$|Q|$"
