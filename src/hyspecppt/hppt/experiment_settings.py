@@ -10,8 +10,8 @@ subscript_s = "\u209b"
 # defined plot types
 PLOT_TYPES = [
     alpha + subscript_s,
-    "cos" + alpha + subscript_s + square,
-    "(1+cos" + alpha + subscript_s + square + ")/2",
+    "cos" + square + alpha + subscript_s,
+    "(1+cos" + square + alpha + subscript_s + ")/2",
 ]
 
 # default parameters
