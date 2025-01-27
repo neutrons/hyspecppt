@@ -220,6 +220,9 @@ class PlotWidget(QWidget):
         self.ax.set_xlabel("$|Q|$")
         self.ax.relim()
         self.ax.autoscale()
+        self.qline.set_color("darkred")
+        self.eline.set_color("darkred")
+
         self.static_canvas.draw()
 
 
