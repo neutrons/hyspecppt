@@ -8,7 +8,6 @@ on:
 
 jobs:
   anaconda-publish:
-    name: upload release to Anaconda
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -20,7 +19,13 @@ jobs:
           environment-file: environment.yml
           cache-environment-key: ${{ runner.os }}-env-${{ hashFiles('**/environment.yml') }}
           cache-downloads-key: ${{ runner.os }}-downloads-${{ hashFiles('**/environment.yml') }}
-    
+          condarc: |
+            channels:
+              - conda-forge
+      - name: build python wheel
+        shell: bash -l {0}
+        run: |
+          python -m build --wheel --no-isolation    
       - name: build conda package
         run: |
           # set up environment
