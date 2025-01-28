@@ -52,7 +52,7 @@ def test_config_path_does_not_exist(monkeypatch, tmp_path):
         """
         [global.other]
         #url to documentation
-        help_url = https://github.com/neutrons/hyspecppt/blob/next/README.md
+        help_url = https://hyspecppt.readthedocs.io/en/latest/
         """
     ],
     indirect=True,
@@ -128,7 +128,7 @@ def test_field_validate_fields_missing(monkeypatch, user_conf_file):
     assert user_config.config_file_path == user_conf_file
 
     # check all field values have the same values as the user configuration file
-    assert get_data("global.other", "help_url") == "https://github.com/neutrons/hyspecppt/blob/next/README.md"
+    assert get_data("global.other", "help_url") == "https://hyspecppt.readthedocs.io/en/latest/"
 
 
 @pytest.mark.parametrize("user_conf_file", ["""[global.other]"""], indirect=True)
@@ -141,7 +141,7 @@ def test_get_data_valid(monkeypatch, user_conf_file):
     # section
     assert len(get_data("global.other", "")) == 1
     # fields
-    assert get_data("global.other", "help_url") == "https://github.com/neutrons/hyspecppt/blob/next/README.md"
+    assert get_data("global.other", "help_url") == "https://hyspecppt.readthedocs.io/en/latest/"
 
     assert config.is_valid()
 

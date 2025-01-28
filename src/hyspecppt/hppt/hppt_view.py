@@ -223,8 +223,8 @@ class PlotWidget(QWidget):
         self.ax.relim()
         self.ax.autoscale()
         # set the croshair color
-        self.qline.set_color("darkred")
-        self.eline.set_color("darkred")
+        self.qline.set_color("darkgrey")
+        self.eline.set_color("darkgrey")
 
         self.static_canvas.draw()
 
