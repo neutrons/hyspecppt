@@ -9,12 +9,8 @@ Please make sure to
 review and adhere to these guidelines when contributing to the project.
 
 
-+++++++++
-Contents
-+++++++++
-
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    hyspecpptclasses
    hyspecpptfields
