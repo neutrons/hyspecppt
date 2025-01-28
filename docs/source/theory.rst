@@ -36,7 +36,7 @@ Denoting the polarization direction :math:`\vec P=\begin{pmatrix}\sin\alpha_P\\\
 
     \cos\alpha_s=\frac{\vec P\cdot \vec Q}{|Q|}
 
-For both powder and single crystal experiments, the user will want to find :math:`\alpha_s` at a given energy and momentum transfer. Since different direction of the same momentum transfer in the crystal are achieved by rotating the sample around the laboratory frame, it is enough to plot the Scharpf angle in a powder mode, and overplot the magnitude of :math:`\vec Q` given the lattice parameters.
+For both powder and single crystal experiments, the user will want to find :math:`\alpha_s` at a given energy and momentum transfer. Since different directions of the same momentum transfer in the crystal are achieved by rotating the sample around the laboratory frame, it is enough to plot the Scharpf angle in a powder mode, and overplot the magnitude of :math:`\vec Q` given the lattice parameters.
 
 .. math::
 
