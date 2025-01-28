@@ -7,41 +7,11 @@ Hyspecppt
 
 **Hyspec P**\ olarization **P**\ lanning **T**\ ool for Single Crystal and Powder samples
 
-Tool that enables users to analyze polarized neutron experiments on powder and single crystal samples using the HYSPEC instrument.
+This tool enables users to select the polarization angle neutron experiments on powder and single crystal samples, when using the HYSPEC instrument.
 
 .. note::
 
    This project is under active development.
-
-
-
-+++++++++++++
-Installation
-+++++++++++++
-
-* Create the development conda environment
-
-   .. code-block:: bash
-
-      $ conda env create
-
-* Activate the environment
-
-   .. code-block:: bash
-
-      $ conda activate hyspecppt_dev
-
-* Install the application in editable mode
-
-   .. code-block:: bash
-
-      $ pip install -e .
-
-* Start the tool
-
-   .. code-block:: bash
-
-      $ hyspecppt
 
 
 +++++++++
@@ -51,4 +21,7 @@ Contents
 .. toctree::
    :maxdepth: 1
 
+   theory
+   gui
+   installation
    design/index
