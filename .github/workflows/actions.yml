@@ -42,8 +42,6 @@ jobs:
         condarc: |
           channels:
             - conda-forge
-            - mantid/label/nightly
-            - oncat
     - name: Build python wheel
       run: |
         python -m build --wheel --no-isolation
