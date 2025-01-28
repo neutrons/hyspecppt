@@ -15,7 +15,7 @@ jobs:
         shell: bash -l {0}
     steps:
       - uses: actions/checkout@v4
-      - uses: conda-incubator/setup-miniconda@v3
+      - uses: mamba-org/setup-micromamba@v2
         with:
           auto-update-conda: true
           channels: conda-forge,defaults
