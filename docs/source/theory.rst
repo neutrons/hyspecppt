@@ -3,7 +3,7 @@
 Theoretical considerations
 ##########################
 
-Neutron polarization techniques are critical tools for separating the spin-dependent and nuclear scattering components in a diverse range of quantum materials. In the current suite of direct geometry spectrometers (DGS) at the facility, HYSPEC is the only instrument specifically equipped to perform polarized neutron experiments on both powder and single crystal samples. 
+Neutron polarization techniques are critical tools for separating the spin-dependent and nuclear scattering components in a diverse range of quantum materials. In the current suite of direct geometry spectrometers (DGS) at the facility, HYSPEC is the only instrument specifically equipped to perform polarized neutron experiments on both powder and single crystal samples.
 The underlying physics of polarized neutron scattering stems from the different interactions between neutrons and the sample, depending on the relative orientation of the neutron spin polarization and the momentum transfer vector, :math:`\vec Q`. Specifically, certain types of magnetic interactions become visible when the neutron polarization :math:`\vec P` is aligned parallel to the momentum transfer, while other types of interactions are highlighted when these two directions are perpendicular.
 
 In the time of flight instruments, the direction of momentum transfer varies not only from detector to detector, but also as a function of the incident and scattered neutron energies. Therefore the measurements contain points witm many different angles between :math:`\vec P` and  :math:`\vec Q`.
@@ -22,12 +22,12 @@ The planning tool assumes that the polarization angle of the neutron with respec
 
 Here :math:`E_i` and :math:`E_f` are incident and final energies, :math:`k_{i,f}` are the initial and final momentum, :math:`\Delta E` is the energy transfer, :math:`\vec Q` is the momentum transfer, and :math:`\theta` is the scattering angle, which we assume that is the in-plane component only.
 
-From here, 
+From here,
 
 .. math::
 
     \cos\theta=\frac{k_i^2+k_f^2-Q^2}{2k_i k_f}
-    
+
 Note that scattering can happen both left and right of the incident beam direction. Both have the same magnitude of the scattering angle, but the sign is different. Since this would make difficult the determination of the Scharpf angle, the experimental workflow would place detectors on only one side. This allows us to determine the sign of the scattering angle.
 
 Denoting the polarization direction :math:`\vec P=\begin{pmatrix}\sin\alpha_P\\\cos\alpha_P\end{pmatrix}`, one can get the Scharpf angle direction using
@@ -36,7 +36,7 @@ Denoting the polarization direction :math:`\vec P=\begin{pmatrix}\sin\alpha_P\\\
 
     \cos\alpha_s=\frac{\vec P\cdot \vec Q}{|Q|}
 
-For both powder and single crystal experiments, the user will want to find :math:`\alpha_s` at a given energy and momentum transfer. Since different direction of the same momentum transfer in the crystal are achieved by rotating the sample around the laboratory frame, it is enough to plot the Scharpf angle in a powder mode, and overplot the magnitude of :math:`\vec Q` given the lattice parameters. 
+For both powder and single crystal experiments, the user will want to find :math:`\alpha_s` at a given energy and momentum transfer. Since different direction of the same momentum transfer in the crystal are achieved by rotating the sample around the laboratory frame, it is enough to plot the Scharpf angle in a powder mode, and overplot the magnitude of :math:`\vec Q` given the lattice parameters.
 
 .. math::
 
@@ -45,4 +45,3 @@ For both powder and single crystal experiments, the user will want to find :math
     \end{pmatrix}\right|
 
 The form of the :math:`B` matrix will be the one used in Mantid (https://docs.mantidproject.org/nightly/concepts/Lattice.html).
-

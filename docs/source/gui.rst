@@ -7,8 +7,8 @@ As of version 1.0.0 the graphical user interface for the planning tool looks lik
 
 .. image:: images/ppt_sc.png
    :width: 600
-   
-The user is supposed to select the incident energy, detector tank angle, and the angle between polarization and the 
+
+The user is supposed to select the incident energy, detector tank angle, and the angle between polarization and the
 beam direction. This will generate a map of the angle between the polarization and momentum transfer :math:`\alpha_s`, or some
 relevant derived quantity. Currently we have implemented :math:`\cos^2\alpha_s` and :math:`(1+\cos^2\alpha_s)/2`.
 
@@ -27,7 +27,7 @@ One can use the plotting toolbar to
 Validation
 ----------
 
-The graphical user interface will provide a visual feedback (red border) if some of the quantities required for calculations are missing 
+The graphical user interface will provide a visual feedback (red border) if some of the quantities required for calculations are missing
 or outside limits. The tooltips provide this information. In addition, in the single crystal mode, the sum of the lattice angles must be breater than :math:`360^\circ`, and the sum of any two angles must be greater than the remaining one.
 
 Negative energy transfer

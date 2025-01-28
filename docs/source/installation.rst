@@ -27,4 +27,3 @@ Installation
    .. code-block:: bash
 
       $ hyspecppt
-
