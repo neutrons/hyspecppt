@@ -4,7 +4,11 @@ description = "Polarization tool for neutrons"
 dynamic = ["version"]
 requires-python = ">=3.10"
 dependencies = [
-  # list all runtime dependencies here
+  "pyside6",
+  "qtpy",
+  "numpy",
+  "scipy",
+  "matplotlib"
 ]
 license = { text = "MIT" }
 keywords = ["neutrons", "polarization", "single crystal", "powder"]

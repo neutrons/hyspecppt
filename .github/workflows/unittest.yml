@@ -41,7 +41,7 @@ jobs:
       - name: build python wheel - pypi
         run: |
           # test that the python wheel builds
-          VERSION=$(versioningit .) python -m build --wheel --no-isolation
+          python -m build --wheel --no-isolation
           twine check dist/hyspecppt-*.whl
       - name: build conda package
         run: |
