@@ -37,6 +37,12 @@ requirements:
 
   run:
     - python
+    - pyside6
+    - qtpy
+    - numpy
+    - matplotlib
+    - scipy
+
 
 about:
   home: {{ url }}
