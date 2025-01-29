@@ -43,7 +43,6 @@ requirements:
     - matplotlib
     - scipy
 
-
 about:
   home: {{ url }}
   license: {{ license }}
