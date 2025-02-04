@@ -216,5 +216,5 @@ def test_zero_alpha():
     """test alpha = 0 at S2=-40, Q=2.1, Ei = 20, P_angle = 70"""
     model = HyspecPPTModel()
     model.set_experiment_data(Ei=20.0, S2=-40.0, alpha_p=70.0, plot_type=PLOT_TYPES[0])
-    # This is the point of Q=2.1, alpha should be close to 0
+    # This is the point of Q ~ 2.1 \\A-1, E ~ 0 meV, alpha should be close to 0
     assert np.isclose(model.calculate_graph_data()["intensity"][94][105], 0.209092)
