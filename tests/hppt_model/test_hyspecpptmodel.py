@@ -212,8 +212,9 @@ def test_calculate_graph_data_consistency():
     assert np.allclose((d_45_45["intensity"] + d_m45_45["intensity"])[inds], 1)
     assert np.allclose((d_45_m45["intensity"] + d_m45_m45["intensity"])[inds], 1)
 
+
 def test_zero_alpha():
-    """test alpha = 0 at S2=-40, Q=2.1, Ei = 20, P_angle = 70"""
+    """Test alpha = 0 at S2=-40, Q=2.1, Ei = 20, P_angle = 70"""
     model = HyspecPPTModel()
     model.set_experiment_data(Ei=20.0, S2=-40.0, alpha_p=70.0, plot_type=PLOT_TYPES[0])
     # This is the point of Q ~ 2.1 \\A-1, E ~ 0 meV, alpha should be close to 0
