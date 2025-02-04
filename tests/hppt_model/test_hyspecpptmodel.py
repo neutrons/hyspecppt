@@ -73,8 +73,8 @@ def test_calculate_graph_data_alpha():
     assert np.isnan(model.calculate_graph_data()["intensity"][0][0])  # not allowed (Q, E) positions
     assert np.isnan(model.calculate_graph_data()["intensity"][84][4])  # not allowed (Q, E) positions
 
-    assert np.isclose(model.calculate_graph_data()["intensity"][84][5], 166.59943)
-    assert np.isclose(model.calculate_graph_data()["intensity"][199][0], 114.73561)
+    assert np.isclose(model.calculate_graph_data()["intensity"][84][5], 136.5994336)
+    assert np.isclose(model.calculate_graph_data()["intensity"][199][0], 84.7356103)
     assert np.isnan(model.calculate_graph_data()["intensity"][199][1])  # not allowed (Q, E) positions
 
 
@@ -101,8 +101,8 @@ def test_calculate_graph_data_cos2_alpha():
     assert np.isnan(model.calculate_graph_data()["intensity"][0][0])  # not allowed (Q, E) positions
     assert np.isnan(model.calculate_graph_data()["intensity"][84][4])  # not allowed (Q, E) positions
 
-    assert np.isclose(model.calculate_graph_data()["intensity"][84][5], np.cos(np.radians(166.59943)) ** 2)
-    assert np.isclose(model.calculate_graph_data()["intensity"][199][0], np.cos(np.radians(114.73561)) ** 2)
+    assert np.isclose(model.calculate_graph_data()["intensity"][84][5], np.cos(np.radians(136.5994336)) ** 2)
+    assert np.isclose(model.calculate_graph_data()["intensity"][199][0], np.cos(np.radians(84.7356103)) ** 2)
     assert np.isnan(model.calculate_graph_data()["intensity"][199][1])  # not allowed (Q, E) positions
 
 
@@ -129,8 +129,8 @@ def test_calculate_graph_data_intensity():
     assert np.isnan(model.calculate_graph_data()["intensity"][0][0])  # not allowed (Q, E) positions
     assert np.isnan(model.calculate_graph_data()["intensity"][84][4])  # not allowed (Q, E) positions
 
-    assert np.isclose(model.calculate_graph_data()["intensity"][84][5], (np.cos(np.radians(166.59943)) ** 2 + 1) / 2)
-    assert np.isclose(model.calculate_graph_data()["intensity"][199][0], (np.cos(np.radians(114.73561)) ** 2 + 1) / 2)
+    assert np.isclose(model.calculate_graph_data()["intensity"][84][5], (np.cos(np.radians(136.5994336)) ** 2 + 1) / 2)
+    assert np.isclose(model.calculate_graph_data()["intensity"][199][0], (np.cos(np.radians(84.7356103)) ** 2 + 1) / 2)
     assert np.isnan(model.calculate_graph_data()["intensity"][199][1])  # not allowed (Q, E) positions
 
 
@@ -179,8 +179,8 @@ def test_calculate_graph_data_intensity_negative_S2():
     assert np.isnan(model.calculate_graph_data()["intensity"][0][0])  # not allowed (Q, E) positions
     assert np.isnan(model.calculate_graph_data()["intensity"][84][4])  # not allowed (Q, E) positions
 
-    assert np.isclose(model.calculate_graph_data()["intensity"][84][5], 0.736049)
-    assert np.isclose(model.calculate_graph_data()["intensity"][199][0], 0.995790)
+    assert np.isclose(model.calculate_graph_data()["intensity"][84][5], 0.5268558)
+    assert np.isclose(model.calculate_graph_data()["intensity"][199][0], 0.912457)
     assert np.isnan(model.calculate_graph_data()["intensity"][199][1])  # not allowed (Q, E) positions
 
 
@@ -211,3 +211,12 @@ def test_calculate_graph_data_consistency():
     inds = np.isfinite(d_45_45["intensity"])
     assert np.allclose((d_45_45["intensity"] + d_m45_45["intensity"])[inds], 1)
     assert np.allclose((d_45_m45["intensity"] + d_m45_m45["intensity"])[inds], 1)
+
+
+def test_zero_alpha():
+    """Test alpha = 0 at S2=-40, Q=2.1, Ei = 20, P_angle = 70"""
+    model = HyspecPPTModel()
+    model.set_experiment_data(Ei=20.0, S2=-40.0, alpha_p=70.0, plot_type=PLOT_TYPES[0])
+    assert np.isclose(
+        model.calculate_graph_data()["intensity"][94][105], 0.209092
+    )  # This is the point of Q=2.1, alpha should be close to 0
