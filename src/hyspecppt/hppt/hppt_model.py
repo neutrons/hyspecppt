@@ -221,11 +221,11 @@ class HyspecPPTModel:
             Qx = kf2d * np.sqrt((1 - cos_theta**2))
 
         # Transform polarization angle in the lab frame to vector
-        Px = np.cos(np.radians(self.alpha_p))
-        Pz = np.sin(np.radians(self.alpha_p))
+        Px = np.sin(np.radians(self.alpha_p))
+        Pz = np.cos(np.radians(self.alpha_p))
 
         # Calculate angle between polarization vector and momentum transfer
-        cos_ang_PQ = (Qx * Px + Qz * Pz) / Q2d / np.sqrt(Px**2 + Pz**2)
+        cos_ang_PQ = (Qx * Px + Qz * Pz) / Q2d
 
         # Select return value for intensity
         if self.plot_type == PLOT_TYPES[0]:  # alpha
