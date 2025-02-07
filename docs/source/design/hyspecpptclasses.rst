@@ -9,44 +9,39 @@ Model-View-Presenter
 HyspecPPT Model
 +++++++++++++++
 
-The HyspecPPTModel encapsulates the backend functionality. It maintains one object: experiment (Experiment) that has all the valid values. The object fields are updated
+The HyspecPPTModel encapsulates the backend functionality. The object fields are updated
 every time there are new valid values received from the user (front end).
 
 .. mermaid::
 
  classDiagram
-    HyspecPPTModel <|-- Experiment
-    Experiment "1" -->"1" CrosshairParameters
+    HyspecPPTModel "1" -->"1" CrosshairParameters
     CrosshairParameters "1" -->"1" SingleCrystalParameters
 
-
     class HyspecPPTModel{
-        +Experiment experiment
-    }
-
-    class Experiment{
         +float incident_energy_e
         +float detector_tank_angle_s
         +float polarization_direction_angle_p
         +enum 'PlotType' plot_type
         +CrosshairParameters cr_parameters
-        +calculate_graph_data(incident_energy_e:float, detector_tank_angle_s:float,polarization_direction_angle_p:float,plot_type:str)
-        +store_data(incident_energy_e:float, detector_tank_angle_s:float,polarization_direction_angle_p:float,plot_type:str)
-        -get_emin(delta_e, incident_energy_e)
+        +set_single_crystal_data(params: dict[str, float])
+        +get_single_crystal_data()
+        +set_crosshair_data(current_experiment_type: str, DeltaE: float = None, modQ: float = None)
+        +get_crosshair_data()
+        +set_experiment_data(Ei: float, S2: float, alpha_p: float, plot_type: str)
+        +get_experiment_data()
+        +check_plot_update(deltaE)
+        +calculate_graph_data()
     }
 
 
     class CrosshairParameters{
-        +enum 'ExperimentType' current_experiment_type
         +float delta_e
         +float mod_q
         +SingleCrystalParameters sc_parameters
-        +calculate_crosshair(current_experiment_type:str, delta_e:float, mod_q:float, sc_parameters:dict)
-        +get_qmod()
-        +store_data(current_experiment_type:str, delta_e:float, mod_q:float, sc_parameters:dictr)
-        +set_experiment_type(experiment_type:str)
-        +update_experiment_type_return_qmod_data(experiment_type:str)
-        +update_sc_return_qmod(sc_data: dict)
+        +set_crosshair(current_experiment_type: str, DeltaE: float = None, modQ: float = None)
+        +get_crosshair()
+        +get_experiment_type()
     }
 
     class SingleCrystalParameters{
@@ -59,14 +54,15 @@ every time there are new valid values received from the user (front end).
         +float lattice_unit_h
         +float lattice_unit_k
         +float lattice_unit_l
+        +set_parameters(params: dict[str, float])
         +get_parameters()
-        +set_parameters()
+        +calculate_modQ()
     }
 
 Experiment Settings
 --------------------
 
-The parameters' default values for the Experiment object are stored in a file, e.g experiment_settings.py, next to the model file. They are imported
+The parameters' default values for the application are stored in a file, experiment_settings.py, next to the model file. They are imported
 in the HyspecPPT Model file and used during the Experiment object's initialization and data calculations. The options for experiment and plot types are used in HyspecPPT Model and View files.
 More specifically the parameters with their values are:
 
@@ -83,22 +79,29 @@ More specifically the parameters with their values are:
                 ALPHA = "alpha_s"
                 COSALPHA = "cos^2(alpha_s)"
                 COSALPHAPLUS1 = "1+cos^2(alpha_s))/2"
-    * default_experiment_type = ExperimentType.POWDER
-    * default_plot_type = PlotType.COS_2_ALPHA_S
-    * incident_energy_e = 20
-    * detector_tank_angle_s = 30
-    * polarization_direction_angle_p = 0
-    * delta_e = 0
-    * mod_q = 0
-    * lattice_a = 1
-    * lattice_b = 1
-    * lattice_c = 1
-    * lattice_alpha = 90
-    * lattice_beta = 90
-    * lattice_gamma = 90
-    * lattice_unit_h = 0
-    * lattice_unit_k = 0
-    * lattice_unit_l = 0
+    * DEFAULT_MODE:dict =
+        * current_experiment_type="single_crystal"
+    * DEFAULT_CROSSHAIR: dict =
+        * delta_e = 0
+        * mod_q = 0
+    * DEFAULT_EXPERIMENT:dict =
+        * plot_type = PlotType.COS_2_ALPHA_S
+        * incident_energy_e = 20
+        * detector_tank_angle_s = 30
+        * polarization_direction_angle_p = 0
+    * DEFAULT_LATTICE:dict =
+        * a = 1
+        * b = 1
+        * c = 1
+        * alpha = 90
+        * beta = 90
+        * gamma = 90
+        * h = 0
+        * k = 0
+        * l = 0
+    * MAX_MODQ = 15 -- maximum momentum transfer
+    * N_POINTS = 200 -- number of points in the plot
+    * TANK_HALF_WIDTH = 30.0 -- tank half-width
     * number_of_pixels = 200
 
 Functions

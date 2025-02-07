@@ -13,4 +13,5 @@ review and adhere to these guidelines when contributing to the project.
    :maxdepth: 1
 
    hyspecpptclasses
+   cfsignatures
    hyspecpptfields
