@@ -3,7 +3,8 @@
 Model-View-Presenter
 ######################
 
-
+The software is organized in a Model-View-Presenter pattern.
+The main (HyspecPPT) models, view and presenter classes and their components interactions are described here.
 
 
 HyspecPPT Model
@@ -104,157 +105,6 @@ More specifically the parameters with their values are:
     * TANK_HALF_WIDTH = 30.0 -- tank half-width
     * number_of_pixels = 200
 
-Functions
--------------
-
-The function signatures and description are included below.
-
-**-- Experiment**
-
-* def calculate_graph_data(incident_energy_e:float, detector_tank_angle_s:float,polarization_direction_angle_p:float,plot_type:str) --> dict : The function receives data parameters, updates the Experiment object's field values and calculates and returns the plot data.
-
-    Internally store_data() is called to store the parameters. The returned data dictionary needed for the plot has the following format:
-
-     .. code-block:: bash
-
-        {
-            "q_min": [], //1-d array
-            "q_max": [], //1-d array
-            "energy_transfer" : [], //1-d array
-            "q2d" :[[],], //2-d array
-            "e2d" :[[],], //2-d array
-            "scharpf_angle" :[[],], //2-d array
-        }
-
-* def store_data(incident_energy_e:float, detector_tank_angle_s:float,polarization_direction_angle_p:float,plot_type:str) --> None : The function receives data parameters and updates the Experiment object's field values.
-* def get_emin(delta_e:float, incident_energy_e:float) --> float : The function returns the e_min value, based on delta_e and incident_energy_e. If delta_e < -incident_energy_e, then e_min =1.2* delta_e, else e_min = delta_e.
-
-The get_emin is only used internally in the Experiment Model.
-
-
-**-- CrosshairParameters**
-
-* def calculate_crosshair(current_Experiment_type:str, delta_e:float, mod_q:float, sc_parameters:dict) --> dict : The function returns the crosshair values. For the SingleCrystal mode it calculates the eline and qline from the sc_parameters. For Powder, it returns delta_e and qmod as eline and qline respectively. The single crystal parameters dictionary have the following format
-
-     .. code-block:: bash
-
-        {
-            "sc_parameters" :
-            {
-                "lattice_a":<a>,
-                "lattice_b":<b>,
-                "lattice_c":<c>,
-                "lattice_alpha":<alpha>,
-                "lattice_beta":<beta>,
-                "lattice_gamma":<gamma>,
-                "lattice_unit_h":<h>,
-                "lattice_unit_k":<k>,
-                "lattice_unit_l":<l>
-            }
-        }
-
-    Internally store_data() is called to store the parameters, and get_qmod() is called to find qmod values respectively.
-    The following format is returned:
-
-     .. code-block:: bash
-
-        {
-            eline: float, //
-            qline: float //
-                    }
-
-* def get_qmod() --> float :  The function returns qmod. It calculates the value from the sc_parameters (SingleCrystal mode). It returns the qmod field for Powder.
-* def set_experiment_type(experiment_type:str) --> None :  The function sets the current_experiment_type from the experiment_type parameter
-* def store_data(current_experiment_type:str, delta_e:float, mod_q:float, sc_parameters:dict) --> None : The function receives data parameters and updates the CrosshairParameters and Single Crystal object's field values e.g.:
-
-    .. code-block:: bash
-
-        {
-            "current_experiment_type": "SingleCrystal",
-            "delta_e": <d_e>,
-            "mod_q" : <m_q>,
-            "sc_parameters" :
-            {
-                "lattice_a":<a>,
-                "lattice_b":<b>,
-                "lattice_c":<c>,
-                "lattice_alpha":<alpha>,
-                "lattice_beta":<beta>,
-                "lattice_gamma":<gamma>,
-                "lattice_unit_h":<h>,
-                "lattice_unit_k":<k>,
-                "lattice_unit_l":<l>
-            }
-        }
-
-    In case of Powder mode the sc_parameters are not populated/included in the data dictionary and the sc_parameters is ignored for model data update e.g.:
-
-     .. code-block:: bash
-
-        {
-            "current_experiment_type": "Powder",
-            "delta_e": <d_e>,
-            "mod_q" : <m_q>,
-            "sc_parameters" : {}
-        }
-
-* def update_experiment_type_return_qmod_data(experiment_type:str) --> dict :  The function updates the experiment_type value and returns qmod (get_qmod) and SingleCrystalParameters in the following format
-     .. code-block:: bash
-
-        {
-            "mod_q" : <m_q>,
-            "sc_parameters" :
-            {
-                "lattice_a":<a>,
-                "lattice_b":<b>,
-                "lattice_c":<c>,
-                "lattice_alpha":<alpha>,
-                "lattice_beta":<beta>,
-                "lattice_gamma":<gamma>,
-                "lattice_unit_h":<h>,
-                "lattice_unit_k":<k>,
-                "lattice_unit_l":<l>
-            }
-        }
-
-* def update_sc_return_qmod(sc_data: dict) --> float :  The function updates the SingleCrystalParameters and returns qmod (get_qmod)
-
-**-- SingleCrystalParameters**
-
-* def set_parameters(sc_data: dict) --> None : The function updates the SingleCrystalParameters with the sc_data, provided in the following format e.g:
-
-     .. code-block:: bash
-
-        {
-            "lattice_a":<a>,
-            "lattice_b":<b>,
-            "lattice_c":<c>,
-            "lattice_alpha":<alpha>,
-            "lattice_beta":<beta>,
-            "lattice_gamma":<gamma>,
-            "lattice_unit_h":<h>,
-            "lattice_unit_k":<k>,
-            "lattice_unit_l":<l>
-        }
-
-* def get_parameters() --> dict : The function returns a dictionary with the SingleCrystalParameters field values.
-
-     .. code-block:: bash
-
-        {
-            "lattice_a":<a>,
-            "lattice_b":<b>,
-            "lattice_c":<c>,
-            "lattice_alpha":<alpha>,
-            "lattice_beta":<beta>,
-            "lattice_gamma":<gamma>,
-            "lattice_unit_h":<h>,
-            "lattice_unit_k":<k>,
-            "lattice_unit_l":<l>
-        }
-
-The data structure is the same in set_parameters() and get_parameters() for consistency.
-
 
 
 HyspecPPT View
@@ -266,14 +116,14 @@ HyspecPPT View
  classDiagram
     HyspecPPTView "1" -->"1" ExperimentWidget
     ExperimentWidget "1" -->"1" CrosshairWidget
-    CrosshairWidget "1" -->"1" SingleCrystalParametersWidget
+    CrosshairWidget "1" -->"1" SingleCrystalWidget
 
     class HyspecPPTView{
-        +ExperimentWidget:experiment
-        +PlotFigure:plot
-        +QButton:help_btn
-        +update_plot(q_min: list[float],q_max: list[float],energy_transfer: list[float], q2d: list[list[float]],e2d: list[list[float]], scharpf_angle: list[list[float]])
-        +update_crosshair(eline: float, qline: float)
+        +ExperimentWidget:experiment_widget
+        +SingleCrystalWidget:sc_widget
+        +CrosshairWidget:crosshair_widget
+        +SelectorWidget:selection_widget
+        +PlotWidget:plot_widget
 
     }
 
@@ -286,7 +136,6 @@ HyspecPPT View
         +QLineEdit:p_value
         +QLabel:plot_type_display
         +QComboBox:plot_type_value
-        +CrosshairWidget:crosshair_parameters
         +validation_status()
         +parameters_update()
         +get_parameters()
@@ -301,7 +150,6 @@ HyspecPPT View
         +QLineEdit:delta_e_value
         +QLabel:qmod_display
         +QLineEdit:qmod_value
-        +SingleCrystalParametersWidget:single_crystal_parameters
         +set_experiment_options(experiment_types:[str])
         +set_plot_options(plot_types:[str])
         +set_qmod(qmod:float)
@@ -314,7 +162,7 @@ HyspecPPT View
         +set_parameters(current_experiment_type: str, delta_e:float, delta_e:floatr
     }
 
-    class SingleCrystalParametersWidget{
+    class SingleCrystalWidget{
         +QLabel:a_display
         +QLineEdit:a_value
         +QLabel:b_display
@@ -341,86 +189,6 @@ HyspecPPT View
     }
 
 
-Functions
--------------
-
-The function signatures and description are included below.
-
-**-- HyspecPPTView**
-
-* def update_plot(q_min: list[float],q_max: list[float],energy_transfer: list[float], q2d: list[list[float]],e2d: list[list[float]], scharpf_angle: list[list[float]]) --> None : The function updates the plot with the given parameters.
-* def update_crosshair(eline: float, qline: float]) --> None : The function updates the crosshair lines at the plot with the given parameters.
-
-**-- CrosshairWidget**
-
-* def set_experiment_options(experiment_types:[str]) --> None : The function sets the Experiment options (Single Crystal and Powder) to be used as radio button options during the widget's initialization.
-* def set_plot_options(plot_types:[str]) --> None : The function sets the plot type options, e.g. alpha_s, to be used as combobox options during the widget's initialization.
-* def set_qmod(qmod:float) --> None: The function sets the mod_q value from qmod parameter.
-* def set_qmod_readonly(readonly:bool) --> None : The function sets/unsets the qmod text readonly property based on the readonly flag.
-* def experiment_type_update() --> None :   The function wraps the Presenter call. Example usage: it is called on experiment type radio toggled
-* def parameters_update() --> None : The function wraps the Presenter call. Example usage: it is called at every parameter update event.
-* def toggle_crystal_parameters(show:bool) --> None : The function hides/shows the SingleCrystalParametersWidget based on the show flag.
-* def validation_status() --> Bool : The function checks all the CrosshairWidget's parameters' validation status. It returns True, if and only if all parameters are valid, else False.
-* def get_parameters() --> dict : The function packs/returns all parameters in a dictionary format as follows:
-     .. code-block:: bash
-
-        {
-            "current_experiment_type": "Powder",
-            "delta_e": <d_e>,
-            "mod_q" : <m_q>
-        }
-* def set_parameters(current_experiment_type: str, delta_e:float, delta_e:float) --> None : The function sets the Widget's values with the parameters.
-
-**-- ExperimentWidget**
-
-* def parameters_update() --> None : The function wraps the Presenter call. Example usage: it is called at every parameter update event.
-* def validation_status() --> Bool : The function checks all the ExperimentWidget's parameters' validation status. It returns True, if and only if all parameters are valid, else False.
-* def get_parameters() --> dict : The function packs/returns all parameters in a dictionary format as follows:
-     .. code-block:: bash
-
-        {
-            "incident_energy_e": <e>,
-            "detector_tank_angle_s" : <s2>,
-            "polarization_direction_angle_p" :<ao>,
-            "plot_type" : <g_a>
-        }
-* def set_parameters(incident_energy_e: float, detector_tank_angle_s:float, polarization_direction_angle_p:float, plot_type:str) --> None : The function sets the Widget's values with the parameters.
-
-**-- SingleCrystalParametersWidget**
-
-* def get_parameters() --> dict : The function packs/returns all parameters in a dictionary format as follows:
-    .. code-block:: bash
-
-        {
-            "lattice_a":<a>,
-            "lattice_b":<b>,
-            "lattice_c":<c>,
-            "lattice_alpha":<alpha>,
-            "lattice_beta":<beta>,
-            "lattice_gamma":<gamma>,
-            "lattice_unit_h":<h>,
-            "lattice_unit_k":<k>,
-            "lattice_unit_l":<l>
-        }
-
-* def set_parameters(parameters: dict) --> None : The functions sets all SingleCrystalParametersWidget's parameters from the dictionary with the following format:
-    .. code-block:: bash
-
-        {
-            "lattice_a":<a>,
-            "lattice_b":<b>,
-            "lattice_c":<c>,
-            "lattice_alpha":<alpha>,
-            "lattice_beta":<beta>,
-            "lattice_gamma":<gamma>,
-            "lattice_unit_h":<h>,
-            "lattice_unit_k":<k>,
-            "lattice_unit_l":<l>
-        }
-
-    The functions get_parameters() and set_parameters() have the same dictionary format.
-* def parameters_update() --> None : The function wraps the Presenter call. Example usage: it is called at every parameter update event.
-* def validation_status() --> Bool : The function checks all the parameters' validation status. It returns True, if and only if all parameters are valid, else False.
 
 HyspecPPT Presenter
 ++++++++++++++++++++++

@@ -1,8 +1,8 @@
 .. _design__guidelines:
 
-+++++++++++++++++
-Hyspecppt Design
-+++++++++++++++++
+++++++++++++++++++++++
+Software Architecture
+++++++++++++++++++++++
 
 Information, diagrams and flowcharts are included about the various components of the Hyspecppt tool.
 Please make sure to

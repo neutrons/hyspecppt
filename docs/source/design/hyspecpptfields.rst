@@ -7,15 +7,15 @@ Fields and Validation for Plot
 The main functionality of the tool is to display a plot, based on the filled in parameters, automatically; no plot button exists
 
 Overall, users can:
-   * plot from Powder sample
-   * plot from Single Crystal sample
+   * plot crosshair and heatmap from Powder experiment
+   * plot crosshair and heatmap from Single Crystal experiment
    * switch between Powder and Single Crystal modes while keeping the previous valid state
    * click on "Help" button that opens up a readthedocs user documentation
 
 Fields
 --------
 
-Below are the fields of SingleCrystal and Powder sample Models
+Below are the fields of SingleCrystal and Powder experiment models
 
 .. list-table:: Common Fields
   :header-rows: 1
@@ -144,15 +144,14 @@ modQ (\|Q\|):
 Validation
 ----------
 
-Regarding validation, if all fields are valid, then the front end triggers the backend to send the current parameters and receive the new data and plot the graph.
-If a user types an invalid value, then a red border appears on the related field.
+Regarding validation, if all fields are valid, then the front end (View) triggers the backend (Model) to send the current parameters and receive the new data and plot the graph.
+If a user types an invalid value, then a red border appears on the related field(s).
 
 
-Front end side validation can include:
+Front end side validation includes:
    * required fields
    * field types
-   * threshold limits: Ei, S2, Ap,modQ, and crystal parameters; qt validators can be used
+   * threshold limits: Ei, S2, Ap,modQ, and single crystal parameters
 
 
-Backend side validation can include:
-  * matplotlib save figure?
+Backend side validation includes:
