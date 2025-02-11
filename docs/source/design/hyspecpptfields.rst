@@ -16,6 +16,7 @@ Fields
 --------
 
 Below are the fields of SingleCrystal and Powder experiment models
+For the purpose of ensuring only valid fields are passed to the Model, custom qt validators are included that perform more complex checks.
 
 .. list-table:: Common Fields
   :header-rows: 1
@@ -144,14 +145,15 @@ modQ (\|Q\|):
 Validation
 ----------
 
-Regarding validation, if all fields are valid, then the front end (View) triggers the backend (Model) to send the current parameters and receive the new data and plot the graph.
+Regarding validation, if all fields are valid, then the front end (View) triggers the backend (Model) to send the current parameters and receive the new data to plot the graphs (heatmap and/or crosshair).
 If a user types an invalid value, then a red border appears on the related field(s).
 
 
 Front end side validation includes:
    * required fields
    * field types
-   * threshold limits: Ei, S2, Ap,modQ, and single crystal parameters
+   * threshold limits: Ei, S2, Ap, modQ, and single crystal parameters
 
 
 Backend side validation includes:
+  * Emin DeltaE updates

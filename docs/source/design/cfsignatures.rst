@@ -59,6 +59,12 @@ View
    :members:
 
 
+View Field Validators
+----------------------
+
+.. automodule:: hyspecppt.hppt.hppt_view_validators
+   :members:
+
 Help
 -----
 

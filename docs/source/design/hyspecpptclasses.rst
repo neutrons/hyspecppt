@@ -1,16 +1,16 @@
 .. _hyspecpptclasses:
 
-Model-View-Presenter
-######################
+HPPT Model-View-Presenter
+#############################
 
 The software is organized in a Model-View-Presenter pattern.
-The main (HyspecPPT) models, view and presenter classes and their components interactions are described here.
+The main (HyspecPPT) model, view and presenter classes and their components interactions are described here.
 
 
 HyspecPPT Model
 +++++++++++++++
 
-The HyspecPPTModel encapsulates the backend functionality. The object fields are updated
+The HyspecPPTModel encapsulates the backend functionality of data calculations. The object fields are updated
 every time there are new valid values received from the user (front end).
 
 .. mermaid::
@@ -60,52 +60,6 @@ every time there are new valid values received from the user (front end).
         +calculate_modQ()
     }
 
-Experiment Settings
---------------------
-
-The parameters' default values for the application are stored in a file, experiment_settings.py, next to the model file. They are imported
-in the HyspecPPT Model file and used during the Experiment object's initialization and data calculations. The options for experiment and plot types are used in HyspecPPT Model and View files.
-More specifically the parameters with their values are:
-
-    * Experiment type options
-        .. code-block:: bash
-
-            class ExperimentType(Enum):
-                POWDER = "Powder"
-                SINGLECRYSTAL = "Single Crystal"
-    * plot type options
-        .. code-block:: bash
-
-            class PlotType(Enum):
-                ALPHA = "alpha_s"
-                COSALPHA = "cos^2(alpha_s)"
-                COSALPHAPLUS1 = "1+cos^2(alpha_s))/2"
-    * DEFAULT_MODE:dict =
-        * current_experiment_type="single_crystal"
-    * DEFAULT_CROSSHAIR: dict =
-        * delta_e = 0
-        * mod_q = 0
-    * DEFAULT_EXPERIMENT:dict =
-        * plot_type = PlotType.COS_2_ALPHA_S
-        * incident_energy_e = 20
-        * detector_tank_angle_s = 30
-        * polarization_direction_angle_p = 0
-    * DEFAULT_LATTICE:dict =
-        * a = 1
-        * b = 1
-        * c = 1
-        * alpha = 90
-        * beta = 90
-        * gamma = 90
-        * h = 0
-        * k = 0
-        * l = 0
-    * MAX_MODQ = 15 -- maximum momentum transfer
-    * N_POINTS = 200 -- number of points in the plot
-    * TANK_HALF_WIDTH = 30.0 -- tank half-width
-    * number_of_pixels = 200
-
-
 
 HyspecPPT View
 +++++++++++++++
@@ -115,8 +69,10 @@ HyspecPPT View
 
  classDiagram
     HyspecPPTView "1" -->"1" ExperimentWidget
-    ExperimentWidget "1" -->"1" CrosshairWidget
-    CrosshairWidget "1" -->"1" SingleCrystalWidget
+    HyspecPPTView "1" -->"1" CrosshairWidget
+    HyspecPPTView "1" -->"1" SingleCrystalWidget
+    HyspecPPTView "1" -->"1" SelectorWidget
+    HyspecPPTView "1" -->"1" PlotWidget
 
     class HyspecPPTView{
         +ExperimentWidget:experiment_widget
@@ -127,65 +83,81 @@ HyspecPPT View
 
     }
 
-    class ExperimentWidget{
-        +QLabel:ei_display
-        +QLineEdit:ei_value
-        +QLabel:S2_display
-        +QLineEdit:S2_value
-        +QLabel:p_display
-        +QLineEdit:p_value
-        +QLabel:plot_type_display
-        +QComboBox:plot_type_value
-        +validation_status()
-        +parameters_update()
-        +get_parameters()
-        +set_parameters(incident_energy_e: float, detector_tank_angle_s:float, polarization_direction_angle_p:float, plot_type:str)
+    class PlotWidget{
+        +matplotlib.Figure: figure
+        +matplotlib.FigureCanvas: static_canvas
+        +matplotlib.NavigationToolbar: toolbar
+        +matplotlib.colorbar.Colorbar: heatmap
+        +float:eline_data
+        +float:qline_data
+        +matplotlib.lines.Line2D:eline
+        +matplotlib.lines.Line2D:qline
+        +update_plot_crosshair(crosshair_data: dict)
+        +update_crosshair(eline: float, qline: float)
+        +update_plot(q_min: list[float], q_max: list[float], energy_transfer: list[float], q2d: list[list[float]], e2d: list[list[float]], scharpf_angle: list[list[float]],plot_label: str)
+        +set_axes_meta_and_draw_plot()
+    }
 
+    class SelectorWidget{
+        +str:powder_label
+        +QRadioButton: powder_rb
+        +str:sc_label
+        +QRadioButton: sc_rb
+        +selector_init(selected_label: str)
+        +sc_toggle()
+        +get_selected_mode_label()
+    }
+
+    class ExperimentWidget{
+        +QLabel:ei_label
+        +QLineEdit:ei_edit
+        +QLabel:s2_label
+        +QLineEdit:s2_edit
+        +QLabel:pangle_label
+        +QLineEdit:p_edit
+        +QLabel:type_label
+        +QComboBox:type_combobox
+        +initializeCombo(options: list[str])
+        +validate_inputs(*_, **__)
+        +validate_all_inputs()
+        +set_values(values: dict[str, Union[float, str]])
     }
 
     class CrosshairWidget{
-        +QLabel:Eexperiment_type_display
-        +QRadioButton:experiment_type_value
-        +QLabel:delta_e_display
-        +QLineEdit:delta_e_value
-        +QLabel:qmod_display
-        +QLineEdit:qmod_value
-        +set_experiment_options(experiment_types:[str])
-        +set_plot_options(plot_types:[str])
-        +set_qmod(qmod:float)
-        +set_qmod_readonly(readonly:bool)
-        +toggle_crystal_parameters(show:bool)
-        +validation_status()
-        +experiment_type_update()
-        +parameters_update()
-        +get_parameters()
-        +set_parameters(current_experiment_type: str, delta_e:float, delta_e:floatr
+        +QLabel:deltae_label
+        +QLineEdit:deltae_edit
+        +QLabel:modq_label
+        +QLineEdit:modq_edit
+        +set_Qmod_enabled(state: bool)
+        +set_values(values: dict[str, float])
+        +validate_inputs(*_, **__)
+        +validation_status_all_inputs()
+        +validate_all_inputs()
     }
 
     class SingleCrystalWidget{
-        +QLabel:a_display
-        +QLineEdit:a_value
-        +QLabel:b_display
-        +QLineEdit:b_value
-        +QLabel:c_display
-        +QLineEdit:c_value
-        +QLabel:alpha_display
-        +QLineEdit:alpha_value
-        +QLabel:beta_display
-        +QLineEdit:beta_value
-        +QLabel:gamma_display
-        +QLineEdit:gamma_value
-        +QLabel:h_display
-        +QLineEdit:h_value
-        +QLabel:k_display
-        +QLineEdit:k_value
-        +QLabel:l_display
-        +QLineEdit:l_value
-        +get_parameters()
-        +set_parameters(parameters:dict)
-        +validation_status()
-        +parameters_update()
-
+        +QLabel:a_label
+        +QLineEdit:a_edit
+        +QLabel:b_label
+        +QLineEdit:b_edit
+        +QLabel:c_label
+        +QLineEdit:c_edit
+        +QLabel:alpha_label
+        +QLineEdit:alpha_edit
+        +QLabel:beta_label
+        +QLineEdit:beta_edit
+        +QLabel:gamma_label
+        +QLineEdit:gamma_edit
+        +QLabel:h_label
+        +QLineEdit:h_edit
+        +QLabel:k_label
+        +QLineEdit:k_edit
+        +QLabel:l_label
+        +QLineEdit:l_edit
+        +set_values(values: dict[str, float])
+        +validate_inputs(*_, **__)
+        +validate_angles()
+        +validate_all_inputs()
     }
 
 
@@ -202,12 +174,9 @@ HyspecPPT Presenter
     class HyspecPPTPresenter{
         -HyspecPPTModel:model
         -HyspecPPTView:view
-        +experiment_parameters_update()
-        +crosshair_parameters_update()
-        +experiment_type_update()
-        +sc_parameters_update()
-        +get_plot_options()
-        +get_experiment_type_options()
+        +handle_field_values_update()
+        +handle_switch_to_powder()
+        +handle_switch_to_sc()
     }
 
     class HyspecPPTModel{
@@ -419,3 +388,48 @@ Any value processing and/or filtering to match the requirements and logic of the
                 View->>Presenter: User updates any parameter at SingleCrystalParametersWidget
                 Note right of Presenter: Check the validation status of all SingleCrystalParametersWidget parameters (SingleCrystalParametersWidget.validation_status)
                 Note right of Presenter: Invalid Status: Nothing
+
+
+Experiment Settings
+--------------------
+
+The parameters' default values for the application are stored in a file, experiment_settings.py, next to the model file. They are imported
+in the HyspecPPT Model file and used during the Experiment object's initialization and data calculations. The options for experiment and plot types are used in HyspecPPT Model and View files.
+More specifically the parameters with their values are:
+
+    * Experiment type options
+        .. code-block:: bash
+
+            class ExperimentType(Enum):
+                POWDER = "Powder"
+                SINGLECRYSTAL = "Single Crystal"
+    * plot type options
+        .. code-block:: bash
+
+            class PlotType(Enum):
+                ALPHA = "alpha_s"
+                COSALPHA = "cos^2(alpha_s)"
+                COSALPHAPLUS1 = "1+cos^2(alpha_s))/2"
+    * DEFAULT_MODE:dict =
+        * current_experiment_type="single_crystal"
+    * DEFAULT_CROSSHAIR: dict =
+        * delta_e = 0
+        * mod_q = 0
+    * DEFAULT_EXPERIMENT:dict =
+        * plot_type = PlotType.COS_2_ALPHA_S
+        * incident_energy_e = 20
+        * detector_tank_angle_s = 30
+        * polarization_direction_angle_p = 0
+    * DEFAULT_LATTICE:dict =
+        * a = 1
+        * b = 1
+        * c = 1
+        * alpha = 90
+        * beta = 90
+        * gamma = 90
+        * h = 0
+        * k = 0
+        * l = 0
+    * MAX_MODQ = 15 -- maximum momentum transfer
+    * N_POINTS = 200 -- number of points in the plot
+    * TANK_HALF_WIDTH = 30.0 -- tank half-width
