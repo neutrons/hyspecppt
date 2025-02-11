@@ -20,26 +20,27 @@ every time there are new valid values received from the user (front end).
     CrosshairParameters "1" -->"1" SingleCrystalParameters
 
     class HyspecPPTModel{
-        +float incident_energy_e
-        +float detector_tank_angle_s
+        +float incident_energy_ei
+        +float detector_tank_angle_s2
         +float polarization_direction_angle_p
         +enum 'PlotType' plot_type
-        +CrosshairParameters cr_parameters
-        +set_single_crystal_data(params: dict[str, float])
-        +get_single_crystal_data()
-        +set_crosshair_data(current_experiment_type: str, DeltaE: float = None, modQ: float = None)
-        +get_crosshair_data()
-        +set_experiment_data(Ei: float, S2: float, alpha_p: float, plot_type: str)
-        +get_experiment_data()
+        +CrosshairParameters crosshair_parameters
+        +set_single_crystal_parameters(params: dict[str, float])
+        +get_single_crystal_parameters()
+        +set_crosshair(current_experiment_type: str, DeltaE: float = None, modQ: float = None)
+        +get_crosshair()
+        +set_experiment_parameters(Ei: float, S2: float, alpha_p: float, plot_type: str)
+        +get_experiment_parameters()
         +check_plot_update(deltaE)
         +calculate_graph_data()
     }
 
 
     class CrosshairParameters{
-        +float delta_e
-        +float mod_q
-        +SingleCrystalParameters sc_parameters
+        +float crosshair_delta_e
+        +float crosshair_mod_q
+        +experiment_type: str
+        +SingleCrystalParameters single_crystal_parameters
         +set_crosshair(current_experiment_type: str, DeltaE: float = None, modQ: float = None)
         +get_crosshair()
         +get_experiment_type()
@@ -52,12 +53,12 @@ every time there are new valid values received from the user (front end).
         +float lattice_alpha
         +float lattice_beta
         +float lattice_gamma
-        +float lattice_unit_h
-        +float lattice_unit_k
-        +float lattice_unit_l
-        +set_parameters(params: dict[str, float])
-        +get_parameters()
-        +calculate_modQ()
+        +float q_rlu_h
+        +float q_rlu_k
+        +float q_rlu_l
+        +set_single_crystal_parameters(params: dict[str, float])
+        +get_single_crystal_parameters()
+        +calculate_crosshair_mod_q()
     }
 
 
@@ -109,14 +110,14 @@ HyspecPPT View
     }
 
     class ExperimentWidget{
-        +QLabel:ei_label
-        +QLineEdit:ei_edit
-        +QLabel:s2_label
-        +QLineEdit:s2_edit
-        +QLabel:pangle_label
-        +QLineEdit:p_edit
-        +QLabel:type_label
-        +QComboBox:type_combobox
+        +QLabel:incident_energy_ei_label
+        +QLineEdit:incident_energy_ei_edit
+        +QLabel:detector_tank_angle_s2_label
+        +QLineEdit:detector_tank_angle_s2_edit
+        +QLabel:polarization_direction_angle_p_label
+        +QLineEdit:polarization_direction_angle_p_edit
+        +QLabel:plot_type_label
+        +QComboBox:plot_type_combobox
         +initializeCombo(options: list[str])
         +validate_inputs(*_, **__)
         +validate_all_inputs()
@@ -124,11 +125,11 @@ HyspecPPT View
     }
 
     class CrosshairWidget{
-        +QLabel:deltae_label
-        +QLineEdit:deltae_edit
-        +QLabel:modq_label
-        +QLineEdit:modq_edit
-        +set_Qmod_enabled(state: bool)
+        +QLabel:crosshair_delta_e_label
+        +QLineEdit:crosshair_delta_e_edit
+        +QLabel:crosshair_mod_q_label
+        +QLineEdit:crosshair_mod_q_edit
+        +set_mod_q_enabled(state: bool)
         +set_values(values: dict[str, float])
         +validate_inputs(*_, **__)
         +validation_status_all_inputs()
@@ -136,24 +137,24 @@ HyspecPPT View
     }
 
     class SingleCrystalWidget{
-        +QLabel:a_label
-        +QLineEdit:a_edit
-        +QLabel:b_label
-        +QLineEdit:b_edit
-        +QLabel:c_label
-        +QLineEdit:c_edit
-        +QLabel:alpha_label
-        +QLineEdit:alpha_edit
-        +QLabel:beta_label
-        +QLineEdit:beta_edit
-        +QLabel:gamma_label
-        +QLineEdit:gamma_edit
-        +QLabel:h_label
-        +QLineEdit:h_edit
-        +QLabel:k_label
-        +QLineEdit:k_edit
-        +QLabel:l_label
-        +QLineEdit:l_edit
+        +QLabel:lattice_a_label
+        +QLineEdit:lattice_a_edit
+        +QLabel:latticeb_label
+        +QLineEdit:lattice_b_edit
+        +QLabel:lattice_c_label
+        +QLineEdit:lattice_c_edit
+        +QLabel:lattice_alpha_label
+        +QLineEdit:lattice_alpha_edit
+        +QLabel:lattice_beta_label
+        +QLineEdit:lattice_beta_edit
+        +QLabel:lattice_gamma_label
+        +QLineEdit:lattice_gamma_edit
+        +QLabel:q_rlu_h_label
+        +QLineEdit:q_rlu_h_edit
+        +QLabel:q_rlu_k_label
+        +QLineEdit:q_rlu_k_edit
+        +QLabel:q_rlu_l_label
+        +QLineEdit:q_rlu_l_edit
         +set_values(values: dict[str, float])
         +validate_inputs(*_, **__)
         +validate_angles()
@@ -187,7 +188,8 @@ HyspecPPT Presenter
         #from above
     }
 
-The Presenter describes the main workflows that require communication and coordination between the Model and View through the Presenter. Additionally, it includes 2 functions that retrieves the options  from the settings files for the View.
+The Hppt Model and View are unaware of one another. The Presenter is the connecting link that has a direct access and interacts with both.
+The Presenter describes the main workflows that require communication and coordination between the Model and View through the Presenter. Additionally, the widgets' data initialization come from the model initialization and passed to the View.
 Any value processing and/or filtering to match the requirements and logic of the View and Model side should happen on the Presenter.
 
 
@@ -200,20 +202,83 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Presenter
 
             Note over View,Presenter:  HyspecPPTView Initialization
-            Note right of Presenter: get Experiment parameters from experiment_settings file
-            Presenter->>View: Set Experiment parameters (ExperimentWidget.set_parameters)
+            Presenter->>Model: A. Get Experiment parameters
+            Presenter->>View: Set Experiment parameters (experiment_widget.set_values)
             Note left of View: Display Experiment parameters values
             Note left of View: experiment_parameters_update is triggered
-            Note right of Presenter: get Crosshair parameters from experiment_settings file
-            Presenter->>View: Set Crosshair parameters (CrosshairWidget.set_parameters)
-            Note left of View: Display Crosshair parameters values
-            Note right of Presenter: get SingleCrystal parameters from experiment_settings file
-            Presenter->>View: Set SingleCrystal parameters (SingleCrystalWidget.set_parameters)
+
+            Presenter->>Model: B. Get SingleCrystal parameters
+            Note left of Presenter: Get the available plot types from the experiment_settings file
+            Presenter->>View: Set SingleCrystal parameters (singlecrystal_widget.set_parameters)
             Note left of View: Display SingleCrystal parameters values
-            Note left of View: crosshair_parameters_update is triggered
+            Note left of View: handle_field_values_update is triggered
+
+            Presenter->>View: C. Select Single Crystal mode in experiment
+            Note left of View: Workflow continues for selecting experiment type = Single Crystal
+            Note left of View: handle_field_values_update is triggered
+
+#. This describes the sequence of events happening among M-V-P when Experiment parameters are updated in order to see a new plot : handle_field_values_update()
+
+    * Valid Status with Replot:
+
+        .. mermaid::
+
+            sequenceDiagram
+                participant View
+                participant Presenter
+                participant Model
+
+                Note over View,Model: Plot draw due to any CrosshairWidget parameter update
+                View->>Presenter: User updates a parameter at CrosshairWidget: crosshair_delta_e_edit, crosshair_mod_q_edit, SelectorWidget radiobuttons
+                View: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validate_all_inputs)
+                View->>Presenter Emit the valid signal and pass the crosshair parameters
+                Presenter->>View: Get the experiment type
+                Presenter->>Model: Send crosshair_delta_e_edit to decide on replot
+                Model->>Presenter: Returns the replot to True
+                Presenter->>Model: Set crosshair data (set_crosshair_data)
+                Presenter->>Model: Calculate plot data (calculate_graph_data)
+                Note right of Model: Calculate plot dictionary data
+                Model->>Presenter: Return graph data dictionary
+                Presenter->>View: Return graph data (plot_widget.update_plot)
+                Note left of View: Draw the (colormap) heatmap
+                Presenter->>View: Return graph data (plot_widget.update_crosshair)
+                Note left of View: Draw the crosshair
 
 
-#. This describes the sequence of events happening among M-V-P when Experiment are updated in order to see a new plot : handle_field_values_update()
+    * Valid Status without Replot:
+        .. mermaid::
+
+            sequenceDiagram
+                participant View
+                participant Presenter
+                participant Model
+
+                Note over View,Model: Plot draw due to any CrosshairWidget parameter update
+                View->>Presenter: User updates a parameter at CrosshairWidget: incident_energy_ei_edit, detector_tank_angle_s2_edit, polarization_direction_angle_p_edit or plot_type_combobox
+                View: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validate_all_inputs)
+                View->>Presenter Emit the valid signal and pass the crosshair parameters
+                Presenter->>Model: Send crosshair_delta_e_edit to decide on replot
+                Model->>Presenter: Returns the replot to False
+                Presenter->>Model: Set crosshair data (set_crosshair_data)
+                Presenter->>View: Return graph data (plot_widget.update_crosshair)
+                Note left of View: Draw the crosshair
+
+    * Invalid Status:
+
+    .. mermaid::
+
+        sequenceDiagram
+            participant View
+            participant Presenter
+            participant Model
+
+            Note over View,Model: Plot draw due to any CrosshairWidget parameter update
+            View->>Presenter: User updates a parameter at CrosshairWidget: incident_energy_ei_edit, detector_tank_angle_s2_edit, polarization_direction_angle_p_edit or plot_type_combobox
+            View: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validate_all_inputs)
+            Note Left of View: Red borders appear (validate_inputs) no signal is emitted
+
+
+#. This describes the sequence of events happening among M-V-P when ExperimentWidget parameters are updated in order to see a new plot : handle_field_values_update()
 
     * Valid Status:
 
@@ -225,14 +290,15 @@ Any value processing and/or filtering to match the requirements and logic of the
                 participant Model
 
                 Note over View,Model: Plot draw due to any ExperimentWidget parameter update
-                View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
-                Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
-                Presenter->>View: Gather the ExperimentWidget parameters (ExperimentWidget.get_parameters)
-                Presenter->>Model: Send the parameters to calculate plot (Experiment.calculate_graph_data)
-                Note right of Model: Store the ei, s2 p and plot_type in Experiment (Experiment.store_data internally) and calculate plot data
+                View->>Presenter: User updates a parameter at ExperimentWidget: incident_energy_ei_edit, detector_tank_angle_s2_edit, polarization_direction_angle_p_edit or plot_type_combobox
+                View: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validate_all_inputs)
+                View->>Presenter Emit the valid signal and pass the experiment parameters
+                Presenter->>Model: Set the parameters (set_experiment_data)
+                Presenter->>Model: Calculate plot data (calculate_graph_data)
+                Note right of Model: Calculate plot dictionary data
                 Model->>Presenter: Return graph data dictionary
-                Presenter->>View: Return graph data (HyspecPPTView.update_plot)
-                Note left of View: Draw the plot
+                Presenter->>View: Return graph data (plot_widget.update_plot)
+                Note left of View: Draw the (colormap) heatmap
 
     * Invalid Status:
 
@@ -244,45 +310,9 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Model
 
             Note over View,Model: Plot draw due to any ExperimentWidget parameter update
-            View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
-            Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
-            Note right of Presenter: Invalid Status: Nothing
-
-
-#. This describes the sequence of events happening among M-V-P when Crosshair parameters are updated in order to see a new plot : handle_field_values_update()
-
-    * Valid Status:
-
-        .. mermaid::
-
-            sequenceDiagram
-                participant View
-                participant Presenter
-                participant Model
-
-                Note over View,Model: Plot draw due to any ExperimentWidget parameter update
-                View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
-                Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
-                Presenter->>View: Gather the ExperimentWidget parameters (ExperimentWidget.get_parameters)
-                Presenter->>Model: Send the parameters to calculate plot (Experiment.calculate_graph_data)
-                Note right of Model: Store the ei, s2 p and plot_type in Experiment (Experiment.store_data internally) and calculate plot data
-                Model->>Presenter: Return graph data dictionary
-                Presenter->>View: Return graph data (HyspecPPTView.update_plot)
-                Note left of View: Draw the plot
-
-    * Invalid Status:
-
-    .. mermaid::
-
-        sequenceDiagram
-            participant View
-            participant Presenter
-            participant Model
-
-            Note over View,Model: Plot draw due to any ExperimentWidget parameter update
-            View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
-            Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
-            Note right of Presenter: Invalid Status: Nothing
+            View->>Presenter: User updates a parameter at ExperimentWidget: incident_energy_ei_edit, detector_tank_angle_s2_edit, polarization_direction_angle_p_edit or plot_type_combobox
+            View: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validate_all_inputs)
+            Note Left of View: Red borders appear (validate_inputs) no signal is emitted
 
 
 #. This describes the sequence of events happening among M-V-P when Single Crystal parameters are updated in order to see a new plot : handle_field_values_update()
@@ -296,30 +326,35 @@ Any value processing and/or filtering to match the requirements and logic of the
                 participant Presenter
                 participant Model
 
-                Note over View,Model: Plot draw due to any ExperimentWidget parameter update
-                View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
-                Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
-                Presenter->>View: Gather the ExperimentWidget parameters (ExperimentWidget.get_parameters)
-                Presenter->>Model: Send the parameters to calculate plot (Experiment.calculate_graph_data)
-                Note right of Model: Store the ei, s2 p and plot_type in Experiment (Experiment.store_data internally) and calculate plot data
-                Model->>Presenter: Return graph data dictionary
-                Presenter->>View: Return graph data (HyspecPPTView.update_plot)
-                Note left of View: Draw the plot
+                Note over View,Model: Plot draw due to any SingleCrystalWidget parameter update
+                View->>Presenter: User updates a parameter at SingleCrystalWidget
+                View: Check the validation status of all SingleCrystalWidget parameters (SingleCrystalWidget.validate_all_inputs)
+                View->>Presenter Emit the valid signal and pass the single crystal parameters
+                Presenter->>Model: Set the parameters (set_single_crystal_data)
+                Presenter->>Model: Get the new crosshair data (get_crosshair_data)
+                Presenter->>View: Display the crosshair data (crosshair_widget.set_values)
+                Note left of Presenter: Check the validation status of all crosshair_widget parameters (CrosshairWidget.validation_status_all_inputs) is valid
+                Presenter->>View: Return graph data (plot_widget.update_crosshair)
+                Note left of View: Draw the crosshair
 
     * Invalid Status:
 
-    .. mermaid::
+        .. mermaid::
 
-        sequenceDiagram
-            participant View
-            participant Presenter
-            participant Model
+            sequenceDiagram
+                participant View
+                participant Presenter
+                participant Model
 
-            Note over View,Model: Plot draw due to any ExperimentWidget parameter update
-            View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
-            Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
-            Note right of Presenter: Invalid Status: Nothing
-
+                Note over View,Model: Plot draw due to any SingleCrystalWidget parameter update
+                View->>Presenter: User updates a parameter at SingleCrystalWidget
+                View: Check the validation status of all SingleCrystalWidget parameters (SingleCrystalWidget.validate_all_inputs)
+                View->>Presenter Emit the valid signal and pass the single crystal parameters
+                Presenter->>Model: Set the parameters (set_single_crystal_data)
+                Presenter->>Model: Get the new crosshair data (get_crosshair_data)
+                Presenter->>View: Display the crosshair data (crosshair_widget.set_values)
+                Note left of Presenter: Check the validation status of all crosshair_widget parameters (CrosshairWidget.validation_status_all_inputs) is invalid
+                Note left of Presenter: Nothing
 
 #. This describes the sequence of events happening among M-V-P when user selects the "Powder" mode : handle_switch_to_powder()
 
@@ -337,7 +372,7 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
                 Presenter->>View: Gather the ExperimentWidget parameters (ExperimentWidget.get_parameters)
                 Presenter->>Model: Send the parameters to calculate plot (Experiment.calculate_graph_data)
-                Note right of Model: Store the ei, s2 p and plot_type in Experiment (Experiment.store_data internally) and calculate plot data
+                Note right of Model: Calculate plot dictionary data
                 Model->>Presenter: Return graph data dictionary
                 Presenter->>View: Return graph data (HyspecPPTView.update_plot)
                 Note left of View: Draw the plot
@@ -374,7 +409,7 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
                 Presenter->>View: Gather the ExperimentWidget parameters (ExperimentWidget.get_parameters)
                 Presenter->>Model: Send the parameters to calculate plot (Experiment.calculate_graph_data)
-                Note right of Model: Store the ei, s2 p and plot_type in Experiment (Experiment.store_data internally) and calculate plot data
+                Note right of Model: Calculate plot dictionary data
                 Model->>Presenter: Return graph data dictionary
                 Presenter->>View: Return graph data (HyspecPPTView.update_plot)
                 Note left of View: Draw the plot
@@ -417,8 +452,9 @@ More specifically the parameters with their values are:
                 ALPHA = "alpha_s"
                 COSALPHA = "cos^2(alpha_s)"
                 COSALPHAPLUS1 = "1+cos^2(alpha_s))/2"
+                COS2ALPHA = (cos" + square + alpha + subscript_s + "-sin" + square + alpha + subscript_s + ")",
     * DEFAULT_MODE:dict =
-        * current_experiment_type="single_crystal"
+        * experiment_type="single_crystal"
     * DEFAULT_CROSSHAIR: dict =
         * delta_e = 0
         * mod_q = 0
