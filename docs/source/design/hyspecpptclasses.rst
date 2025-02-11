@@ -1,6 +1,6 @@
 .. _hyspecpptclasses:
 
-HPPT Model-View-Presenter
+HPPT
 #############################
 
 The software is organized in a Model-View-Presenter pattern.
@@ -199,7 +199,7 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant View
             participant Presenter
 
-            Note over View,Presenter:  - HyspecPPTView Initialization
+            Note over View,Presenter:  HyspecPPTView Initialization
             Note right of Presenter: get Experiment parameters from experiment_settings file
             Presenter->>View: Set Experiment parameters (ExperimentWidget.set_parameters)
             Note left of View: Display Experiment parameters values
@@ -213,36 +213,7 @@ Any value processing and/or filtering to match the requirements and logic of the
             Note left of View: crosshair_parameters_update is triggered
 
 
-
-#. Display the available plot types from the settings files: set_plot_options() at the View
-
-    .. mermaid::
-
-        sequenceDiagram
-            participant View
-            participant Presenter
-
-            Note over View,Presenter: Application Start - HyspecPPTView Initialization
-            View->>Presenter: Get all available plot type options - ExperimentWidget::get_plot_options()
-            Note right of Presenter: get the PlotType Enum from experiment_settings file
-            Presenter->>View: Return the list of plot types (str)
-            Note left of View: Set and display the plot types in the plot_type_value combo box
-
-#. Display the available experiment type options from the settings files: set_experiment_type_options() at the View
-
-    .. mermaid::
-
-        sequenceDiagram
-            participant View
-            participant Presenter
-
-            Note over View,Presenter: Application Start
-            View->>Presenter: Get all available experiment type options - ExperimentWidget::get_experiment_type_options()
-            Note right of Presenter: get the ExperimentType Enum from experiment_settings file
-            Presenter->>View: Return the list of experiment types (str)
-            Note left of View: Set and display the experiment types in the experiment_type_value radio buttons
-
-#. This describes the sequence of events happening among M-V-P when Experiment parameters are updated in order to see a new plot : experiment_parameters_update()
+#. This describes the sequence of events happening among M-V-P when Experiment are updated in order to see a new plot : handle_field_values_update()
 
     * Valid Status:
 
@@ -277,7 +248,8 @@ Any value processing and/or filtering to match the requirements and logic of the
             Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
             Note right of Presenter: Invalid Status: Nothing
 
-#. This describes the sequence of events happening among M-V-P when Crosshair parameters delta_e_value and qmod_value are updated in order to draw crosshair on the plot : crosshair_parameters_update()
+
+#. This describes the sequence of events happening among M-V-P when Crosshair parameters are updated in order to see a new plot : handle_field_values_update()
 
     * Valid Status:
 
@@ -288,110 +260,145 @@ Any value processing and/or filtering to match the requirements and logic of the
                 participant Presenter
                 participant Model
 
-                Note over View,Model: Crosshair draw due to CrosshairWidget delta_e_value or qmod_value update
-                View->>Presenter: User (or programmatically) updates a parameter at CrosshairWidget: delta_e_value or qmod_value
-                Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
-                Presenter->>View: Gather the CrosshairWidget parameters (CrosshairWidget.get_parameters)
-                Presenter->>Model: Send the parameters to calculate crosshair (CrosshairParameters.calculate_crosshair)
-                Note right of Model: Store the current_experiment_type, delta_e, mod_q, sc_parameters in CrosshairParameters (CrosshairParameters.store_data internally) SingleCrystalParameters (SingleCrystalParameters.store_data internally and calculate crosshair
-                Model->>Presenter: Return crosshair
-                Presenter->>View: Return crosshair qline and eline (HyspecPPTView.update_crosshair)
-                Note left of View: Display the crosshair on the plot
-
-    * Invalid Status:
-        .. mermaid::
-
-            sequenceDiagram
-                participant View
-                participant Presenter
-                participant Model
-
-                Note over View,Model: Crosshair draw due to CrosshairWidget delta_e_value or qmod_value update
-                View->>Presenter: User (or programmatically) updates a parameter at CrosshairWidget: delta_e_value or qmod_value
-                Note right of Presenter: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validation_status)
-                Note right of Presenter: Invalid Status: Nothing
-
-#. This describes the sequence of events happening among M-V-P when Crosshair parameter experiment_type_value is updated in order to draw crosshair on the plot : experiment_type_update(). The presenter checks the value of experiment_type_value and splits the workflow as follows
-
-    * Valid Status:
-
-        * experiment_type_value is set to Powder
-
-            .. mermaid::
-
-                sequenceDiagram
-                    participant View
-                    participant Presenter
-                    participant Model
-
-                    Note over View,Model: Crosshair draw due to CrosshairWidget experiment_type_value update
-                    View->>Presenter: User updates experiment_type_value to Powder
-                    Presenter->>View: Gather the CrosshairWidget  parameters (CrosshairWidget.get_parameters)
-                    Presenter->>Model: Send the experiment type to be saved in the model
-                    Presenter->>View: Hide the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and enable the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
-
-        * experiment_type_value is set to Single Crystal
-
-            .. mermaid::
-
-                sequenceDiagram
-                    participant View
-                    participant Presenter
-                    participant Model
-
-                    Note over View,Model: Crosshair draw due to CrosshairWidget experiment_type_value update
-                    View->>Presenter: User updates experiment_type_value to Single Crystal
-                    Presenter->>Model: Send the experiment type to calculate qmod (CrosshairParameters.update_experiment_type_return_qmod_data)
-                    Model->>Presenter: Return qmod and stored CrosshairParameters
-                    Presenter->>View: Show the SingleCrystalParametersWidget block (CrosshairWidget.toggle_crystal_parameters) and disable the qmod_value for edit (CrosshairWidget.set_qmod_readonly)
-                    Presenter->>View: Return qmod (CrosshairWidget.set_qmod), SingleCrystalParametersWidget.set_parameters()
-                    Note left of View: Display the qmod_value
-                    Note left of View: Display the SingleCrystalParameters values
-                    Note left of View: crosshair_parameters_update is triggered
-
-
-    On experiment type change, qmod is recalculated based on SingleCrystalParameters for Single Crystal mode. Thus, if the user's qmod value was invalid, it will be ignored.
-
-
-#. This describes the sequence of events happening among M-V-P when Single Crystal parameters are updated in order to draw crosshair : sc_parameters_update()
-
-    * Valid Status:
-
-        .. mermaid::
-
-            sequenceDiagram
-                participant View
-                participant Presenter
-                participant Model
-
-                Note over View,Model: Crosshair update due to any SingleCrystalParametersWidget parameter update
-                View->>Presenter: User updates any parameter at SingleCrystalParametersWidget
-                Note right of Presenter: Check the validation status of all SingleCrystalParametersWidget parameters (SingleCrystalParametersWidget.validation_status)
-                Presenter->>View: Gather the SingleCrystalParametersWidget parameters (SingleCrystalParametersWidget.get_parameters)
-                Presenter->>Model: Send the parameters
-                Note right of Model: Update Single CrystalParameters and calculate the qmod value (update_sc_return_qmod)
-                Model->>Presenter: Return qmod
-                Presenter->>View: Return qmod (CrosshairWidget.set_qmod)
-                Note left of View: Display the qmod_value
-                Note left of View: crosshair_parameters_update is triggered
-
+                Note over View,Model: Plot draw due to any ExperimentWidget parameter update
+                View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
+                Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
+                Presenter->>View: Gather the ExperimentWidget parameters (ExperimentWidget.get_parameters)
+                Presenter->>Model: Send the parameters to calculate plot (Experiment.calculate_graph_data)
+                Note right of Model: Store the ei, s2 p and plot_type in Experiment (Experiment.store_data internally) and calculate plot data
+                Model->>Presenter: Return graph data dictionary
+                Presenter->>View: Return graph data (HyspecPPTView.update_plot)
+                Note left of View: Draw the plot
 
     * Invalid Status:
 
+    .. mermaid::
+
+        sequenceDiagram
+            participant View
+            participant Presenter
+            participant Model
+
+            Note over View,Model: Plot draw due to any ExperimentWidget parameter update
+            View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
+            Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
+            Note right of Presenter: Invalid Status: Nothing
+
+
+#. This describes the sequence of events happening among M-V-P when Single Crystal parameters are updated in order to see a new plot : handle_field_values_update()
+
+    * Valid Status:
+
         .. mermaid::
 
             sequenceDiagram
                 participant View
                 participant Presenter
                 participant Model
-                Note over View,Model: Crosshair update due to any SingleCrystalParametersWidget parameter update
-                View->>Presenter: User updates any parameter at SingleCrystalParametersWidget
-                Note right of Presenter: Check the validation status of all SingleCrystalParametersWidget parameters (SingleCrystalParametersWidget.validation_status)
-                Note right of Presenter: Invalid Status: Nothing
+
+                Note over View,Model: Plot draw due to any ExperimentWidget parameter update
+                View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
+                Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
+                Presenter->>View: Gather the ExperimentWidget parameters (ExperimentWidget.get_parameters)
+                Presenter->>Model: Send the parameters to calculate plot (Experiment.calculate_graph_data)
+                Note right of Model: Store the ei, s2 p and plot_type in Experiment (Experiment.store_data internally) and calculate plot data
+                Model->>Presenter: Return graph data dictionary
+                Presenter->>View: Return graph data (HyspecPPTView.update_plot)
+                Note left of View: Draw the plot
+
+    * Invalid Status:
+
+    .. mermaid::
+
+        sequenceDiagram
+            participant View
+            participant Presenter
+            participant Model
+
+            Note over View,Model: Plot draw due to any ExperimentWidget parameter update
+            View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
+            Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
+            Note right of Presenter: Invalid Status: Nothing
+
+
+#. This describes the sequence of events happening among M-V-P when user selects the "Powder" mode : handle_switch_to_powder()
+
+    * Valid Status:
+
+        .. mermaid::
+
+            sequenceDiagram
+                participant View
+                participant Presenter
+                participant Model
+
+                Note over View,Model: Plot draw due to any ExperimentWidget parameter update
+                View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
+                Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
+                Presenter->>View: Gather the ExperimentWidget parameters (ExperimentWidget.get_parameters)
+                Presenter->>Model: Send the parameters to calculate plot (Experiment.calculate_graph_data)
+                Note right of Model: Store the ei, s2 p and plot_type in Experiment (Experiment.store_data internally) and calculate plot data
+                Model->>Presenter: Return graph data dictionary
+                Presenter->>View: Return graph data (HyspecPPTView.update_plot)
+                Note left of View: Draw the plot
+
+    * Invalid Status:
+
+    .. mermaid::
+
+        sequenceDiagram
+            participant View
+            participant Presenter
+            participant Model
+
+            Note over View,Model: Plot draw due to any ExperimentWidget parameter update
+            View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
+            Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
+            Note right of Presenter: Invalid Status: Nothing
+
+
+
+#. This describes the sequence of events happening among M-V-P when user selects the "Single Crystal" mode  : handle_switch_to_sc()
+
+    * Valid Status:
+
+        .. mermaid::
+
+            sequenceDiagram
+                participant View
+                participant Presenter
+                participant Model
+
+                Note over View,Model: Plot draw due to any ExperimentWidget parameter update
+                View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
+                Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
+                Presenter->>View: Gather the ExperimentWidget parameters (ExperimentWidget.get_parameters)
+                Presenter->>Model: Send the parameters to calculate plot (Experiment.calculate_graph_data)
+                Note right of Model: Store the ei, s2 p and plot_type in Experiment (Experiment.store_data internally) and calculate plot data
+                Model->>Presenter: Return graph data dictionary
+                Presenter->>View: Return graph data (HyspecPPTView.update_plot)
+                Note left of View: Draw the plot
+
+    * Invalid Status:
+
+    .. mermaid::
+
+        sequenceDiagram
+            participant View
+            participant Presenter
+            participant Model
+
+            Note over View,Model: Plot draw due to any ExperimentWidget parameter update
+            View->>Presenter: User updates a parameter at ExperimentWidget: ei_value, s2_value, p_value or plot_type_value
+            Note right of Presenter: Check the validation status of all ExperimentWidget parameters (ExperimentWidget.validation_status)
+            Note right of Presenter: Invalid Status: Nothing
+
+
+
 
 
 Experiment Settings
---------------------
+++++++++++++++++++++++
 
 The parameters' default values for the application are stored in a file, experiment_settings.py, next to the model file. They are imported
 in the HyspecPPT Model file and used during the Experiment object's initialization and data calculations. The options for experiment and plot types are used in HyspecPPT Model and View files.

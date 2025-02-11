@@ -1,7 +1,7 @@
 .. _cfsignatures:
 
-Interface design
-#########################
+Application Programming Interface
+###################################
 
 It includes the function signatures and classes of the various modules.
 

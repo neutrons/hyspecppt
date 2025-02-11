@@ -1,8 +1,8 @@
 .. _hyspecpptfields:
 
-===============================
-Fields and Validation for Plot
-===============================
+=======================
+Fields and Validation
+=======================
 
 The main functionality of the tool is to display a plot, based on the filled in parameters, automatically; no plot button exists
 
@@ -128,20 +128,6 @@ Below are the additional fields of SingleCrystal Model
     - -100 < L < 100
     - yes
 
-
-
-Inter-Field Validations
-------------------------
-
-Polarization Type:
-  * If Polarization Type set to "Single Crystal", all parameters of Single Crystal block are required. The valid default/model-stored values are set at the appropriate fields.
-  * If Polarization Type set to "Powder", all parameters of Single Crystal block are hidden and not required. The valid default/model-stored values are set at the appropriate fields.
-
-modQ (\|Q\|):
-  * If Polarization Type set to "Single Crystal", it is a read-only field. The value is returned from the backend after all Single crystal parameters are filled in.
-  * If Polarization Type set to "Powder", user can fill the value in.
-
-
 Validation
 ----------
 
@@ -156,4 +142,23 @@ Front end side validation includes:
 
 
 Backend side validation includes:
-  * Emin DeltaE updates
+  * Emin recalculation due to DeltaE update
+
+
+Inter-Field Validations
+------------------------
+
+Polarization Type:
+  * If Polarization Type set to "Single Crystal", all parameters of Single Crystal block are required. The valid default/model-stored values are set at the appropriate fields.
+  * If Polarization Type set to "Powder", all parameters of Single Crystal block are hidden and not required. The valid default/model-stored values are set at the appropriate fields.
+
+modQ (\|Q\|):
+  * If Polarization Type set to "Single Crystal", it is a read-only field. The value is returned from the backend after all Single crystal parameters are filled in.
+  * If Polarization Type set to "Powder", user can fill the value in.
+
+alpha, beta , gamma; all the below conditions need to be met for the fields to be valid:
+  * All three angles' values are less than 360 degrees: (alpha + beta+ gamma) <=360
+  * They can form a triangle: (alpha + beta) < gamma and (alpha + beta) < gamma and (beta + gamma) < alpha
+
+Emin, DeltaE:
+  * A change in deltaE can trigger an update to Emin; the process is hidden to the user
