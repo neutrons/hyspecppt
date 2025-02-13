@@ -214,7 +214,8 @@ Any value processing and/or filtering to match the requirements and logic of the
             Note left of View: Display SingleCrystal parameters values
             Note left of View: handle_field_values_update is triggered
 
-            Presenter->>View: C. Select Single Crystal mode in experiment
+            Presenter->>Model: C. Get default experiment mode (Single Crystal)
+            Presenter->>View: Set experiment mode (selection_widget.selector_init)
             Note left of View: Workflow continues for selecting experiment type = Single Crystal
             Note left of View: handle_field_values_update is triggered
 
@@ -230,7 +231,7 @@ Any value processing and/or filtering to match the requirements and logic of the
                 participant Model
 
                 Note over View,Model: Plot draw due to any CrosshairWidget parameter update
-                View->>Presenter: User updates a parameter at CrosshairWidget
+                Note left of View: User updates a parameter at CrosshairWidget
                 Note left of View: Check the validation status of all CrosshairWidget parameters (CrosshairWidget.validate_all_inputs)
                 View->>Presenter: Emit the valid signal and pass the crosshair parameters
                 Presenter->>View: Get the experiment type
@@ -372,7 +373,7 @@ Any value processing and/or filtering to match the requirements and logic of the
             participant Model
 
             Note over View,Model: Updates due to switching to Powder Mode
-            Note left of View: User selects the Single Crystal radio button
+            Note left of View: User selects the Powder radio button
             View->>Presenter: Trigger the update
             Presenter->>View: Update fields' visibility for powder case(field_visibility_in_Powder)
             Note left of View: Hide the SingleCrystalWidget
@@ -389,6 +390,7 @@ Any value processing and/or filtering to match the requirements and logic of the
             Presenter->>Model: Get experiment parameters (get_experiment_data)
             Presenter->>View: Set experiment parameters (experiment_widget.set_values)
             Note left of View: Display experiment parameters values
+            Note left of View: handle_field_values_update is triggered
 
 
 #. This describes the sequence of events happening among M-V-P when user selects the "Single Crystal" mode : handle_switch_to_sc()
