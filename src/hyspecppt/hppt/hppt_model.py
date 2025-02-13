@@ -181,6 +181,20 @@ class HyspecPPTModel:
         # check if it is the same
         return self.Emin != Emin
 
+    def get_ang_Q_beam(self) -> float:
+        """Returns the angle between Q and the beam"""
+        SE2K = np.sqrt(2e-3 * e * m_n) * 1e-10 / hbar
+        crosshair_data = self.get_crosshair_data()
+        deltaE = crosshair_data["DeltaE"]
+        modQ = crosshair_data["modQ"]
+        ki = np.sqrt(self.Ei) * SE2K
+        kf = np.sqrt(self.Ei - deltaE) * SE2K
+        cos_theta = (ki**2 + kf**2 - modQ**2) / (2 * ki * kf)
+        with np.errstate(
+            invalid="ignore"
+        ):  # ignore the state when users put a non-zero deltaE while modQ is still at 0
+            return np.degrees(np.arccos(cos_theta)) if self.S2 < 0 else -np.degrees(np.arccos(cos_theta))
+
     def calculate_graph_data(self) -> dict[str, np.array]:
         """Returns a dictionary of arrays [Q_low, Q_hi, E, Q2d, E2d, data of plot_types]"""
         # constant to transform from energy in meV to momentum in Angstrom^-1
