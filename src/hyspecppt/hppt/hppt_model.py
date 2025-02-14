@@ -226,7 +226,6 @@ class HyspecPPTModel:
 
         # Calculate angle between polarization vector and momentum transfer
         cos_ang_PQ = (Qx * Px + Qz * Pz) / Q2d
-        ang_PQ = np.arccos(cos_ang_PQ)
 
         # Select return value for intensity
         if self.plot_type == PLOT_TYPES[0]:  # alpha
@@ -237,5 +236,5 @@ class HyspecPPTModel:
         elif self.plot_type == PLOT_TYPES[2]:  # "(cos^2(a)+1)/2"
             intensity = (cos_ang_PQ**2 + 1) / 2
         elif self.plot_type == PLOT_TYPES[3]:
-            intensity = np.cos(ang_PQ) ** 2 - np.sin(ang_PQ) ** 2
+            intensity = 2 * cos_ang_PQ**2 - 1
         return dict(Q_low=Q_low, Q_hi=Q_hi, E=E, Q2d=Q2d, E2d=E2d, intensity=intensity, plot_type=self.plot_type)
