@@ -244,6 +244,7 @@ def test_cos2_sin2():
     assert np.isnan(model.calculate_graph_data()["intensity"][0][0])  # not allowed (Q, E) positions
     assert np.isnan(model.calculate_graph_data()["intensity"][84][4])  # not allowed (Q, E) positions
 
+    # keeping cos^2(alpha) - sin^2(alpha) in tests for more robustness
     assert np.isclose(
         model.calculate_graph_data()["intensity"][84][5],
         np.cos(np.radians(136.5994336)) ** 2 - np.sin(np.radians(136.5994336)) ** 2,
