@@ -189,11 +189,9 @@ class HyspecPPTModel:
         modQ = crosshair_data["modQ"]
         ki = np.sqrt(self.Ei) * SE2K
         kf = np.sqrt(self.Ei - deltaE) * SE2K
-        cos_theta = (ki**2 + kf**2 - modQ**2) / (2 * ki * kf)
-        with np.errstate(
-            invalid="ignore"
-        ):  # ignore the state when users put a non-zero deltaE while modQ is still at 0
-            return np.degrees(np.arccos(cos_theta)) if self.S2 < 0 else -np.degrees(np.arccos(cos_theta))
+        with np.errstate(all="ignore"):  # ignore the state when momentum energy not conserved
+            cos_kiQ = (ki**2 + modQ**2 - kf**2) / (2 * ki * modQ)
+            return np.degrees(np.arccos(cos_kiQ)) if self.S2 < 0 else -np.degrees(np.arccos(cos_kiQ))
 
     def calculate_graph_data(self) -> dict[str, np.array]:
         """Returns a dictionary of arrays [Q_low, Q_hi, E, Q2d, E2d, data of plot_types]"""
