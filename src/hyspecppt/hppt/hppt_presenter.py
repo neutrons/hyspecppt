@@ -24,7 +24,7 @@ class HyspecPPTPresenter:
         self.view.experiment_widget.initializeCombo(PLOT_TYPES)
         self.view.experiment_widget.set_values(self.model.get_experiment_data())
 
-        # set default selection mode
+        # set default selection mode from the model
         experiment_type = self.view.selection_widget.powder_label
         if self.model.cp.get_experiment_type().startswith("single"):
             experiment_type = self.view.selection_widget.sc_label
