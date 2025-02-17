@@ -219,3 +219,38 @@ def test_zero_alpha():
     model.set_experiment_data(Ei=20.0, S2=-40.0, alpha_p=70.0, plot_type=PLOT_TYPES[0])
     # This is the point of Q ~ 2.1 \\A-1, E ~ 0 meV, alpha should be close to 0
     assert np.isclose(model.calculate_graph_data()["intensity"][94][105], 0.209092)
+
+
+def test_cos2_sin2():
+    """Test calculating different graph data"""
+    model = HyspecPPTModel()
+    model.set_experiment_data(Ei=20.0, S2=60.0, alpha_p=30.0, plot_type=PLOT_TYPES[3])
+    assert np.isclose(min(model.calculate_graph_data()["Q_low"]), 1.55338)
+    assert np.isclose(max(model.calculate_graph_data()["Q_low"]), 2.30880)
+
+    assert np.isclose(min(model.calculate_graph_data()["Q_hi"]), 3.25839)
+    assert np.isclose(max(model.calculate_graph_data()["Q_hi"]), 5.3811)
+    assert model.calculate_graph_data()["E"].all() == np.linspace(-20, 18, 200).all()
+
+    assert model.calculate_graph_data()["Q2d"][0][0] == 0.0
+    assert model.calculate_graph_data()["Q2d"][0][1] == 0.0
+
+    assert np.isclose(model.calculate_graph_data()["Q2d"][199][0], 5.38106)
+    assert np.isclose(model.calculate_graph_data()["Q2d"][199][1], 5.38106)
+
+    assert np.isclose(model.calculate_graph_data()["E2d"][0][0], -20)
+    assert np.isclose(model.calculate_graph_data()["E2d"][0][199], 18.0)
+
+    assert np.isnan(model.calculate_graph_data()["intensity"][0][0])  # not allowed (Q, E) positions
+    assert np.isnan(model.calculate_graph_data()["intensity"][84][4])  # not allowed (Q, E) positions
+
+    # keeping cos^2(alpha) - sin^2(alpha) in tests for more robustness
+    assert np.isclose(
+        model.calculate_graph_data()["intensity"][84][5],
+        np.cos(np.radians(136.5994336)) ** 2 - np.sin(np.radians(136.5994336)) ** 2,
+    )
+    assert np.isclose(
+        model.calculate_graph_data()["intensity"][199][0],
+        np.cos(np.radians(84.7356103)) ** 2 - np.sin(np.radians(84.7356103)) ** 2,
+    )
+    assert np.isnan(model.calculate_graph_data()["intensity"][199][1])  # not allowed (Q, E) positions
