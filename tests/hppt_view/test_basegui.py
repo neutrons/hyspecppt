@@ -109,5 +109,5 @@ def test_combo_box_plot_options(qtbot):
     ExpWidget.Type_combobox.setCurrentIndex(3)
     assert (
         ExpWidget.Type_combobox.currentText()
-        == "(cos" + square + alpha + subscript_s + "-sin" + square + alpha + subscript_s + ")"
+        == "cos" + square + alpha + subscript_s + "-sin" + square + alpha + subscript_s
     )
