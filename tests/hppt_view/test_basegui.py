@@ -88,12 +88,10 @@ def test_selector_widget(qtbot):
     assert selector_widget.sc_rb.text() == "Single C&rystal"
 
 
-def test_combo_box_plot_options(qtbot):
+def test_combo_box_plot_options():
     """Test the combo box text are set correctly"""
     # unicode
     alpha = "\u03b1"
-    beta = "\u03b2"
-    gamma = "\u03b3"
     square = "\u00b2"
     subscript_s = "\u209b"
 
