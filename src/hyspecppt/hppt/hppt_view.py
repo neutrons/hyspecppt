@@ -152,15 +152,16 @@ class PlotWidget(QWidget):
 
     def update_plot_crosshair(self, crosshair_data: dict) -> None:
         """Update the plot with valid crosshair_data
+
         Args:
-            eline (float): x
-            qline (float): y
+            crosshair_data: dictionary with: eline (float) x, qline (float) y
 
         """
         self.update_crosshair(crosshair_data["data"]["DeltaE"], crosshair_data["data"]["modQ"])
 
     def update_crosshair(self, eline: float, qline: float) -> None:
         """Update the plot with crosshair lines
+
         Args:
             eline (float): x
             qline (float): y
@@ -268,9 +269,11 @@ class SelectorWidget(QWidget):
 
     def selector_init(self, selected_label: str):
         """Initialize the default selected mode
+
         Args:
             selected_label: it contains either sc_label or powder_label
             based on the selected label the mode is set during initialization
+
         """
         if selected_label == self.sc_label:
             self.sc_rb.setChecked(True)
@@ -279,7 +282,9 @@ class SelectorWidget(QWidget):
 
     def sc_toggle(self) -> None:
         """Update fields based on selected mode
+
         Args:
+
         """
         if self.parent():
             sender = self.sender().text()
@@ -291,7 +296,9 @@ class SelectorWidget(QWidget):
 
     def get_selected_mode_label(self) -> str:
         """Return the label of the selected mode
+
         Args:
+
         """
         if self.powder_rb.isChecked():
             return self.powder_label
