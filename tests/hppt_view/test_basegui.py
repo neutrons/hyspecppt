@@ -86,3 +86,26 @@ def test_selector_widget(qtbot):
 
     assert selector_widget.powder_rb.text() == "Po&wder"
     assert selector_widget.sc_rb.text() == "Single C&rystal"
+
+
+def test_combo_box_plot_options():
+    """Test the combo box text are set correctly"""
+    # unicode
+    alpha = "\u03b1"
+    square = "\u00b2"
+    subscript_s = "\u209b"
+
+    ExpWidget = hppt_view.ExperimentWidget()
+    ExpWidget.initializeCombo(PLOT_TYPES)
+    assert ExpWidget.Type_combobox.currentText() == alpha + subscript_s
+    ExpWidget.Type_combobox.setCurrentIndex(1)
+    assert ExpWidget.Type_combobox.currentText() == "cos" + square + alpha + subscript_s
+
+    ExpWidget.Type_combobox.setCurrentIndex(2)
+    assert ExpWidget.Type_combobox.currentText() == "(1+cos" + square + alpha + subscript_s + ")/2"
+
+    ExpWidget.Type_combobox.setCurrentIndex(3)
+    assert (
+        ExpWidget.Type_combobox.currentText()
+        == "cos" + square + alpha + subscript_s + "-sin" + square + alpha + subscript_s
+    )

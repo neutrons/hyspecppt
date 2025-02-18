@@ -55,7 +55,11 @@ class SingleCrystalParameters:
         self.l = params["l"]
 
     def get_parameters(self) -> dict[str, float]:
-        """Returns all the parameters as a dictionary"""
+        """Returns all the parameters as a dictionary
+
+        Args:
+
+        """
         return dict(
             a=self.a,
             b=self.b,
@@ -69,7 +73,11 @@ class SingleCrystalParameters:
         )
 
     def calculate_modQ(self) -> float:
-        """Returns |Q| from lattice parameters and h, k, l"""
+        r"""Returns \|Q\| from lattice parameters and h, k, l
+
+        Args:
+
+        """
         ca = np.cos(np.radians(self.alpha))
         sa = np.sin(np.radians(self.alpha))
         cb = np.cos(np.radians(self.beta))
@@ -111,7 +119,14 @@ class CrosshairParameters:
         self.sc_parameters = SingleCrystalParameters()
 
     def set_crosshair(self, current_experiment_type: str, DeltaE: float = None, modQ: float = None) -> None:
-        """Store crosshair parameters including in SC mode"""
+        """Store crosshair parameters including in SC mode
+
+        Args:
+            current_experiment_type: selected experiment type
+            DeltaE: deltae value
+            modQ: modq value
+
+        """
         if current_experiment_type is not None:
             self.current_experiment_type = current_experiment_type
         if DeltaE is not None:
@@ -120,7 +135,11 @@ class CrosshairParameters:
             self.modQ = modQ
 
     def get_crosshair(self) -> dict[str, float]:
-        """Get the crosshair"""
+        """Return the crosshair
+
+        Args:
+
+        """
         if self.current_experiment_type == "single_crystal":
             modQ = self.sc_parameters.calculate_modQ()
             # update the valid value
@@ -130,7 +149,11 @@ class CrosshairParameters:
         return dict(DeltaE=self.DeltaE, modQ=self.modQ)
 
     def get_experiment_type(self) -> str:
-        """Return experiment type"""
+        """Return experiment type
+
+        Args:
+
+        """
         return self.current_experiment_type
 
 
@@ -150,29 +173,72 @@ class HyspecPPTModel:
         self.cp = CrosshairParameters()
 
     def set_single_crystal_data(self, params: dict[str, float]) -> None:
+        """Return experiment type
+
+        Args:
+            params: dictionary of single crystal parameters
+
+        """
         self.cp.sc_parameters.set_parameters(params)
 
     def get_single_crystal_data(self) -> dict[str, float]:
+        """Return experiment type
+
+        Args:
+
+        """
         return self.cp.sc_parameters.get_parameters()
 
     def set_crosshair_data(self, current_experiment_type: str, DeltaE: float = None, modQ: float = None) -> None:
+        """Return experiment type
+
+        Args:
+            current_experiment_type: mode
+            DeltaE: crosshair DeltaE
+            modQ: crosshair modQ
+
+        """
         self.cp.set_crosshair(current_experiment_type=current_experiment_type, DeltaE=DeltaE, modQ=modQ)
 
     def get_crosshair_data(self) -> dict[str, float]:
+        """Return experiment type
+
+        Args:
+
+        """
         return self.cp.get_crosshair()
 
     def set_experiment_data(self, Ei: float, S2: float, alpha_p: float, plot_type: str) -> None:
+        """Set experiment data
+
+        Args:
+            Ei: incident energy Ei
+            S2: Detector angle S2
+            alpha_p: polarization angle
+            plot_type: plot function
+
+        """
         self.Ei = Ei
         self.S2 = S2
         self.alpha_p = alpha_p
         self.plot_type = plot_type
 
     def get_experiment_data(self) -> dict[str, float]:
+        """Return experiment data: Ei,S2, alpha_p and plot_type in a dictionary format
+
+        Args:
+
+        """
         data = dict(Ei=self.Ei, S2=self.S2, alpha_p=self.alpha_p, plot_type=self.plot_type)
         return data
 
     def check_plot_update(self, deltaE) -> bool:
-        """Returns bool to indicate whether the Emin is different and indicate replotting"""
+        """Returns bool to indicate whether the Emin is different and indicate replotting
+
+        Args:
+            deltaE: new DeltaE value
+
+        """
         # calculate the new Emin
         if deltaE is not None and deltaE <= -self.Ei:
             Emin = 1.2 * deltaE
@@ -194,7 +260,11 @@ class HyspecPPTModel:
             return np.degrees(np.arccos(cos_kiQ)) if self.S2 < 0 else -np.degrees(np.arccos(cos_kiQ))
 
     def calculate_graph_data(self) -> dict[str, np.array]:
-        """Returns a dictionary of arrays [Q_low, Q_hi, E, Q2d, E2d, data of plot_types]"""
+        """Returns a dictionary of arrays [Q_low, Q_hi, E, Q2d, E2d, data of plot_types]
+
+        Args:
+
+        """
         # constant to transform from energy in meV to momentum in Angstrom^-1
         SE2K = np.sqrt(2e-3 * e * m_n) * 1e-10 / hbar
 
@@ -247,5 +317,6 @@ class HyspecPPTModel:
             intensity = cos_ang_PQ**2
         elif self.plot_type == PLOT_TYPES[2]:  # "(cos^2(a)+1)/2"
             intensity = (cos_ang_PQ**2 + 1) / 2
-
+        elif self.plot_type == PLOT_TYPES[3]:
+            intensity = 2 * cos_ang_PQ**2 - 1
         return dict(Q_low=Q_low, Q_hi=Q_hi, E=E, Q2d=Q2d, E2d=E2d, intensity=intensity, plot_type=self.plot_type)

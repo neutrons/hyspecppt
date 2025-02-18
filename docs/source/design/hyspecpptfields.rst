@@ -1,21 +1,22 @@
 .. _hyspecpptfields:
 
-===============================
-Fields and Validation for Plot
-===============================
+=======================
+Fields and Validation
+=======================
 
 The main functionality of the tool is to display a plot, based on the filled in parameters, automatically; no plot button exists
 
 Overall, users can:
-   * plot from Powder sample
-   * plot from Single Crystal sample
+   * plot crosshair and heatmap from Powder experiment
+   * plot crosshair and heatmap from Single Crystal experiment
    * switch between Powder and Single Crystal modes while keeping the previous valid state
    * click on "Help" button that opens up a readthedocs user documentation
 
 Fields
 --------
 
-Below are the fields of SingleCrystal and Powder sample Models
+Below are the fields of SingleCrystal and Powder experiment models
+For the purpose of ensuring only valid fields are passed to the Model, custom qt validators are included that perform more complex checks.
 
 .. list-table:: Common Fields
   :header-rows: 1
@@ -127,6 +128,21 @@ Below are the additional fields of SingleCrystal Model
     - -100 < L < 100
     - yes
 
+Validation
+----------
+
+Regarding validation, if all fields are valid, then the front end (View) triggers the backend (Model) to send the current parameters and receive the new data to plot the graphs (heatmap and/or crosshair).
+If a user types an invalid value, then a red border appears on the related field(s).
+
+
+Front end side validation includes:
+   * required fields
+   * field types
+   * threshold limits: Ei, S2, Ap, modQ, and single crystal parameters
+
+
+Backend side validation includes:
+  * Emin recalculation due to DeltaE update
 
 
 Inter-Field Validations
@@ -140,19 +156,9 @@ modQ (\|Q\|):
   * If Polarization Type set to "Single Crystal", it is a read-only field. The value is returned from the backend after all Single crystal parameters are filled in.
   * If Polarization Type set to "Powder", user can fill the value in.
 
+alpha, beta , gamma; all the below conditions need to be met for the fields to be valid:
+  * All three angles' values are less than 360 degrees: (alpha + beta+ gamma) <=360
+  * They can form a triangle: (alpha + beta) < gamma and (alpha + beta) < gamma and (beta + gamma) < alpha
 
-Validation
-----------
-
-Regarding validation, if all fields are valid, then the front end triggers the backend to send the current parameters and receive the new data and plot the graph.
-If a user types an invalid value, then a red border appears on the related field.
-
-
-Front end side validation can include:
-   * required fields
-   * field types
-   * threshold limits: Ei, S2, Ap,modQ, and crystal parameters; qt validators can be used
-
-
-Backend side validation can include:
-  * matplotlib save figure?
+Emin, DeltaE:
+  * A change in deltaE can trigger an update to Emin; the process is hidden to the user

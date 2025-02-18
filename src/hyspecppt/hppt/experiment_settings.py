@@ -12,6 +12,7 @@ PLOT_TYPES = [
     alpha + subscript_s,
     "cos" + square + alpha + subscript_s,
     "(1+cos" + square + alpha + subscript_s + ")/2",
+    "cos" + square + alpha + subscript_s + "-sin" + square + alpha + subscript_s,
 ]
 
 # default parameters

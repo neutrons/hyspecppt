@@ -7,7 +7,9 @@ except ImportError:
 
 
 def Hyspecppt():  # noqa: N802
-    """This is needed for backward compatibility because mantid workbench does
+    """Start Class"""
+    """
+    This is needed for backward compatibility because mantid workbench does
     "from hyspecppt import Hyspecppt"
     """
     from .hyspecpptmain import HyspecPPT as hyspecppt  # noqa: E501, N813
