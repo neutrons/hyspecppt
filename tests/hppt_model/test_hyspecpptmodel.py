@@ -280,6 +280,8 @@ def test_single_crystal_q_beam_mode():
     model.set_single_crystal_data(params)
     assert np.isclose(model.get_crosshair_data()["modQ"], 4.326)
     assert np.isclose(model.get_ang_Q_beam(), -28.864, 0.001)
+
+
 def test_cos2_sin2():
     """Test calculating different graph data"""
     model = HyspecPPTModel()
