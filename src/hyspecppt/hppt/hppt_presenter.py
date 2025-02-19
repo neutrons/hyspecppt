@@ -23,6 +23,7 @@ class HyspecPPTPresenter:
         self.view.sc_widget.set_values(self.model.get_single_crystal_data())
         self.view.experiment_widget.initializeCombo(PLOT_TYPES)
         self.view.experiment_widget.set_values(self.model.get_experiment_data())
+        self.view.crosshair_widget.set_QZ_values(self.model.get_ang_Q_beam())
 
         # set default selection mode from the model
         experiment_type = self.view.selection_widget.powder_label
@@ -98,6 +99,12 @@ class HyspecPPTPresenter:
             # update the plot crosshair, if valid values are passed from the model; could be invalid q
             if self.view.crosshair_widget.validation_status_all_inputs():
                 self.view.plot_widget.update_crosshair(eline=saved_values["DeltaE"], qline=saved_values["modQ"])
+        self.handle_QZ_angle()
+
+    def handle_QZ_angle(self):
+        """Compute QZ_angle"""
+        QZ_ang = self.model.get_ang_Q_beam()
+        self.view.crosshair_widget.set_QZ_values(QZ_ang)
 
     def handle_switch_to_powder(self):
         """Switch to Powder mode"""
