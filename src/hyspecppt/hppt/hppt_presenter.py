@@ -124,6 +124,7 @@ class HyspecPPTPresenter:
         # update view values
         saved_values = self.model.get_experiment_data()
         self.view.experiment_widget.set_values(saved_values)
+        self.handle_QZ_angle()
 
     def handle_switch_to_sc(self):
         """Switch to Single Crystal mode"""
@@ -150,3 +151,4 @@ class HyspecPPTPresenter:
         # if the view contains an invalid value it is overwritten
         saved_values = self.model.get_single_crystal_data()
         self.view.sc_widget.set_values(saved_values)
+        self.handle_QZ_angle()
