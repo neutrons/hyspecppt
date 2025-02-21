@@ -721,6 +721,7 @@ def test_handle_Q_beam_ang_values_S2(hyspec_app, qtbot):
     qtbot.keyPress(exp_widget.S2_edit, Qt.Key_Return)
     assert crosshair_widget.QZ_angle_edit.text() == "58.932"  # positive Q-beam ang
 
+
 def test_handle_Q_beam_ang_values_scattering_triangle_not_closed(hyspec_app, qtbot):
     """Test switch to Single Crystal mode and powder mode will update the Q-beam angle"""
     # show the app
@@ -747,7 +748,7 @@ def test_handle_Q_beam_ang_values_scattering_triangle_not_closed(hyspec_app, qtb
     crosshair_widget.modQ_edit.setFocus()
     qtbot.keyPress(crosshair_widget.modQ_edit, Qt.Key_Return)
 
-    assert exp_widget.S2_edit.text() == "30.0"  
+    assert exp_widget.S2_edit.text() == "30.0"
     assert crosshair_widget.QZ_angle_edit.text() == "-58.932"
 
     # now user change modQ to 0 while deltaE left at 5
