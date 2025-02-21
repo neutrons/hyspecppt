@@ -710,7 +710,7 @@ def test_handle_Q_beam_ang_values_S2(hyspec_app, qtbot):
     crosshair_widget.modQ_edit.setFocus()
     qtbot.keyPress(crosshair_widget.modQ_edit, Qt.Key_Return)
 
-    assert exp_widget.S2_edit.text() == "30"  # positive S2
+    assert exp_widget.S2_edit.text() == "30.0"  # positive S2
     assert crosshair_widget.QZ_angle_edit.text() == "-58.932"  # negative Q-beam ang
 
     # change S2 to -30
