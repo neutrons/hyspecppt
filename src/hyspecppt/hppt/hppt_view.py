@@ -38,12 +38,8 @@ class HyspecPPTView(QWidget):
         """
         super().__init__(parent)
 
+        # callback functions defined by the presenter
         self.fields_callback = None
-        # callback functions defined by the presenter
-        self.powder_mode_switch_callback = None
-        self.sc_mode_switch_callback = None
-
-        # callback functions defined by the presenter
         self.powder_mode_switch_callback = None
         self.sc_mode_switch_callback = None
 
