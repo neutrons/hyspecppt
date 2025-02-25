@@ -690,7 +690,7 @@ class CrosshairWidget(QWidget):
         self.QZ_angle_edit.setToolTip(tooltip_QZ_angle)
         self.QZ_angle_label.setToolTip(tooltip_QZ_angle)
         self.QZ_angle_edit.setEnabled(False)
-        self.QZ_angle_edit.setStyleSheet("color: green;")
+        self.QZ_angle_edit.setStyleSheet("color: black;")
 
         box_layout = QHBoxLayout()
         box_layout.addWidget(self.DeltaE_label)
