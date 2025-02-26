@@ -45,3 +45,11 @@ For both powder and single crystal experiments, the user will want to find :math
     \end{pmatrix}\right|
 
 The form of the :math:`B` matrix will be the one used in Mantid (https://docs.mantidproject.org/nightly/concepts/Lattice.html).
+
+For simplicity, sometimes it's useful to see the angle between the :math:`\vec Q` and the beam direction. Using the cosine law,
+
+.. math::
+
+    \cos\angle(\vec Q,\hat z)=\frac{k_i^2+Q^2-k_f^2}{2k_i Q}
+
+Since we can measure on both sides of the incident beam, the sign of this angle is taken to be opposite of the sign of the detector tank angle.
