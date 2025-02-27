@@ -29,6 +29,7 @@ every time there are new valid values received from the user (front end).
         +get_single_crystal_parameters()
         +set_crosshair(current_experiment_type: str, DeltaE: float = None, modQ: float = None)
         +get_crosshair()
+        +get_ang_Q_beam()
         +set_experiment_parameters(Ei: float, S2: float, alpha_p: float, plot_type: str)
         +get_experiment_parameters()
         +check_plot_update(deltaE)
@@ -129,11 +130,14 @@ HyspecPPT View
         +QLineEdit:crosshair_delta_e_edit
         +QLabel:crosshair_mod_q_label
         +QLineEdit:crosshair_mod_q_edit
+        +QLabel:angle_q_z_label
+        +QLineEdit:angle_q_z_edit
         +set_mod_q_enabled(state: bool)
         +set_values(values: dict[str, float])
         +validate_inputs(*_, **__)
         +validation_status_all_inputs()
         +validate_all_inputs()
+        +set_QZ_values(angle: float)
     }
 
     class SingleCrystalWidget{
@@ -178,6 +182,7 @@ HyspecPPT Presenter
         +handle_field_values_update()
         +handle_switch_to_powder()
         +handle_switch_to_sc()
+        +handle_QZ_angle()
     }
 
     class HyspecPPTModel{
@@ -247,6 +252,7 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Note left of View: Draw the (colormap) heatmap
                 Presenter->>View: Return graph data (plot_widget.update_crosshair)
                 Note left of View: Draw the crosshair
+                Note left of View: Update momentum transfer angle
 
 
     * Valid Status without Replot:
@@ -269,6 +275,7 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Note right of Model: Store the crosshair data
                 Presenter->>View: Return graph data (plot_widget.update_crosshair)
                 Note left of View: Draw the crosshair
+                Note left of View: Update momentum transfer angle
 
     * Invalid Status:
 
@@ -306,6 +313,7 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Model->>Presenter: Return graph data dictionary
                 Presenter->>View: Return graph data (plot_widget.update_plot)
                 Note left of View: Draw the (colormap) heatmap
+                Note left of View: Update momentum transfer angle
 
     * Invalid Status:
 
@@ -343,6 +351,7 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Note left of Presenter: Check the validation status of all crosshair_widget parameters (CrosshairWidget.validation_status_all_inputs) is valid
                 Presenter->>View: Return graph data (plot_widget.update_crosshair)
                 Note left of View: Draw the crosshair
+                Note left of View: Update momentum transfer angle
 
     * Invalid Status:
 
@@ -425,6 +434,7 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Presenter->>View: Set single crystal parameters (singlecrystal_widget.set_parameters)
                 Note left of View: Display SingleCrystal parameters values
                 Note left of View: handle_field_values_update is triggered
+                Note left of View: Update momentum transfer angle
 
     * Invalid Status:
 
