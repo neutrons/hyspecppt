@@ -745,6 +745,7 @@ class CrosshairWidget(QWidget):
 
         Args:
             angle (float): the angle between momentum transfer and beam direction
+
         """
         self.QZ_angle_edit.setText(f"{angle:.3f}")
 
