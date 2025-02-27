@@ -740,7 +740,12 @@ class CrosshairWidget(QWidget):
         self.DeltaE_edit.setText(str(values["DeltaE"]))
         self.modQ_edit.setText("{:.3f}".format(values["modQ"]))
 
-    def set_QZ_values(self, angle):
+    def set_QZ_values(self, angle: float) -> None:
+        """Displays the angle between momentum transfer and beam direction
+
+        Args:
+            angle (float): the angle between momentum transfer and beam direction
+        """
         self.QZ_angle_edit.setText(f"{angle:.3f}")
 
     def validate_inputs(self, *_, **__) -> None:

@@ -245,6 +245,8 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Model->>Presenter: Returns the replot to True
                 Presenter->>Model: Set crosshair data (set_crosshair_data)
                 Note right of Model: Store the crosshair data
+                Presenter->>Model: Get momentum transfer angle
+                Model->>Presenter: Return momentum transfer angle
                 Presenter->>Model: Calculate plot data (calculate_graph_data)
                 Note right of Model: Calculate plot dictionary data
                 Model->>Presenter: Return graph data dictionary
@@ -252,6 +254,7 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Note left of View: Draw the (colormap) heatmap
                 Presenter->>View: Return graph data (plot_widget.update_crosshair)
                 Note left of View: Draw the crosshair
+                Presenter->>View: Display momentum transfer angle
                 Note left of View: Update momentum transfer angle
 
 
@@ -273,8 +276,11 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Model->>Presenter: Returns the replot to False
                 Presenter->>Model: Set crosshair data (set_crosshair_data)
                 Note right of Model: Store the crosshair data
+                Presenter->>Model: Get momentum transfer angle
+                Model->>Presenter: Return momentum transfer angle
                 Presenter->>View: Return graph data (plot_widget.update_crosshair)
                 Note left of View: Draw the crosshair
+                Presenter->>View: Display momentum transfer angle
                 Note left of View: Update momentum transfer angle
 
     * Invalid Status:
@@ -312,7 +318,10 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Note right of Model: Calculate plot dictionary data
                 Model->>Presenter: Return graph data dictionary
                 Presenter->>View: Return graph data (plot_widget.update_plot)
+                Presenter->>Model: Get momentum transfer angle
+                Model->>Presenter: Return momentum transfer angle
                 Note left of View: Draw the (colormap) heatmap
+                Presenter->>View: Display momentum transfer angle
                 Note left of View: Update momentum transfer angle
 
     * Invalid Status:
@@ -347,10 +356,13 @@ Any value processing and/or filtering to match the requirements and logic of the
                 View->>Presenter: Emit the valid signal and pass the single crystal parameters
                 Presenter->>Model: Set the parameters (set_single_crystal_data)
                 Presenter->>Model: Get the new crosshair data (get_crosshair_data)
+                Presenter->>Model: Get momentum transfer angle
+                Model->>Presenter: Return momentum transfer angle
                 Presenter->>View: Display the crosshair data (crosshair_widget.set_values)
                 Note left of Presenter: Check the validation status of all crosshair_widget parameters (CrosshairWidget.validation_status_all_inputs) is valid
                 Presenter->>View: Return graph data (plot_widget.update_crosshair)
                 Note left of View: Draw the crosshair
+                Presenter->>View: Display momentum transfer angle
                 Note left of View: Update momentum transfer angle
 
     * Invalid Status:
@@ -431,9 +443,12 @@ Any value processing and/or filtering to match the requirements and logic of the
                 Note left of View: Display experiment parameters values
                 Note left of View: handle_field_values_update is triggered
                 Presenter->>Model: Get single crystal parameters (get_single_crystal_data)
+                Presenter->>Model: Get momentum transfer angle
+                Model->>Presenter: Return momentum transfer angle
                 Presenter->>View: Set single crystal parameters (singlecrystal_widget.set_parameters)
                 Note left of View: Display SingleCrystal parameters values
                 Note left of View: handle_field_values_update is triggered
+                Presenter->>View: Display momentum transfer angle
                 Note left of View: Update momentum transfer angle
 
     * Invalid Status:
