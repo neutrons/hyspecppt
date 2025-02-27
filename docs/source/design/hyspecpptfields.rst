@@ -4,13 +4,14 @@
 Fields and Validation
 =======================
 
-The main functionality of the tool is to display a plot, based on the filled in parameters, automatically; no plot button exists
+The main functionality of the tool is to display a plot, based on the filled in parameters, automatically; no plot button exists.
 
 Overall, users can:
    * plot crosshair and heatmap from Powder experiment
    * plot crosshair and heatmap from Single Crystal experiment
    * switch between Powder and Single Crystal modes while keeping the previous valid state
    * click on "Help" button that opens up a readthedocs user documentation
+   * show the angle between momentum transfer and incident beam at the crosshair position. A value of `nan` means that conservation of energy and momentum does not permit measurement at that point.
 
 Fields
 --------

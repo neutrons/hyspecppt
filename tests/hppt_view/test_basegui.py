@@ -109,3 +109,12 @@ def test_combo_box_plot_options():
         ExpWidget.Type_combobox.currentText()
         == "cos" + square + alpha + subscript_s + "-sin" + square + alpha + subscript_s
     )
+
+
+def test_crosshair_widget_Q_beam_ang():
+    """Test the names of the Qlabel and line edits are correct"""
+    crosshair_widget = hppt_view.CrosshairWidget()
+
+    assert crosshair_widget.QZ_angle_label.text() == "Q-Beam Angle:"
+    assert crosshair_widget.QZ_angle_edit.text() == ""
+    assert not crosshair_widget.QZ_angle_edit.isEnabled()

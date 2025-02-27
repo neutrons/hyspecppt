@@ -587,3 +587,177 @@ def test_emin_deltae_updated_values(hyspec_app, qtbot):
     # assert heatmap
     assert plot_widget.ax.get_ylabel() == r"$\Delta E$"
     assert plot_widget.ax.get_xlabel() == "$|Q|$"
+
+
+def test_handle_Q_beam_ang_values_update(hyspec_app, qtbot):
+    """Test switch to Single Crystal mode and powder mode will update the Q-beam angle"""
+    # show the app
+    hyspec_app.show()
+    qtbot.waitUntil(hyspec_app.show, timeout=5000)
+    assert hyspec_app.isVisible()
+
+    hyspec_view = hyspec_app.main_window.HPPT_view
+    sc_widget = hyspec_view.sc_widget
+    crosshair_widget = hyspec_view.crosshair_widget
+
+    # switch to single crystal
+    hyspec_view.switch_to_sc()
+
+    # set a valid a value
+    sc_widget.a_edit.clear()
+    qtbot.keyClicks(sc_widget.a_edit, "10")
+    assert sc_widget.a_edit.text() == "10"
+
+    # set a valid b value
+    sc_widget.b_edit.clear()
+    qtbot.keyClicks(sc_widget.b_edit, "10")
+    assert sc_widget.b_edit.text() == "10"
+
+    # set a valid c value
+    sc_widget.c_edit.clear()
+    qtbot.keyClicks(sc_widget.c_edit, "10")
+    assert sc_widget.c_edit.text() == "10"
+
+    # set a valid h value
+    sc_widget.h_edit.clear()
+    qtbot.keyClicks(sc_widget.h_edit, "1")
+    assert sc_widget.h_edit.text() == "1"
+
+    # set a valid a k value
+    sc_widget.k_edit.clear()
+    qtbot.keyClicks(sc_widget.k_edit, "1")
+    assert sc_widget.k_edit.text() == "1"
+
+    # # set a valid a l value
+    sc_widget.l_edit.clear()
+    qtbot.keyClicks(sc_widget.l_edit, "0")
+    assert sc_widget.l_edit.text() == "0"
+
+    # # Simulate gaining/losing focus
+    sc_widget.l_edit.setFocus()
+    qtbot.keyPress(sc_widget.l_edit, Qt.Key_Return)
+
+    # # Qmod value should be updated with the new value
+    assert crosshair_widget.modQ_edit.text() == "0.889"
+    assert crosshair_widget.DeltaE_edit.text() == "0"
+    assert crosshair_widget.modQ_edit.styleSheet() != INVALID_QLINEEDIT
+    assert crosshair_widget.QZ_angle_edit.text() == "-81.778"
+
+    # Switch to powder and change DeltaE
+    hyspec_view.switch_to_powder()
+    hyspec_view.selection_widget.powder_rb.setChecked(True)
+
+    assert crosshair_widget.QZ_angle_edit.text() == "-81.778"
+    crosshair_widget.DeltaE_edit.clear()
+    qtbot.keyClicks(crosshair_widget.DeltaE_edit, "5.0")
+    assert crosshair_widget.DeltaE_edit.text() == "5.0"
+    crosshair_widget.DeltaE_edit.setFocus()
+    qtbot.keyPress(crosshair_widget.DeltaE_edit, Qt.Key_Return)
+
+    assert crosshair_widget.QZ_angle_edit.text() == "-54.556"
+
+
+def test_handle_Q_beam_ang_values_powder(hyspec_app, qtbot):
+    """Test switch to Single Crystal mode and powder mode will update the Q-beam angle"""
+    # show the app
+    hyspec_app.show()
+    qtbot.waitUntil(hyspec_app.show, timeout=5000)
+    assert hyspec_app.isVisible()
+
+    hyspec_view = hyspec_app.main_window.HPPT_view
+    crosshair_widget = hyspec_view.crosshair_widget
+
+    # Switch to powder and change DeltaE
+    hyspec_view.switch_to_powder()
+    hyspec_view.selection_widget.powder_rb.setChecked(True)
+
+    crosshair_widget.DeltaE_edit.clear()
+    qtbot.keyClicks(crosshair_widget.DeltaE_edit, "5.0")
+    assert crosshair_widget.DeltaE_edit.text() == "5.0"
+    crosshair_widget.DeltaE_edit.setFocus()
+
+    crosshair_widget.modQ_edit.clear()
+    qtbot.keyClicks(crosshair_widget.modQ_edit, "2.000")
+    assert crosshair_widget.modQ_edit.text() == "2.000"
+    crosshair_widget.modQ_edit.setFocus()
+    qtbot.keyPress(crosshair_widget.modQ_edit, Qt.Key_Return)
+
+    assert crosshair_widget.QZ_angle_edit.text() == "-58.932"
+
+
+def test_handle_Q_beam_ang_values_S2(hyspec_app, qtbot):
+    """Test switch to Single Crystal mode and powder mode will update the Q-beam angle"""
+    # show the app
+    hyspec_app.show()
+    qtbot.waitUntil(hyspec_app.show, timeout=5000)
+    assert hyspec_app.isVisible()
+
+    hyspec_view = hyspec_app.main_window.HPPT_view
+    crosshair_widget = hyspec_view.crosshair_widget
+
+    # Switch to powder and change DeltaE
+    hyspec_view.switch_to_powder()
+    hyspec_view.selection_widget.powder_rb.setChecked(True)
+
+    crosshair_widget.DeltaE_edit.clear()
+    qtbot.keyClicks(crosshair_widget.DeltaE_edit, "5.0")
+    assert crosshair_widget.DeltaE_edit.text() == "5.0"
+    crosshair_widget.DeltaE_edit.setFocus()
+
+    exp_widget = hyspec_view.experiment_widget
+    crosshair_widget.modQ_edit.clear()
+    qtbot.keyClicks(crosshair_widget.modQ_edit, "2.000")
+    assert crosshair_widget.modQ_edit.text() == "2.000"
+    crosshair_widget.modQ_edit.setFocus()
+    qtbot.keyPress(crosshair_widget.modQ_edit, Qt.Key_Return)
+
+    assert exp_widget.S2_edit.text() == "30.0"  # positive S2
+    assert crosshair_widget.QZ_angle_edit.text() == "-58.932"  # negative Q-beam ang
+
+    # change S2 to -30
+    exp_widget.S2_edit.clear()
+    qtbot.keyClicks(exp_widget.S2_edit, "-30")  # negative S2
+    exp_widget.S2_edit.setFocus()
+    qtbot.keyPress(exp_widget.S2_edit, Qt.Key_Return)
+    assert crosshair_widget.QZ_angle_edit.text() == "58.932"  # positive Q-beam ang
+
+
+def test_handle_Q_beam_ang_values_scattering_triangle_not_closed(hyspec_app, qtbot):
+    """Test switch to Single Crystal mode and powder mode will update the Q-beam angle"""
+    # show the app
+    hyspec_app.show()
+    qtbot.waitUntil(hyspec_app.show, timeout=5000)
+    assert hyspec_app.isVisible()
+
+    hyspec_view = hyspec_app.main_window.HPPT_view
+    crosshair_widget = hyspec_view.crosshair_widget
+
+    # Switch to powder and change DeltaE
+    hyspec_view.switch_to_powder()
+    hyspec_view.selection_widget.powder_rb.setChecked(True)
+
+    crosshair_widget.DeltaE_edit.clear()
+    qtbot.keyClicks(crosshair_widget.DeltaE_edit, "5.0")
+    assert crosshair_widget.DeltaE_edit.text() == "5.0"
+    crosshair_widget.DeltaE_edit.setFocus()
+
+    exp_widget = hyspec_view.experiment_widget
+    crosshair_widget.modQ_edit.clear()
+    qtbot.keyClicks(crosshair_widget.modQ_edit, "2.000")
+    assert crosshair_widget.modQ_edit.text() == "2.000"
+    crosshair_widget.modQ_edit.setFocus()
+    qtbot.keyPress(crosshair_widget.modQ_edit, Qt.Key_Return)
+
+    assert exp_widget.S2_edit.text() == "30.0"
+    assert crosshair_widget.QZ_angle_edit.text() == "-58.932"
+
+    # now user change modQ to 0 while deltaE left at 5
+
+    exp_widget = hyspec_view.experiment_widget
+    crosshair_widget.modQ_edit.clear()
+    qtbot.keyClicks(crosshair_widget.modQ_edit, "0.000")
+    assert crosshair_widget.modQ_edit.text() == "0.000"
+    crosshair_widget.modQ_edit.setFocus()
+    qtbot.keyPress(crosshair_widget.modQ_edit, Qt.Key_Return)
+
+    assert crosshair_widget.QZ_angle_edit.text() == "nan"

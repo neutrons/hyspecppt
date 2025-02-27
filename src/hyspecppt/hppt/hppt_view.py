@@ -43,11 +43,6 @@ class HyspecPPTView(QWidget):
         self.powder_mode_switch_callback = None
         self.sc_mode_switch_callback = None
 
-        # callback functions defined by the presenter
-        self.fields_callback = None
-        self.powder_mode_switch_callback = None
-        self.sc_mode_switch_callback = None
-
         layout = QHBoxLayout()
         self.setLayout(layout)
         left_side_layout = QVBoxLayout()
@@ -688,12 +683,24 @@ class CrosshairWidget(QWidget):
         self.modQ_edit.setToolTip(tooltip_modQ)
         self.modQ_label.setToolTip(tooltip_modQ)
 
+        self.QZ_angle_edit = QLineEdit(self)
+        self.QZ_angle_label = QLabel("Q-Beam Angle:", self)
+        self.QZ_angle_label.setBuddy(self.QZ_angle_edit)
+        tooltip_QZ_angle = "Angle between Q and beam in degrees."
+        self.QZ_angle_edit.setToolTip(tooltip_QZ_angle)
+        self.QZ_angle_label.setToolTip(tooltip_QZ_angle)
+        self.QZ_angle_edit.setEnabled(False)
+        self.QZ_angle_edit.setStyleSheet("color: black;")
+
         box_layout = QHBoxLayout()
         box_layout.addWidget(self.DeltaE_label)
         box_layout.addWidget(self.DeltaE_edit)
 
         box_layout.addWidget(self.modQ_label)
         box_layout.addWidget(self.modQ_edit)
+
+        box_layout.addWidget(self.QZ_angle_label)
+        box_layout.addWidget(self.QZ_angle_edit)
 
         self.DeltaE_validator = QDoubleValidator(parent=self)
         self.DeltaE_validator.setNotation(QDoubleValidator.StandardNotation)
@@ -732,6 +739,15 @@ class CrosshairWidget(QWidget):
         """
         self.DeltaE_edit.setText(str(values["DeltaE"]))
         self.modQ_edit.setText("{:.3f}".format(values["modQ"]))
+
+    def set_QZ_values(self, angle: float) -> None:
+        """Displays the angle between momentum transfer and beam direction
+
+        Args:
+            angle (float): the angle between momentum transfer and beam direction
+
+        """
+        self.QZ_angle_edit.setText(f"{angle:.3f}")
 
     def validate_inputs(self, *_, **__) -> None:
         """Check validity of the fields and set the stylesheet"""
