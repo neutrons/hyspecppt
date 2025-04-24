@@ -34,12 +34,6 @@ extensions = [
     "sphinxcontrib.mermaid",
 ]
 
-autodoc_mock_imports = [
-    "qtpy",
-    "qtpy.uic",
-    "qtpy.QtWidgets",
-]
-
 master_doc = "index"
 source_suffix = [".rst", ".md"]
 
