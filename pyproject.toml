@@ -67,7 +67,6 @@ markers = [
 
 [tool.ruff]
 line-length = 120
-ignore = ["pixi.lock"]
 
 [tool.ruff.lint]
 select = ["A", "ARG","ASYNC","BLE","C90", "D", "E", "F", "I", "N", "UP032", "W"]
