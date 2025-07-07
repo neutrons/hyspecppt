@@ -26,9 +26,6 @@ jobs:
       with:
         pixi-version: v0.48.2
 
-    - name: pylint
-      run: pixi run pre-commit run -a pylint
-
     - name: Install hyspecppt
       run: pixi run python -m pip install -e .
 
@@ -143,7 +140,7 @@ jobs:
           echo "Files downloaded:"
           ls
           # Get the first file
-          FILE_NAME=$(ls ./shiver-*.conda)
+          FILE_NAME=$(ls ./hyspecppt-*.conda)
           echo "Conda package file to publish: $FILE_NAME"
 
       - name: Upload package to anaconda
@@ -156,33 +153,3 @@ jobs:
           if [ "${IS_RC}" = "true" ]; then CONDA_LABEL="rc"; fi
           echo pushing ${{ github.ref }} with label $CONDA_LABEL
           pixi run anaconda upload --label $CONDA_LABEL --user neutrons ${{ env.PKG_NAME }}-*.conda
-
-  # trigger-deploy:
-  #   runs-on: ubuntu-22.04
-  #   needs: [tests, conda-build]
-  #   # only trigger deploys from protected branches and tags
-  #   if: ${{ github.ref_protected || github.ref_type == 'tag' }}
-  #   steps:
-  #     - name: Determine Environment
-  #       uses: neutrons/branch-mapper@v2
-  #       id: conda_env_name
-  #       with:
-  #         prefix: shiver
-
-  #     - name: Trigger deploy
-  #       id: trigger
-  #       uses: eic/trigger-gitlab-ci@v2
-  #       with:
-  #         url: https://code.ornl.gov
-  #         token: ${{ secrets.GITLAB_TRIGGER_TOKEN }}
-  #         project_id: 7835
-  #         ref_name: main
-  #         variables: |
-  #           PLAY="update"
-  #           CONDA_ENV="${{ steps.conda_env_name.outputs.name }}"
-
-  #     - name: Annotate commit
-  #       uses: peter-evans/commit-comment@v2
-  #       with:
-  #         body: |
-  #           GitLab pipeline for ${{ steps.conda_env_name.outputs.name }} has been submitted for this commit: ${{ steps.trigger.outputs.web_url }}
