@@ -1,5 +1,8 @@
 exclude: "scripts/.*|.*\\.mat$"
 
+ci:
+  skip: [pixi-lock-check]
+
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v5.0.0
@@ -26,3 +29,4 @@ repos:
   rev: v2.4.1
   hooks:
     - id: codespell
+      exclude: pixi.lock
