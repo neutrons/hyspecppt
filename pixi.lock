@@ -972,8 +972,8 @@ packages:
   timestamp: 1737618427549
 - pypi: ./
   name: hyspecppt
-  version: 1.1.0.dev4
-  sha256: 4555c5cafb6b62dc23bdacc8d00606a5d8a18e5d8f0b03c556f016837c83be76
+  version: 1.1.0.dev8
+  sha256: 90c013b4b9f3e9a358371bf95d548d42f1d1e44334252f37b84090363e9df84a
   requires_python: '>=3.10'
   editable: true
 - conda: https://conda.anaconda.org/conda-forge/linux-64/icu-75.1-he02047a_0.conda
