@@ -6,21 +6,36 @@ Tool that enables users to analyze polarized neutron experiments on powder and s
 
 ## Installation Process
 
-Create the development conda environment
+Create and activate a virtual environment with [Pixi](https://pixi.sh/).Prerequisites: Pixi installation e.g. for Linux:
 
-`conda env create`
+`curl -fsSL https://pixi.sh/install.sh | sh`
 
-Activate the environment
+Download the repository. Setup/Update the environment
 
-`conda activate hyspecppt_dev`
+`pixi install`
 
-Install the application in editable mode
+Enter the environment
 
-`pip install -e .`
+`pixi shell`
 
 Start the tool
 
 `hyspecppt`
+
+## For Contributors
+
+**Development/Deployment**
+
+
+---
+
+Any change to pyproject.toml, e.g. new dependencies, requires updating the pixi.lock file and including it in the commit.
+
+```bash
+
+pixi.lock
+
+```
 
 
 ## Documentation Build locally
@@ -29,13 +44,9 @@ Enter the documentation directory
 
 `cd docs\`
 
-Clean current build files, if they exist
+Build the doc locally into "build/html" folder:
 
-`make clean`
-
-Build the html files
-
-`make html`
+`pixi run sphinx-build -T -b html docs/source build/html`
 
 Documentation [hyspecppt.readthedocs.io](https://hyspecppt.readthedocs.io/)
 

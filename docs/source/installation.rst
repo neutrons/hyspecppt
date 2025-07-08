@@ -1,26 +1,26 @@
 .. _installation:
 
 +++++++++++++
-Installation
+Installation for Hyspecppt development
 +++++++++++++
 
-* Create the development conda environment
+* Create and activate a virtual environment with [Pixi](https://pixi.sh/). Prerequisites: Pixi installation e.g. for Linux:
 
    .. code-block:: bash
 
-      $ conda env create
+      $ curl -fsSL https://pixi.sh/install.sh | sh
 
-* Activate the environment
-
-   .. code-block:: bash
-
-      $ conda activate hyspecppt_dev
-
-* Install the application in editable mode
+* Activate and install Hyspecppt (make sure you are in hyspecppt project folder where pyproject.toml is)
 
    .. code-block:: bash
 
-      $ pip install -e .
+      $ pixi install
+
+* Activate pixi environment
+
+   .. code-block:: bash
+
+      $ pixi shell
 
 * Start the tool
 
