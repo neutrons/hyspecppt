@@ -51,5 +51,5 @@ Build the doc locally into "build/html" folder:
 Documentation [hyspecppt.readthedocs.io](https://hyspecppt.readthedocs.io/)
 
 
-[![CI](https://github.com/neutrons/hyspecppt/actions/workflows/unittest.yml/badge.svg?branch=next)](https://github.com/neutrons/hyspecppt/actions/workflows/unittest.yml)
+[![CI](https://github.com/neutrons/hyspecppt/actions/workflows/test_and_deploy.yml/badge.svg?branch=next)](https://github.com/neutrons/hyspecppt/actions/workflows/test_and_deploy.yml)
 [![codecov](https://codecov.io/gh/neutrons/hyspecppt/graph/badge.svg?token=GAQE3SS0HJ)](https://codecov.io/gh/neutrons/hyspecppt)
