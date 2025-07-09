@@ -140,7 +140,7 @@ jobs:
           echo "Files downloaded:"
           ls
           # Get the first file
-          FILE_NAME=$(ls ./hyspecppt-*.conda)
+          FILE_NAME=$(ls ./${{ env.PKG_NAME }}-*.conda)
           echo "Conda package file to publish: $FILE_NAME"
 
       - name: Upload package to anaconda
