@@ -27,3 +27,10 @@ repos:
   hooks:
     - id: codespell
       exclude: pixi.lock
+- repo: local
+  hooks:
+    - id: pixi-lock-check
+      name: pixi-lock-check
+      entry: bash -c "pixi lock --check"
+      stage: pre-push
+      language: system
