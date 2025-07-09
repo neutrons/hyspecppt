@@ -10,7 +10,7 @@ Installation for Hyspecppt development
 
       $ curl -fsSL https://pixi.sh/install.sh | sh
 
-* Activate and install Hyspecppt (make sure you are in hyspecppt project folder where pyproject.toml is)
+* Setup/Update the environment of Hyspecppt (make sure you are in hyspecppt project folder where pyproject.toml is)
 
    .. code-block:: bash
 
