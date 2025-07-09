@@ -1,5 +1,6 @@
 exclude: "scripts/.*|.*\\.mat$"
-
+ci:
+    skip: [pixi-lock-check]
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v5.0.0
@@ -26,3 +27,11 @@ repos:
   rev: v2.4.1
   hooks:
     - id: codespell
+      exclude: pixi.lock
+- repo: local
+  hooks:
+    - id: pixi-lock-check
+      name: pixi-lock-check
+      entry: bash -c "pixi lock --check"
+      stage: pre-push
+      language: system
