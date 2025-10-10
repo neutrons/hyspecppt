@@ -15,20 +15,32 @@ def test_appwindow(hyspec_app, qtbot):
     assert hyspec_app.windowTitle() == f"Hyspecppt - {__version__}"
 
 
-def test_gui_version():
+def test_gui_full_version_param():
     """Test that argument parameter --version prints the version"""
-    full_command = ["hyspecppt", "--version"]
-    version_result = subprocess.run(full_command, capture_output=True, text=True)
-    version_result = version_result.stdout.strip()
-    assert version_result == __version__
+    hyspecppt_command = ["hyspecppt", "--version"]
+    conda_command = ["conda list | grep hyspecppt", ""]
+    # get the version from command line
+    hyspecppt_version = subprocess.run(hyspecppt_command, capture_output=True, text=True)
+    hyspecppt_version_result = hyspecppt_version.stdout.strip()
+    # get the version from the environment
+    conda_version = subprocess.run(conda_command, shell=True, capture_output=True, text=True)
+    conda_version_result = conda_version.stdout.strip().split()[-3]
+    # they should match
+    assert hyspecppt_version_result == conda_version_result
 
 
-def test_gui_v():
+def test_gui_v_param():
     """Test that argument parameter -v prints the version"""
-    full_command = ["hyspecppt", "-v"]
-    version_result = subprocess.run(full_command, capture_output=True, text=True)
-    version_result = version_result.stdout.strip()
-    assert version_result == __version__
+    hyspecppt_command = ["hyspecppt", "-v"]
+    conda_command = ["conda list | grep hyspecppt", ""]
+    # get the version from command line
+    hyspecppt_version = subprocess.run(hyspecppt_command, capture_output=True, text=True)
+    hyspecppt_version_result = hyspecppt_version.stdout.strip()
+    # get the version from the environment
+    conda_version = subprocess.run(conda_command, shell=True, capture_output=True, text=True)
+    conda_version_result = conda_version.stdout.strip().split()[-3]
+    # they should match
+    assert hyspecppt_version_result == conda_version_result
 
 
 def test_gui_invalid_parameter():
