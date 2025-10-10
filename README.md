@@ -38,6 +38,19 @@ pixi.lock
 ```
 
 
+**Conda Package Testing**
+
+The following packages are required to exist in the environment, in order to test hyspectppt installed as a conda package:
+
+``bash
+
+pytest
+pytest-qt
+pytest-mock
+pytest-xvfb
+
+```
+
 ## Documentation Build locally
 
 Enter the documentation directory
