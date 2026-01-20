@@ -6,8 +6,6 @@ environments:
     - url: https://prefix.dev/pixi-build-backends/
     indexes:
     - https://pypi.org/simple
-    options:
-      pypi-prerelease-mode: if-necessary-or-explicit
     packages:
       linux-64:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2
@@ -983,9 +981,10 @@ packages:
   timestamp: 1737618427549
 - pypi: ./
   name: hyspecppt
-  version: 1.1.0.dev10
+  version: 1.1.0.dev19
   sha256: 5424dad67a1c8745bd573239206279a909b241805f6055f6c8247314fee03f8d
   requires_python: '>=3.10'
+  editable: true
 - conda: https://conda.anaconda.org/conda-forge/linux-64/icu-78.2-h33c6efd_0.conda
   sha256: 142a722072fa96cf16ff98eaaf641f54ab84744af81754c292cb81e0881c0329
   md5: 186a18e3ba246eccfc7cff00cd19a870
