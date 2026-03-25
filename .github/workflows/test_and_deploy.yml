@@ -9,7 +9,7 @@ on:
 
 env:
   PKG_NAME: hyspecppt
-  MODULE_NAME: hyspec_ppt
+  MODULE_NAME: hyspecppt
 
 # cancel previous job if new commit is pushed
 concurrency:
