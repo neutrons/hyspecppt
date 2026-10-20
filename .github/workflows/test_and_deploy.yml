@@ -84,7 +84,7 @@ jobs:
           pixi run conda-build
           mkdir -p /tmp/local-channel/linux-64
           cp *.conda /tmp/local-channel/linux-64
-      
+
       - name: Build conda environment
         id: build
         uses: neutrons/gh-actions/pkg-install@v2.1
