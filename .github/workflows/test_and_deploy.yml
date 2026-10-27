@@ -136,7 +136,7 @@ jobs:
           name: artifact-conda-package
 
       - name: Upload package to anaconda
-        uses: neutrons/gh-actions/publish@main
+        uses: neutrons/gh-actions/publish@v2.1
         with:
           anaconda-token: ${{ secrets.ANACONDA_TOKEN }}
           organization: neutrons
@@ -144,7 +144,7 @@ jobs:
 
       - name: Remove old packages
         if: github.ref == 'refs/heads/next'
-        uses: neutrons/gh-actions/pkg-remove@v1
+        uses: neutrons/gh-actions/pkg-remove@v2.1
         with:
           anaconda-token: ${{ secrets.ANACONDA_TOKEN }}
           organization: neutrons
